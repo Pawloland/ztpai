@@ -1,8 +1,8 @@
 FROM php:8.4.4-fpm-alpine3.21
 
-## Install Xdebug and other necessary tools
-RUN apk add --no-cache $PHPIZE_DEPS linux-headers\
-    && pecl install xdebug-3.4.1\
+## Install necessary dependencies
+RUN apk add --no-cache $PHPIZE_DEPS linux-headers bash curl \
+    && pecl install xdebug-3.4.2 \
     && docker-php-ext-enable xdebug \
     && apk del $PHPIZE_DEPS
 
@@ -35,7 +35,8 @@ RUN apk add --no-cache --virtual .build-deps $BUILD_DEPS \
 
 RUN apk add --no-cache --virtual .run-deps $RUN_DEPS
 
-# Copy the application code
-# COPY . /app
+## Install Symfony CLI
+RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.alpine.sh' | bash && \
+    apk add --no-cache symfony-cli
 
-# VOLUME ["/app"]
+COPY --from=composer /usr/bin/composer /usr/bin/composer

@@ -8,6 +8,11 @@ services:
       - ./docker/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
       - ./docker/php/conf.d/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini
     ports:
-      - "8000:8000" # Expose port 8000 to the host
+      - "8000:8000"
     working_dir: /app
-    command: php -S 0.0.0.0:8000 -t public # Start PHP built-in server with the document root as public
+    environment:
+      - XDEBUG_MODE=debug # to connect to xdebug from phpstorm: File > Settings > PHP > Servers > + >
+      # Name: whatever, Host: 127.0.0.1 (localhost can not work), Port: 8000, Debugger: Xdebug,
+      # set absolute path on the server for Project_files/(path of the project here)/symfony to /app
+    command: symfony server:start --no-interaction --allow-all-ip --no-tls
+
