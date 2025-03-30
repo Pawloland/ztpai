@@ -7,6 +7,11 @@ Tworzenie nowego kontrolera:
 docker compose run --rm -it -u "$(id -u):$(id -g)" php php bin/console make:controller SomeController
 ```
 
+Tworzenie nowych modeli (entities):
+```bash
+docker compose run --rm -it -u "$(id -u):$(id -g)" php php bin/console make:entity
+```
+
 Generowanie struktury frontend:
 ```bash
 docker compose run --rm -it node npm create vite@latest
