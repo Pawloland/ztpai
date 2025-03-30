@@ -16,3 +16,27 @@ services:
       # set absolute path on the server for Project_files/(path of the project here)/symfony to /app
     command: symfony server:start --no-interaction --allow-all-ip --no-tls
 
+
+  node-base:
+    container_name: node-base
+    image: node:latest
+    env_file:
+      - ./.env
+    volumes:
+      - ./frontend/biletron-frontend:/biletron-frontend
+    working_dir: /biletron-frontend
+    command: bash -c "echo [INFO] This docker service does nothing. It should be extended and not run directly. If you see this message more than one time for the same service, then something is set up incorrectly. This message should be seen only when bare docker compose up is run."
+
+  node-install:
+    container_name: node-install
+    extends: node-base
+    command: npm install
+    profiles: [ "install" ]
+
+  node-dev:
+    container_name: node-dev
+    extends: node-base
+    ports:
+      - "5173:5173"
+    command: npm run dev
+    profiles: [ "run-dev" ]
