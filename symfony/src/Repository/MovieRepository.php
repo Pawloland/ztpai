@@ -16,6 +16,36 @@ class MovieRepository extends ServiceEntityRepository
         parent::__construct($registry, movie::class);
     }
 
+    public function findAllMovies(): array
+    {
+        return $this->createQueryBuilder('m')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findMovieById(int $id): ?movie
+    {
+        return $this->find($id);
+    }
+
+    public function addMovie(Movie $movie): Movie
+    {
+        $entityManager = $this->getEntityManager();
+
+        $entityManager->persist($movie);
+        $entityManager->flush();
+
+        return $movie;
+    }
+
+    public function deleteMovie(Movie $movie): void
+    {
+        $entityManager = $this->getEntityManager();
+
+        $entityManager->remove($movie);
+        $entityManager->flush();
+    }
+
     //    /**
     //     * @return movie[] Returns an array of movie objects
     //     */

@@ -219,4 +219,40 @@ class movie
         return $this;
     }
 
+    public function getIdLanguage(): ?int
+    {
+        return $this->languageViaIdLanguage ? $this->languageViaIdLanguage->getIdLanguage() : null;
+    }
+
+    public function setIdLanguage(?language $language): static
+    {
+        $this->languageViaIdLanguage = $language;
+
+        return $this;
+    }
+
+    public function getIdDubbing(): ?int
+    {
+        return $this->languageViaIdDubbing ? $this->languageViaIdDubbing->getIdLanguage() : null;
+    }
+
+    public function setIdDubbing(?language $language): static
+    {
+        $this->languageViaIdDubbing = $language;
+
+        return $this;
+    }
+
+    public function getIdSubtitles(): ?int
+    {
+        return $this->languageViaIdSubtitles ? $this->languageViaIdSubtitles->getIdLanguage() : null;
+    }
+
+    public function setIdSubtitles(?language $language): static
+    {
+        $this->languageViaIdSubtitles = $language;
+
+        return $this;
+    }
+
 }
