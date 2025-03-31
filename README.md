@@ -7,6 +7,11 @@ Instalowanie zależności backendu:
 docker compose run --rm -it -u "$(id -u):$(id -g)" php composer install
 ```
 
+Czyszczenie cache:
+```bash
+docker compose run --rm -it -u "$(id -u):$(id -g)" php php bin/console cache:clear
+```
+
 Tworzenie nowego kontrolera:
 ```bash
 docker compose run --rm -it -u "$(id -u):$(id -g)" php php bin/console make:controller SomeController
