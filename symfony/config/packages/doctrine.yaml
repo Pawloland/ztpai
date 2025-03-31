@@ -8,6 +8,10 @@ doctrine:
 
         profiling_collect_backtrace: '%kernel.debug%'
         use_savepoints: true
+
+        schema_filter: ~^(?!client_archive_part_default|client_archive_part_2022|client_archive_part_2023|client_archive_part_2024|item|purchase|forum|cron|debugger)~
+
+
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true

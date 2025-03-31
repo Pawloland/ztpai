@@ -219,7 +219,7 @@ CREATE TABLE movie (
     original_title VARCHAR(80) NOT NULL,
     duration TIME NOT NULL,
     description VARCHAR(500) DEFAULT NULL,
-    poster uuid DEFAULT gen_random_uuid(),
+    poster uuid DEFAULT NULL,
     id_language INT NOT NULL,
     id_dubbing INT DEFAULT NULL,
     id_subtitles INT DEFAULT NULL,
