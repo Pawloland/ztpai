@@ -316,7 +316,7 @@ INSERT INTO permissions VALUES (5, 'removeMovie');
 INSERT INTO permissions VALUES (6, 'removeReservation');
 INSERT INTO permissions VALUES (7, 'removeScreening');
 INSERT INTO permissions VALUES (8, 'removeClient');
-INSERT INTO permissions VALUES (9, 'removeUser');
+INSERT INTO permissions VALUES (9, 'removeWorker');
 
 
 -- ----------------------------
@@ -506,98 +506,97 @@ INSERT INTO seat VALUES (12, 2, 3, 'c', 1);
 INSERT INTO seat VALUES (13, 2, 3, 'd', 1);
 
 -- ----------------------------
--- Table structure for user_type
+-- Table structure for worker_type
 -- ----------------------------
-DROP TABLE IF EXISTS user_type CASCADE;
-CREATE TABLE user_type (
-    id_user_type SERIAL PRIMARY KEY,
+DROP TABLE IF EXISTS worker_type CASCADE;
+CREATE TABLE worker_type (
+    id_worker_type SERIAL PRIMARY KEY,
     type_name VARCHAR(40) NOT NULL,
     -- Unique index on type_name
-    CONSTRAINT type_name_unique UNIQUE (type_name)
+    CONSTRAINT uq_type_name UNIQUE (type_name)
 );
-ALTER SEQUENCE user_type_id_user_type_seq RESTART WITH 8;
+ALTER SEQUENCE worker_type_id_worker_type_seq RESTART WITH 8;
 
 -- ----------------------------
--- Records of user_type
+-- Records of worker_type
 -- ----------------------------
--- INSERT INTO user_type VALUES (1, 'Cashier');
--- INSERT INTO user_type VALUES (2, 'Chief operations officer');
--- INSERT INTO user_type VALUES (3, 'Manager');
--- INSERT INTO user_type VALUES (4, 'Scheduler');
--- INSERT INTO user_type VALUES (5, 'Administrator');
-INSERT INTO user_type VALUES (6, 'Admin');
-INSERT INTO user_type VALUES (7, 'Employee');
+-- INSERT INTO worker_type VALUES (1, 'Cashier');
+-- INSERT INTO worker_type VALUES (2, 'Chief operations officer');
+-- INSERT INTO worker_type VALUES (3, 'Manager');
+-- INSERT INTO worker_type VALUES (4, 'Scheduler');
+-- INSERT INTO worker_type VALUES (5, 'Administrator');
+INSERT INTO worker_type VALUES (6, 'Admin');
+INSERT INTO worker_type VALUES (7, 'Employee');
 
 -- ----------------------------
--- Table structure for user
+-- Table structure for worker
 -- ----------------------------
-DROP TABLE IF EXISTS user CASCADE;
-CREATE TABLE user (
-    id_user SERIAL PRIMARY KEY,
-    id_user_type INT NOT NULL,
-    user_name VARCHAR(40) NOT NULL,
-    user_surname VARCHAR(40) NOT NULL,
+DROP TABLE IF EXISTS worker CASCADE;
+CREATE TABLE worker (
+    id_worker SERIAL PRIMARY KEY,
+    id_worker_type INT NOT NULL,
+    worker_name VARCHAR(40) NOT NULL,
+    worker_surname VARCHAR(40) NOT NULL,
     nick VARCHAR(40) NOT NULL UNIQUE,
     password_hash VARCHAR(80) NOT NULL,
     -- Foreign Key
-    CONSTRAINT fk_user_type FOREIGN KEY (id_user_type) REFERENCES user_type (id_user_type) ON DELETE RESTRICT ON UPDATE RESTRICT
+    FOREIGN KEY (id_worker_type) REFERENCES worker_type (id_worker_type) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 -- Index
-CREATE INDEX fk_user_type ON user (id_user_type);
-ALTER SEQUENCE user_id_user_seq RESTART WITH 7;
+CREATE INDEX worker_id_worker_type_idx ON worker (id_worker_type);
+ALTER SEQUENCE worker_id_worker_seq RESTART WITH 7;
 
 -- ----------------------------
--- Records of user
+-- Records of worker
 -- ----------------------------
--- INSERT INTO user VALUES (1, 5, 'Larry', 'Stevens', 'larry_stevens', 'hashed_password1');
--- INSERT INTO user VALUES (2, 5, 'Luis', 'Boyd', 'luis_boyd', 'hashed_password2');
--- INSERT INTO user VALUES (3, 5, 'Leroy', 'Moreno', 'leroy_moreno', 'hashed_password3');
--- INSERT INTO user VALUES (4, 5, 'Anne', 'Butler', 'anne_butler', 'hashed_password4');
--- INSERT INTO user VALUES (5, 5, 'Marjorie', 'Ruiz', 'marjorie_ruiz', 'hashed_password5');
--- INSERT INTO user VALUES (6, 5, 'Scott', 'Castillo', 'scott_castillo', 'hashed_password6');
-INSERT INTO user VALUES (7, 6, 'admin', 'admin', 'admin', '$2y$12$oHBPgN2x397l9ecLwcNdEeB/.1V6TFekvDNckkfmmvmq8Dfr7qFWe');
-INSERT INTO user VALUES (8, 7, 'employee', 'employee', 'employee', '$2y$12$cLCGaBNo0hiWN3sMu.FNUOvWgCTar1ZryB605kBTqpdwm9d2uElTy');
+-- INSERT INTO worker VALUES (1, 5, 'Larry', 'Stevens', 'larry_stevens', 'hashed_password1');
+-- INSERT INTO worker VALUES (2, 5, 'Luis', 'Boyd', 'luis_boyd', 'hashed_password2');
+-- INSERT INTO worker VALUES (3, 5, 'Leroy', 'Moreno', 'leroy_moreno', 'hashed_password3');
+-- INSERT INTO worker VALUES (4, 5, 'Anne', 'Butler', 'anne_butler', 'hashed_password4');
+-- INSERT INTO worker VALUES (5, 5, 'Marjorie', 'Ruiz', 'marjorie_ruiz', 'hashed_password5');
+-- INSERT INTO worker VALUES (6, 5, 'Scott', 'Castillo', 'scott_castillo', 'hashed_password6');
+INSERT INTO worker VALUES (7, 6, 'admin', 'admin', 'admin', '$2y$12$oHBPgN2x397l9ecLwcNdEeB/.1V6TFekvDNckkfmmvmq8Dfr7qFWe');
+INSERT INTO worker VALUES (8, 7, 'employee', 'employee', 'employee', '$2y$12$cLCGaBNo0hiWN3sMu.FNUOvWgCTar1ZryB605kBTqpdwm9d2uElTy');
 
 -- ----------------------------
--- Table structure for usertype_permissions
+-- Table structure for worker_type_permissions
 -- ----------------------------
-DROP TABLE IF EXISTS usertype_permissions CASCADE;
-CREATE TABLE usertype_permissions (
-    id_user_type INT NOT NULL,
+DROP TABLE IF EXISTS worker_type_permissions CASCADE;
+CREATE TABLE worker_type_permissions (
+    id_worker_type INT NOT NULL,
     id_perm INT NOT NULL,
+    PRIMARY KEY (id_worker_type, id_perm), -- Composite primary key for better performance
     -- Foreign Keys
-    CONSTRAINT id_perm FOREIGN KEY (id_perm) REFERENCES permissions (id_perm) ON DELETE RESTRICT ON UPDATE RESTRICT,
-    CONSTRAINT id_user_type FOREIGN KEY (id_user_type) REFERENCES user_type (id_user_type) ON DELETE RESTRICT ON UPDATE RESTRICT
+    FOREIGN KEY (id_worker_type) REFERENCES worker_type (id_worker_type) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    FOREIGN KEY (id_perm) REFERENCES permissions (id_perm) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
--- Indexes
-CREATE INDEX id_user_type ON usertype_permissions (id_user_type);
-CREATE INDEX id_perm ON usertype_permissions (id_perm);
+-- Add indexes to optimize queries in both directions
+CREATE INDEX idx_worker_type_permissions_worker_type ON worker_type_permissions (id_worker_type);
+CREATE INDEX idx_worker_type_permissions_perm ON worker_type_permissions (id_perm);
 
 -- ----------------------------
--- Records of usertype_permissions
+-- Records of worker_type_permissions
 -- ----------------------------
--- INSERT INTO usertype_permissions VALUES (1, 1);
--- INSERT INTO usertype_permissions VALUES (1, 2);
--- INSERT INTO usertype_permissions VALUES (2, 1);
--- INSERT INTO usertype_permissions VALUES (2, 2);
--- INSERT INTO usertype_permissions VALUES (2, 3);
--- INSERT INTO usertype_permissions VALUES (3, 1);
--- INSERT INTO usertype_permissions VALUES (3, 2);
--- INSERT INTO usertype_permissions VALUES (4, 3);
--- INSERT INTO usertype_permissions VALUES (3, 3);
--- INSERT INTO usertype_permissions VALUES (4, 4);
--- INSERT INTO usertype_permissions VALUES (5, 3);
--- INSERT INTO usertype_permissions VALUES (5, 4);
--- INSERT INTO usertype_permissions VALUES (5, 1);
---type Admin permissions removeMovie, removeReservation, removeScreening, removeClient, removeUser
-INSERT INTO usertype_permissions VALUES (6, 5);
-INSERT INTO usertype_permissions VALUES (6, 6);
-INSERT INTO usertype_permissions VALUES (6, 7);
-INSERT INTO usertype_permissions VALUES (6, 8);
-INSERT INTO usertype_permissions VALUES (6, 9);
---type Employee permissions - none
-
-
+-- INSERT INTO worker_type_permissions VALUES (1, 1);
+-- INSERT INTO worker_type_permissions VALUES (1, 2);
+-- INSERT INTO worker_type_permissions VALUES (2, 1);
+-- INSERT INTO worker_type_permissions VALUES (2, 2);
+-- INSERT INTO worker_type_permissions VALUES (2, 3);
+-- INSERT INTO worker_type_permissions VALUES (3, 1);
+-- INSERT INTO worker_type_permissions VALUES (3, 2);
+-- INSERT INTO worker_type_permissions VALUES (4, 3);
+-- INSERT INTO worker_type_permissions VALUES (3, 3);
+-- INSERT INTO worker_type_permissions VALUES (4, 4);
+-- INSERT INTO worker_type_permissions VALUES (5, 3);
+-- INSERT INTO worker_type_permissions VALUES (5, 4);
+-- INSERT INTO worker_type_permissions VALUES (5, 1);
+-- Type Admin permissions: removeMovie, removeReservation, removeScreening, removeClient, removeWorker
+INSERT INTO worker_type_permissions VALUES (6, 5);
+INSERT INTO worker_type_permissions VALUES (6, 6);
+INSERT INTO worker_type_permissions VALUES (6, 7);
+INSERT INTO worker_type_permissions VALUES (6, 8);
+INSERT INTO worker_type_permissions VALUES (6, 9);
+-- Type Employee permissions - none
 
 -- ----------------------------
 -- Table structure for forum
@@ -613,12 +612,9 @@ CREATE TABLE forum (
     FOREIGN KEY (id_client) REFERENCES client (id_client) ON DELETE RESTRICT ON UPDATE RESTRICT,
     FOREIGN KEY (id_movie) REFERENCES movie (id_movie) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
-CREATE INDEX idx_id_movie ON forum (id_movie);
-CREATE INDEX idx_id_client ON forum (id_client);
-
--- PostgreSQL does not support FULLTEXT indexing natively like MariaDB. You can use a GIN index for text search:
--- CREATE INDEX content_gin ON forum USING GIN (to_tsvector('english', content));
-ALTER SEQUENCE forum_id_comment_seq RESTART WITH 49;
+-- Indexes
+CREATE INDEX forum_movie_idx ON forum (id_movie);
+CREATE INDEX forum_client_idx ON forum (id_client);
 
 -- ----------------------------
 -- Records of forum
@@ -672,10 +668,10 @@ CREATE TABLE reservation (
     FOREIGN KEY (id_seat) REFERENCES seat (id_seat) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 -- Indexes
-CREATE UNIQUE INDEX seat_screening ON reservation (id_seat, id_screening);
-CREATE INDEX fk_reservation_screening ON reservation (id_screening);
-CREATE INDEX fk_reservation_discount ON reservation (id_discount);
-CREATE INDEX id_client ON reservation (id_client);
+CREATE UNIQUE INDEX reservation_seat_screening_idx ON reservation (id_seat, id_screening);
+CREATE INDEX reservation_screening_idx ON reservation (id_screening);
+CREATE INDEX reservation_discount_idx ON reservation (id_discount);
+CREATE INDEX reservation_client_idx ON reservation (id_client);
 ALTER SEQUENCE reservation_id_reservation_seq RESTART WITH 1562;
 
 
@@ -724,7 +720,7 @@ DROP VIEW IF EXISTS vmovieratings;
 CREATE VIEW vmovieratings AS
 SELECT
     movie.title AS title,
-    AVG(forum.stars) AS avg(stars),
+    AVG(forum.stars) AS avg_stars,
     COUNT(forum.stars) AS number_of_reviews
 FROM movie
          JOIN forum ON movie.id_movie = forum.id_movie
@@ -1112,10 +1108,10 @@ $$ LANGUAGE plpgsql;
 
 
 -- ----------------------------
--- Procedure structure for new_user
+-- Procedure structure for new_client
 -- ----------------------------
-DROP FUNCTION IF EXISTS new_user;
-CREATE OR REPLACE FUNCTION new_user(
+DROP FUNCTION IF EXISTS new_client;
+CREATE OR REPLACE FUNCTION new_client(
     vcname VARCHAR(40),
     vcsurname VARCHAR(40),
     vnick VARCHAR(40),
@@ -1135,7 +1131,7 @@ BEGIN
         RAISE EXCEPTION 'Nazwa lub mail jest zajęta';
     END IF;
 
-    -- Insert the new user
+    -- Insert the new client
     INSERT INTO client (client_name, client_surname, nick, password_hash, mail)
     VALUES (vcname, vcsurname, vnick, vpasshash, vmail);
 
@@ -1175,7 +1171,7 @@ SELECT cron.schedule(
 $$
     DELETE FROM client_sessions
     WHERE expiration_date < NOW();
-    DELETE FROM user_sessions
+    DELETE FROM worker_sessions
     WHERE expiration_date < NOW();
 $$);
 
@@ -1281,19 +1277,19 @@ CREATE TABLE client_sessions (
     id_client INT NOT NULL,
     session_token VARCHAR(80) UNIQUE NOT NULL,
     expiration_date TIMESTAMP WITH TIME ZONE NOT NULL,
-    FOREIGN KEY (id_client) REFERENCES client (id_client) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (id_client) REFERENCES client (id_client) ON DELETE CASCADE ON UPDATE RESTRICT
 );
 
 -- ----------------------------
--- Table structure for user_sessions
+-- Table structure for worker_sessions
 -- ----------------------------
-DROP TABLE IF EXISTS user_sessions CASCADE;
-CREATE TABLE user_sessions (
-    id_session_user SERIAL PRIMARY KEY,
-    id_user INT NOT NULL,
+DROP TABLE IF EXISTS worker_sessions CASCADE;
+CREATE TABLE worker_sessions (
+    id_session_worker SERIAL PRIMARY KEY,
+    id_worker INT NOT NULL,
     session_token VARCHAR(80) UNIQUE NOT NULL,
     expiration_date TIMESTAMP WITH TIME ZONE NOT NULL,
-    FOREIGN KEY (id_user) REFERENCES user (id_user) ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY (id_worker) REFERENCES worker (id_worker) ON DELETE CASCADE ON UPDATE RESTRICT
 );
 
 -- ----------------------------
@@ -1319,8 +1315,8 @@ BEGIN
     IF p_type = 'c' THEN
         INSERT INTO client_sessions (id_client, session_token, expiration_date)
         VALUES (p_id, session_token, v_expiration_date);
-    ELSIF p_type = 'u' THEN
-        INSERT INTO user_sessions (id_user, session_token, expiration_date)
+    ELSIF p_type = 'w' THEN
+        INSERT INTO worker_sessions (id_worker, session_token, expiration_date)
         VALUES (p_id, session_token, v_expiration_date);
     ELSE
         -- Invalid type, return NULL
@@ -1366,9 +1362,9 @@ BEGIN
     IF p_type = 'c' THEN
         v_table_name := 'client_sessions';
         v_id_column := 'id_client';
-    ELSIF p_type = 'u' THEN
-        v_table_name := 'user_sessions';
-        v_id_column := 'id_user';
+    ELSIF p_type = 'w' THEN
+        v_table_name := 'worker_sessions';
+        v_id_column := 'id_worker';
     ELSE
         RETURN;
     END IF;
@@ -1440,9 +1436,9 @@ BEGIN
     IF p_type = 'c' THEN
         v_table_name := 'client_sessions';
         v_id_column := 'id_client';
-    ELSIF p_type = 'u' THEN
-        v_table_name := 'user_sessions';
-        v_id_column := 'id_user';
+    ELSIF p_type = 'w' THEN
+        v_table_name := 'worker_sessions';
+        v_id_column := 'id_worker';
     ELSE
         RETURN FALSE;
     END IF;
