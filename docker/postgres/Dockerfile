@@ -7,12 +7,12 @@ RUN apt update && apt install -y ca-certificates && \
     yes | /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh  &&\
     apt update &&\
     apt -y install  \
-        postgresql-17-cron  \
-        postgresql-server-dev-17 \
-        libkrb5-dev \
-        git \
-        make \
-        gcc
+    postgresql-17-cron  \
+    postgresql-server-dev-17 \
+    libkrb5-dev \
+    git \
+    make \
+    gcc
 
 # https://stackoverflow.com/questions/78154884
 # set up pg_cron and pldebugger
@@ -31,4 +31,4 @@ CMD ["postgres", "-c", "config_file=/usr/share/postgresql/postgresql.conf.sample
 
 RUN mkdir -p /docker-entrypoint-initdb.d
 
-COPY ./docker/postgres/db_init_plus_example_data.sql /docker-entrypoint-initdb.d/
+# COPY ./docker/postgres/db_init_plus_example_data.sql /docker-entrypoint-initdb.d/
