@@ -2,3 +2,5 @@
 .env
 docker/pgadmin/*
 !docker/pgadmin/.gitkeep
+docker/php/tmp/*
+!docker/php/tmp/.gitkeep

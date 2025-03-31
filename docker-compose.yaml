@@ -8,8 +8,9 @@ services:
       - ./.env
     volumes:
       - ./symfony:/app # Mount the symfony directory to /app inside the container
-      - ./docker/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-      - ./docker/php/conf.d/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini
+      - ./docker/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:ro
+      - ./docker/php/conf.d/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini:ro
+      - ./docker/php/tmp:/tmp:rw
     ports:
       - "8000:8000"
     working_dir: /app
