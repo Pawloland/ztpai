@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: "client")]
 #[ORM\UniqueConstraint(name: "client_nick_key", columns: ["nick"])]
 #[ORM\UniqueConstraint(name: "client_mail_key", columns: ["mail"])]
-class client
+class Client
 {
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
@@ -33,10 +33,10 @@ class client
     #[ORM\Column(type: "string", length: 320, nullable: false)]
     private $mail;
 
-    #[ORM\OneToMany(targetEntity: \reservation::class, mappedBy: "client")]
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: "client")]
     private $reservations;
 
-    #[ORM\OneToMany(targetEntity: \client_sessions::class, mappedBy: "client")]
+    #[ORM\OneToMany(targetEntity: ClientSessions::class, mappedBy: "client")]
     private $clientSessions;
 
     public function __construct()
@@ -111,14 +111,14 @@ class client
     }
 
     /**
-     * @return Collection<int, reservation>
+     * @return Collection<int, Reservation>
      */
     public function getReservations(): Collection
     {
         return $this->reservations;
     }
 
-    public function addReservation(reservation $reservation): static
+    public function addReservation(Reservation $reservation): static
     {
         if (!$this->reservations->contains($reservation)) {
             $this->reservations->add($reservation);
@@ -128,7 +128,7 @@ class client
         return $this;
     }
 
-    public function removeReservation(reservation $reservation): static
+    public function removeReservation(Reservation $reservation): static
     {
         if ($this->reservations->removeElement($reservation)) {
             // set the owning side to null (unless already changed)
@@ -141,14 +141,14 @@ class client
     }
 
     /**
-     * @return Collection<int, client_sessions>
+     * @return Collection<int, ClientSessions>
      */
     public function getClientSessions(): Collection
     {
         return $this->clientSessions;
     }
 
-    public function addClientSession(client_sessions $clientSession): static
+    public function addClientSession(ClientSessions $clientSession): static
     {
         if (!$this->clientSessions->contains($clientSession)) {
             $this->clientSessions->add($clientSession);
@@ -158,7 +158,7 @@ class client
         return $this;
     }
 
-    public function removeClientSession(client_sessions $clientSession): static
+    public function removeClientSession(ClientSessions $clientSession): static
     {
         if ($this->clientSessions->removeElement($clientSession)) {
             // set the owning side to null (unless already changed)

@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: "worker")]
 #[ORM\Index(name: "worker_id_worker_type_idx", columns: ["id_worker_type"])]
 #[ORM\UniqueConstraint(name: "worker_nick_key", columns: ["nick"])]
-class worker
+class Worker
 {
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
@@ -30,10 +30,10 @@ class worker
     #[ORM\Column(type: "string", length: 80, nullable: false)]
     private $password_hash;
 
-    #[ORM\OneToMany(targetEntity: \worker_sessions::class, mappedBy: "worker")]
+    #[ORM\OneToMany(targetEntity: WorkerSessions::class, mappedBy: "worker")]
     private $workerSessions;
 
-    #[ORM\ManyToOne(targetEntity: \worker_type::class, inversedBy: "workers")]
+    #[ORM\ManyToOne(targetEntity: WorkerType::class, inversedBy: "workers")]
     #[ORM\JoinColumn(name: "id_worker_type",
             referencedColumnName: "id_worker_type",
             nullable: false,
@@ -99,14 +99,14 @@ class worker
     }
 
     /**
-     * @return Collection<int, worker_sessions>
+     * @return Collection<int, WorkerSessions>
      */
     public function getWorkerSessions(): Collection
     {
         return $this->workerSessions;
     }
 
-    public function addWorkerSession(worker_sessions $workerSession): static
+    public function addWorkerSession(WorkerSessions $workerSession): static
     {
         if (!$this->workerSessions->contains($workerSession)) {
             $this->workerSessions->add($workerSession);
@@ -116,7 +116,7 @@ class worker
         return $this;
     }
 
-    public function removeWorkerSession(worker_sessions $workerSession): static
+    public function removeWorkerSession(WorkerSessions $workerSession): static
     {
         if ($this->workerSessions->removeElement($workerSession)) {
             // set the owning side to null (unless already changed)
@@ -128,12 +128,12 @@ class worker
         return $this;
     }
 
-    public function getWorkerType(): ?worker_type
+    public function getWorkerType(): ?WorkerType
     {
         return $this->workerType;
     }
 
-    public function setWorkerType(?worker_type $workerType): static
+    public function setWorkerType(?WorkerType $workerType): static
     {
         $this->workerType = $workerType;
 

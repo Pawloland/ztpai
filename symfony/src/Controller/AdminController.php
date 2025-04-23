@@ -1,16 +1,15 @@
 <?php
 
 namespace App\Controller;
-require_once __DIR__ . '/../Entity/movie.php';
 
-use App\Repository\MovieRepository;
+use App\Entity\Movie;
 use App\Repository\LanguageRepository;
+use App\Repository\MovieRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Entity\Movie;
 
 
 final class AdminController extends AbstractController
@@ -72,7 +71,7 @@ final class AdminController extends AbstractController
                 'duration' => $movie->getDuration()->format('H:i:s'),
                 'description' => $movie->getDescription(),
                 'poster' => $movie->getPoster(),
-                'id_lanuage' => $movie->getIdLanguage(),
+                'id_language' => $movie->getIdLanguage(),
                 'id_dubbing' => $movie->getIdDubbing(),
                 'id_subtitles' => $movie->getIdSubtitles()
             ];
@@ -114,7 +113,7 @@ final class AdminController extends AbstractController
             }
 
             // Create a new Movie entity
-            $movie = new movie();
+            $movie = new Movie();
             $movie->setTitle($data['title']);
             $movie->setOriginalTitle($data['original_title']);
             $movie->setDuration($duration);
@@ -163,7 +162,7 @@ final class AdminController extends AbstractController
             'duration' => $movie->getDuration()->format('H:i:s'),
             'description' => $movie->getDescription(),
             'poster' => $movie->getPoster(),
-            'id_lanuage' => $movie->getIdLanguage(),
+            'id_language' => $movie->getIdLanguage(),
             'id_dubbing' => $movie->getIdDubbing(),
             'id_subtitles' => $movie->getIdSubtitles()
         ];
@@ -176,7 +175,7 @@ final class AdminController extends AbstractController
     {
         try {
             $movie = $movieRepository->findMovieById($id);
-            
+
             if (!$movie) {
                 return $this->json(['error' => 'Movie not found'], Response::HTTP_NOT_FOUND);
             }
@@ -187,7 +186,7 @@ final class AdminController extends AbstractController
                 'message' => 'Movie deleted successfully',
                 'id' => $id
             ], Response::HTTP_OK);
-            
+
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }

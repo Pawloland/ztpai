@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\worker_sessions;
+use App\Entity\WorkerSessions;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<worker_sessions>
+ * @extends ServiceEntityRepository<WorkerSessions>
  */
 class WorkerSessionsRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, worker_sessions::class);
+        parent::__construct($registry, WorkerSessions::class);
     }
 
     //    /**
-    //     * @return worker_sessions[] Returns an array of worker_sessions objects
+    //     * @return workerSessions[] Returns an array of workerSessions objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class WorkerSessionsRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?worker_sessions
+    //    public function findOneBySomeField($value): ?workerSessions
     //    {
     //        return $this->createQueryBuilder('w')
     //            ->andWhere('w.exampleField = :val')

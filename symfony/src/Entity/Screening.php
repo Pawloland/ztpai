@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: "fk_screening_movie", columns: ["id_movie"])]
 #[ORM\Index(name: "fk_screening_hall", columns: ["id_hall"])]
 #[ORM\Index(name: "fk_screening_screening_type", columns: ["id_screening_type"])]
-class screening
+class Screening
 {
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
@@ -23,24 +23,24 @@ class screening
     #[ORM\Column(type: "datetimetz", nullable: true)]
     private $start_time;
 
-    #[ORM\OneToMany(targetEntity: \reservation::class, mappedBy: "screening")]
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: "screening")]
     private $reservation;
 
-    #[ORM\ManyToOne(targetEntity: \hall::class, inversedBy: "screenings")]
+    #[ORM\ManyToOne(targetEntity: Hall::class, inversedBy: "screenings")]
     #[ORM\JoinColumn(name: "id_hall",
             referencedColumnName: "id_hall",
             nullable: false,
             onDelete: "RESTRICT")]
     private $hall;
 
-    #[ORM\ManyToOne(targetEntity: \movie::class, inversedBy: "screenings")]
+    #[ORM\ManyToOne(targetEntity: Movie::class, inversedBy: "screenings")]
     #[ORM\JoinColumn(name: "id_movie",
             referencedColumnName: "id_movie",
             nullable: false,
             onDelete: "RESTRICT")]
     private $movie;
 
-    #[ORM\ManyToOne(targetEntity: \screening_type::class, inversedBy: "screenings")]
+    #[ORM\ManyToOne(targetEntity: ScreeningType::class, inversedBy: "screenings")]
     #[ORM\JoinColumn(name: "id_screening_type",
             referencedColumnName: "id_screening_type",
             nullable: false,
@@ -69,36 +69,36 @@ class screening
         return $this;
     }
 
-    public function getMovie(): ?movie
+    public function getMovie(): ?Movie
     {
         return $this->movie;
     }
 
-    public function setMovie(?movie $movie): static
+    public function setMovie(?Movie $movie): static
     {
         $this->movie = $movie;
 
         return $this;
     }
 
-    public function getScreeningType(): ?screening_type
+    public function getScreeningType(): ?ScreeningType
     {
         return $this->screeningType;
     }
 
-    public function setScreeningType(?screening_type $screeningType): static
+    public function setScreeningType(?ScreeningType $screeningType): static
     {
         $this->screeningType = $screeningType;
 
         return $this;
     }
 
-    public function getHall(): ?hall
+    public function getHall(): ?Hall
     {
         return $this->hall;
     }
 
-    public function setHall(?hall $hall): static
+    public function setHall(?Hall $hall): static
     {
         $this->hall = $hall;
 
@@ -106,14 +106,14 @@ class screening
     }
 
     /**
-     * @return Collection<int, reservation>
+     * @return Collection<int, Reservation>
      */
     public function getReservation(): Collection
     {
         return $this->reservation;
     }
 
-    public function addReservation(reservation $reservation): static
+    public function addReservation(Reservation $reservation): static
     {
         if (!$this->reservation->contains($reservation)) {
             $this->reservation->add($reservation);
@@ -123,7 +123,7 @@ class screening
         return $this;
     }
 
-    public function removeReservation(reservation $reservation): static
+    public function removeReservation(Reservation $reservation): static
     {
         if ($this->reservation->removeElement($reservation)) {
             // set the owning side to null (unless already changed)

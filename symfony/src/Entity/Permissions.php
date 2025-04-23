@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: PermissionRepository::class)]
 #[ORM\Table(name: "permissions")]
 #[ORM\UniqueConstraint(name: "permissions_perm_name_key", columns: ["perm_name"])]
-class permissions
+class Permissions
 {
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
@@ -20,7 +20,7 @@ class permissions
     #[ORM\Column(type: "string", length: 60, nullable: false)]
     private $perm_name;
 
-    #[ORM\OneToMany(targetEntity: \worker_type_permissions::class, mappedBy: "permissions")]
+    #[ORM\OneToMany(targetEntity: WorkerTypePermissions::class, mappedBy: "permissions")]
     private $workerTypePermissions;
 
     public function __construct()
@@ -46,14 +46,14 @@ class permissions
     }
 
     /**
-     * @return Collection<int, worker_type_permissions>
+     * @return Collection<int, WorkerTypePermissions>
      */
     public function getWorkerTypePermissions(): Collection
     {
         return $this->workerTypePermissions;
     }
 
-    public function addWorkerTypePermission(worker_type_permissions $workerTypePermission): static
+    public function addWorkerTypePermission(WorkerTypePermissions $workerTypePermission): static
     {
         if (!$this->workerTypePermissions->contains($workerTypePermission)) {
             $this->workerTypePermissions->add($workerTypePermission);
@@ -63,7 +63,7 @@ class permissions
         return $this;
     }
 
-    public function removeWorkerTypePermission(worker_type_permissions $workerTypePermission): static
+    public function removeWorkerTypePermission(WorkerTypePermissions $workerTypePermission): static
     {
         if ($this->workerTypePermissions->removeElement($workerTypePermission)) {
             // set the owning side to null (unless already changed)

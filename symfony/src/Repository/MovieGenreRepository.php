@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\movie_genre;
+use App\Entity\MovieGenre;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<movie_genre>
+ * @extends ServiceEntityRepository<MovieGenre>
  */
 class MovieGenreRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, movie_genre::class);
+        parent::__construct($registry, MovieGenre::class);
     }
 
     //    /**
-    //     * @return movie_genre[] Returns an array of movie_genre objects
+    //     * @return movieGenre[] Returns an array of movieGenre objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class MovieGenreRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?movie_genre
+    //    public function findOneBySomeField($value): ?movieGenre
     //    {
     //        return $this->createQueryBuilder('m')
     //            ->andWhere('m.exampleField = :val')

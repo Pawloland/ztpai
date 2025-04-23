@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\screening_type;
+use App\Entity\ScreeningType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<screening_type>
+ * @extends ServiceEntityRepository<ScreeningType>
  */
 class ScreeningTypeRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, screening_type::class);
+        parent::__construct($registry, ScreeningType::class);
     }
 
     //    /**
-    //     * @return screening_type[] Returns an array of screening_type objects
+    //     * @return screeningType[] Returns an array of screeningType objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class ScreeningTypeRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?screening_type
+    //    public function findOneBySomeField($value): ?screeningType
     //    {
     //        return $this->createQueryBuilder('s')
     //            ->andWhere('s.exampleField = :val')

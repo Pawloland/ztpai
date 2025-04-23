@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: "reservation_discount_idx", columns: ["id_discount"])]
 #[ORM\Index(name: "reservation_client_idx", columns: ["id_client"])]
 #[ORM\UniqueConstraint(name: "reservation_seat_screening_idx", columns: ["id_seat","id_screening"])]
-class reservation
+class Reservation
 {
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
@@ -52,24 +52,24 @@ class reservation
     #[ORM\Column(type: "string", length: 11, nullable: true)]
     private $address_zip;
 
-    #[ORM\ManyToOne(targetEntity: \client::class, inversedBy: "reservations")]
+    #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "reservations")]
     #[ORM\JoinColumn(name: "id_client", referencedColumnName: "id_client", onDelete: "RESTRICT")]
     private $client;
 
-    #[ORM\ManyToOne(targetEntity: \discount::class, inversedBy: "reservations")]
+    #[ORM\ManyToOne(targetEntity: Discount::class, inversedBy: "reservations")]
     #[ORM\JoinColumn(name: "id_discount",
             referencedColumnName: "id_discount",
             onDelete: "RESTRICT")]
     private $discount;
 
-    #[ORM\ManyToOne(targetEntity: \screening::class, inversedBy: "reservation")]
+    #[ORM\ManyToOne(targetEntity: Screening::class, inversedBy: "reservation")]
     #[ORM\JoinColumn(name: "id_screening",
             referencedColumnName: "id_screening",
             nullable: false,
             onDelete: "RESTRICT")]
     private $screening;
 
-    #[ORM\ManyToOne(targetEntity: \seat::class, inversedBy: "reservation")]
+    #[ORM\ManyToOne(targetEntity: Seat::class, inversedBy: "reservation")]
     #[ORM\JoinColumn(name: "id_seat",
             referencedColumnName: "id_seat",
             nullable: false,
@@ -213,48 +213,48 @@ class reservation
         return $this;
     }
 
-    public function getClient(): ?client
+    public function getClient(): ?Client
     {
         return $this->client;
     }
 
-    public function setClient(?client $client): static
+    public function setClient(?Client $client): static
     {
         $this->client = $client;
 
         return $this;
     }
 
-    public function getDiscount(): ?discount
+    public function getDiscount(): ?Discount
     {
         return $this->discount;
     }
 
-    public function setDiscount(?discount $discount): static
+    public function setDiscount(?Discount $discount): static
     {
         $this->discount = $discount;
 
         return $this;
     }
 
-    public function getScreening(): ?screening
+    public function getScreening(): ?Screening
     {
         return $this->screening;
     }
 
-    public function setScreening(?screening $screening): static
+    public function setScreening(?Screening $screening): static
     {
         $this->screening = $screening;
 
         return $this;
     }
 
-    public function getSeat(): ?seat
+    public function getSeat(): ?Seat
     {
         return $this->seat;
     }
 
-    public function setSeat(?seat $seat): static
+    public function setSeat(?Seat $seat): static
     {
         $this->seat = $seat;
 

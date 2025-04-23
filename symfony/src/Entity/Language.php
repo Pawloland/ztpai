@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: "language")]
 #[ORM\UniqueConstraint(name: "language_language_name_key", columns: ["language_name"])]
 #[ORM\UniqueConstraint(name: "language_code_key", columns: ["code"])]
-class language
+class Language
 {
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
@@ -24,13 +24,13 @@ class language
     #[ORM\Column(type: "string", length: 5, nullable: false)]
     private $code;
 
-    #[ORM\OneToMany(targetEntity: \movie::class, mappedBy: "languageViaIdLanguage")]
+    #[ORM\OneToMany(targetEntity: Movie::class, mappedBy: "languageViaIdLanguage")]
     private $movieViaIdLanguage;
 
-    #[ORM\OneToMany(targetEntity: \movie::class, mappedBy: "languageViaIdDubbing")]
+    #[ORM\OneToMany(targetEntity: Movie::class, mappedBy: "languageViaIdDubbing")]
     private $movieViaIdDubbing;
 
-    #[ORM\OneToMany(targetEntity: \movie::class, mappedBy: "languageViaIdSubtitles")]
+    #[ORM\OneToMany(targetEntity: Movie::class, mappedBy: "languageViaIdSubtitles")]
     private $movieViaIdSubtitles;
 
     public function __construct()
@@ -70,14 +70,14 @@ class language
     }
 
     /**
-     * @return Collection<int, movie>
+     * @return Collection<int, Movie>
      */
     public function getMovieViaIdLanguage(): Collection
     {
         return $this->movieViaIdLanguage;
     }
 
-    public function addMovieViaIdLanguage(movie $movieViaIdLanguage): static
+    public function addMovieViaIdLanguage(Movie $movieViaIdLanguage): static
     {
         if (!$this->movieViaIdLanguage->contains($movieViaIdLanguage)) {
             $this->movieViaIdLanguage->add($movieViaIdLanguage);
@@ -87,7 +87,7 @@ class language
         return $this;
     }
 
-    public function removeMovieViaIdLanguage(movie $movieViaIdLanguage): static
+    public function removeMovieViaIdLanguage(Movie $movieViaIdLanguage): static
     {
         if ($this->movieViaIdLanguage->removeElement($movieViaIdLanguage)) {
             // set the owning side to null (unless already changed)
@@ -100,14 +100,14 @@ class language
     }
 
     /**
-     * @return Collection<int, movie>
+     * @return Collection<int, Movie>
      */
     public function getMovieViaIdDubbing(): Collection
     {
         return $this->movieViaIdDubbing;
     }
 
-    public function addMovieViaIdDubbing(movie $movieViaIdDubbing): static
+    public function addMovieViaIdDubbing(Movie $movieViaIdDubbing): static
     {
         if (!$this->movieViaIdDubbing->contains($movieViaIdDubbing)) {
             $this->movieViaIdDubbing->add($movieViaIdDubbing);
@@ -117,7 +117,7 @@ class language
         return $this;
     }
 
-    public function removeMovieViaIdDubbing(movie $movieViaIdDubbing): static
+    public function removeMovieViaIdDubbing(Movie $movieViaIdDubbing): static
     {
         if ($this->movieViaIdDubbing->removeElement($movieViaIdDubbing)) {
             // set the owning side to null (unless already changed)
@@ -130,14 +130,14 @@ class language
     }
 
     /**
-     * @return Collection<int, movie>
+     * @return Collection<int, Movie>
      */
     public function getMovieViaIdSubtitles(): Collection
     {
         return $this->movieViaIdSubtitles;
     }
 
-    public function addMovieViaIdSubtitle(movie $movieViaIdSubtitle): static
+    public function addMovieViaIdSubtitle(Movie $movieViaIdSubtitle): static
     {
         if (!$this->movieViaIdSubtitles->contains($movieViaIdSubtitle)) {
             $this->movieViaIdSubtitles->add($movieViaIdSubtitle);
@@ -147,7 +147,7 @@ class language
         return $this;
     }
 
-    public function removeMovieViaIdSubtitle(movie $movieViaIdSubtitle): static
+    public function removeMovieViaIdSubtitle(Movie $movieViaIdSubtitle): static
     {
         if ($this->movieViaIdSubtitles->removeElement($movieViaIdSubtitle)) {
             // set the owning side to null (unless already changed)

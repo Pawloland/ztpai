@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\worker_type_permissions;
+use App\Entity\WorkerTypePermissions;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<worker_type_permissions>
+ * @extends ServiceEntityRepository<WorkerTypePermissions>
  */
 class WorkerTypePermissionsRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, worker_type_permissions::class);
+        parent::__construct($registry, WorkerTypePermissions::class);
     }
 
     //    /**
-    //     * @return worker_type_permissions[] Returns an array of worker_type_permissions objects
+    //     * @return workerTypePermissions[] Returns an array of workerTypePermissions objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class WorkerTypePermissionsRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?worker_type_permissions
+    //    public function findOneBySomeField($value): ?workerTypePermissions
     //    {
     //        return $this->createQueryBuilder('w')
     //            ->andWhere('w.exampleField = :val')

@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: GenreRepository::class)]
 #[ORM\Table(name: "genre")]
 #[ORM\UniqueConstraint(name: "genre_genre_name_key", columns: ["genre_name"])]
-class genre
+class Genre
 {
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
@@ -18,7 +18,7 @@ class genre
     #[ORM\Column(type: "string", length: 40, nullable: false)]
     private $genre_name;
 
-    #[ORM\OneToOne(targetEntity: \movie_genre::class, mappedBy: "genre")]
+    #[ORM\OneToOne(targetEntity: MovieGenre::class, mappedBy: "genre")]
     private $movieGenres;
 
     public function getIdGenre(): ?int
@@ -38,12 +38,12 @@ class genre
         return $this;
     }
 
-    public function getMovieGenres(): ?movie_genre
+    public function getMovieGenres(): ?MovieGenre
     {
         return $this->movieGenres;
     }
 
-    public function setMovieGenres(?movie_genre $movieGenres): static
+    public function setMovieGenres(?MovieGenre $movieGenres): static
     {
         // unset the owning side of the relation if necessary
         if ($movieGenres === null && $this->movieGenres !== null) {

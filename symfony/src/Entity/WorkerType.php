@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: WorkerTypeRepository::class)]
 #[ORM\Table(name: "worker_type")]
 #[ORM\UniqueConstraint(name: "uq_type_name", columns: ["type_name"])]
-class worker_type
+class WorkerType
 {
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
@@ -20,10 +20,10 @@ class worker_type
     #[ORM\Column(type: "string", length: 40, nullable: false)]
     private $type_name;
 
-    #[ORM\OneToMany(targetEntity: \worker::class, mappedBy: "workerType")]
+    #[ORM\OneToMany(targetEntity: Worker::class, mappedBy: "workerType")]
     private $workers;
 
-    #[ORM\OneToMany(targetEntity: \worker_type_permissions::class, mappedBy: "workerType")]
+    #[ORM\OneToMany(targetEntity: WorkerTypePermissions::class, mappedBy: "workerType")]
     private $workerTypePermissions;
 
     public function __construct()
@@ -50,14 +50,14 @@ class worker_type
     }
 
     /**
-     * @return Collection<int, worker>
+     * @return Collection<int, Worker>
      */
     public function getWorkers(): Collection
     {
         return $this->workers;
     }
 
-    public function addWorker(worker $worker): static
+    public function addWorker(Worker $worker): static
     {
         if (!$this->workers->contains($worker)) {
             $this->workers->add($worker);
@@ -67,7 +67,7 @@ class worker_type
         return $this;
     }
 
-    public function removeWorker(worker $worker): static
+    public function removeWorker(Worker $worker): static
     {
         if ($this->workers->removeElement($worker)) {
             // set the owning side to null (unless already changed)
@@ -80,14 +80,14 @@ class worker_type
     }
 
     /**
-     * @return Collection<int, worker_type_permissions>
+     * @return Collection<int, WorkerTypePermissions>
      */
     public function getWorkerTypePermissions(): Collection
     {
         return $this->workerTypePermissions;
     }
 
-    public function addWorkerTypePermission(worker_type_permissions $workerTypePermission): static
+    public function addWorkerTypePermission(WorkerTypePermissions $workerTypePermission): static
     {
         if (!$this->workerTypePermissions->contains($workerTypePermission)) {
             $this->workerTypePermissions->add($workerTypePermission);
@@ -97,7 +97,7 @@ class worker_type
         return $this;
     }
 
-    public function removeWorkerTypePermission(worker_type_permissions $workerTypePermission): static
+    public function removeWorkerTypePermission(WorkerTypePermissions $workerTypePermission): static
     {
         if ($this->workerTypePermissions->removeElement($workerTypePermission)) {
             // set the owning side to null (unless already changed)

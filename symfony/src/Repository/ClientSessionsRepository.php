@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\client_sessions;
+use App\Entity\ClientSessions;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<client_sessions>
+ * @extends ServiceEntityRepository<ClientSessions>
  */
 class ClientSessionsRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, client_sessions::class);
+        parent::__construct($registry, ClientSessions::class);
     }
 
     //    /**
-    //     * @return client_sessions[] Returns an array of client_sessions objects
+    //     * @return clientSessions[] Returns an array of clientSessions objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class ClientSessionsRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?client_sessions
+    //    public function findOneBySomeField($value): ?clientSessions
     //    {
     //        return $this->createQueryBuilder('c')
     //            ->andWhere('c.exampleField = :val')

@@ -2,18 +2,18 @@
 
 namespace App\Repository;
 
-use App\Entity\discount;
+use App\Entity\Discount;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<discount>
+ * @extends ServiceEntityRepository<Discount>
  */
 class DiscountRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, discount::class);
+        parent::__construct($registry, Discount::class);
     }
 
     //    /**

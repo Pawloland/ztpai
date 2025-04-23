@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: "seat")]
 #[ORM\Index(name: "fk_seat_hall", columns: ["id_hall"])]
 #[ORM\Index(name: "fk_seat_seat_type", columns: ["id_seat_type"])]
-class seat
+class Seat
 {
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
@@ -24,17 +24,17 @@ class seat
     #[ORM\Column(type: "integer", nullable: false)]
     private $number;
 
-    #[ORM\OneToMany(targetEntity: \reservation::class, mappedBy: "seat")]
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: "seat")]
     private $reservation;
 
-    #[ORM\ManyToOne(targetEntity: \hall::class, inversedBy: "seats")]
+    #[ORM\ManyToOne(targetEntity: Hall::class, inversedBy: "seats")]
     #[ORM\JoinColumn(name: "id_hall",
             referencedColumnName: "id_hall",
             nullable: false,
             onDelete: "RESTRICT")]
     private $hall;
 
-    #[ORM\ManyToOne(targetEntity: \seat_type::class, inversedBy: "seats")]
+    #[ORM\ManyToOne(targetEntity: SeatType::class, inversedBy: "seats")]
     #[ORM\JoinColumn(name: "id_seat_type",
             referencedColumnName: "id_seat_type",
             nullable: false,
@@ -75,24 +75,24 @@ class seat
         return $this;
     }
 
-    public function getHall(): ?hall
+    public function getHall(): ?Hall
     {
         return $this->hall;
     }
 
-    public function setHall(?hall $hall): static
+    public function setHall(?Hall $hall): static
     {
         $this->hall = $hall;
 
         return $this;
     }
 
-    public function getSeatType(): ?seat_type
+    public function getSeatType(): ?SeatType
     {
         return $this->seatType;
     }
 
-    public function setSeatType(?seat_type $seatType): static
+    public function setSeatType(?SeatType $seatType): static
     {
         $this->seatType = $seatType;
 
@@ -100,14 +100,14 @@ class seat
     }
 
     /**
-     * @return Collection<int, reservation>
+     * @return Collection<int, Reservation>
      */
     public function getReservation(): Collection
     {
         return $this->reservation;
     }
 
-    public function addReservation(reservation $reservation): static
+    public function addReservation(Reservation $reservation): static
     {
         if (!$this->reservation->contains($reservation)) {
             $this->reservation->add($reservation);
@@ -117,7 +117,7 @@ class seat
         return $this;
     }
 
-    public function removeReservation(reservation $reservation): static
+    public function removeReservation(Reservation $reservation): static
     {
         if ($this->reservation->removeElement($reservation)) {
             // set the owning side to null (unless already changed)

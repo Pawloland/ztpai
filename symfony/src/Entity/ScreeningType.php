@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: ScreeningTypeRepository::class)]
 #[ORM\Table(name: "screening_type")]
 #[ORM\UniqueConstraint(name: "screening_name", columns: ["screening_name"])]
-class screening_type
+class ScreeningType
 {
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
@@ -24,7 +24,7 @@ class screening_type
     #[ORM\Column(type: "decimal", nullable: false, scale: 2)]
     private $price;
 
-    #[ORM\OneToMany(targetEntity: \screening::class, mappedBy: "screeningType")]
+    #[ORM\OneToMany(targetEntity: Screening::class, mappedBy: "screeningType")]
     private $screenings;
 
     public function __construct()
@@ -62,14 +62,14 @@ class screening_type
     }
 
     /**
-     * @return Collection<int, screening>
+     * @return Collection<int, Screening>
      */
     public function getScreenings(): Collection
     {
         return $this->screenings;
     }
 
-    public function addScreening(screening $screening): static
+    public function addScreening(Screening $screening): static
     {
         if (!$this->screenings->contains($screening)) {
             $this->screenings->add($screening);
@@ -79,7 +79,7 @@ class screening_type
         return $this;
     }
 
-    public function removeScreening(screening $screening): static
+    public function removeScreening(Screening $screening): static
     {
         if ($this->screenings->removeElement($screening)) {
             // set the owning side to null (unless already changed)

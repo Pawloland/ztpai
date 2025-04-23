@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\seat_type;
+use App\Entity\SeatType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<seat_type>
+ * @extends ServiceEntityRepository<SeatType>
  */
 class SeatTypeRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, seat_type::class);
+        parent::__construct($registry, SeatType::class);
     }
 
     //    /**
-    //     * @return seat_type[] Returns an array of seat_type objects
+    //     * @return seatType[] Returns an array of seatType objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class SeatTypeRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?seat_type
+    //    public function findOneBySomeField($value): ?seatType
     //    {
     //        return $this->createQueryBuilder('s')
     //            ->andWhere('s.exampleField = :val')

@@ -36,3 +36,28 @@ Uruchomienie serwera frontendu vite w trybie deweloperskim:
 ```bash
 docker compose up node-dev
 ```
+
+Sprawdzenie poprawności mappingu i bazy danych:
+```bash
+docker compose run --rm -it -u "$(id -u):$(id -g)" php php bin/console doctrine:schema:validate -v
+```
+
+Sprawdzenie poprawności mappingu:
+```bash
+docker compose run --rm -it -u "$(id -u):$(id -g)" php php bin/console doctrine:mapping:info
+```
+
+Wypisanie SQL z rozbieżnościami międzzy bazą danych a mappingiem:
+```bash
+docker compose run --rm -it -u "$(id -u):$(id -g)" php php bin/console doctrine:schema:update --dump-sql
+```
+
+Wypisanie pełnego SQL do stworzenia bazy danych na postawie mappingu:
+```bash
+docker compose run --rm -it -u "$(id -u):$(id -g)" php php bin/console doctrine:schema:create --dump-sql
+```
+
+Czyszczenie cache metadanych:
+```bash
+docker compose run --rm -it -u "$(id -u):$(id -g)" php php bin/console doctrine:cache:clear-metadata
+```

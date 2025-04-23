@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\worker_type;
+use App\Entity\WorkerType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<worker_type>
+ * @extends ServiceEntityRepository<WorkerType>
  */
 class WorkerTypeRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, worker_type::class);
+        parent::__construct($registry, WorkerType::class);
     }
 
     //    /**
-    //     * @return worker_type[] Returns an array of worker_type objects
+    //     * @return workerType[] Returns an array of workerType objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class WorkerTypeRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?worker_type
+    //    public function findOneBySomeField($value): ?workerType
     //    {
     //        return $this->createQueryBuilder('w')
     //            ->andWhere('w.exampleField = :val')

@@ -9,10 +9,10 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: "worker_type_permissions")]
 #[ORM\Index(name: "idx_worker_type_permissions_worker_type", columns: ["id_worker_type"])]
 #[ORM\Index(name: "idx_worker_type_permissions_perm", columns: ["id_perm"])]
-class worker_type_permissions
+class WorkerTypePermissions
 {
         #[ORM\Id]
-        #[ORM\ManyToOne(targetEntity: \worker_type::class, inversedBy: "workerTypePermissions")]
+        #[ORM\ManyToOne(targetEntity: WorkerType::class, inversedBy: "workerTypePermissions")]
         #[ORM\JoinColumn(
                 name: "id_worker_type",
                 referencedColumnName: "id_worker_type",
@@ -22,7 +22,7 @@ class worker_type_permissions
         private $workerType;
 
         #[ORM\Id]
-        #[ORM\ManyToOne(targetEntity: \permissions::class, inversedBy: "workerTypePermissions")]
+        #[ORM\ManyToOne(targetEntity: Permissions::class, inversedBy: "workerTypePermissions")]
         #[ORM\JoinColumn(
                 name: "id_perm",
                 referencedColumnName: "id_perm",
@@ -31,24 +31,24 @@ class worker_type_permissions
         )]
         private $permissions;
 
-        public function getWorkerType(): ?worker_type
+        public function getWorkerType(): ?WorkerType
         {
             return $this->workerType;
         }
 
-        public function setWorkerType(?worker_type $workerType): static
+        public function setWorkerType(?WorkerType $workerType): static
         {
             $this->workerType = $workerType;
 
             return $this;
         }
 
-        public function getPermissions(): ?permissions
+        public function getPermissions(): ?Permissions
         {
             return $this->permissions;
         }
 
-        public function setPermissions(?permissions $permissions): static
+        public function setPermissions(?Permissions $permissions): static
         {
             $this->permissions = $permissions;
 

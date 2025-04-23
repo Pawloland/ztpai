@@ -14,7 +14,7 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\Index(name: "fk_movie_language", columns: ["id_language"])]
 #[ORM\Index(name: "fk_movie_dubbing", columns: ["id_dubbing"])]
 #[ORM\Index(name: "fk_movie_subtitles", columns: ["id_subtitles"])]
-class movie
+class Movie
 {
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
@@ -36,26 +36,26 @@ class movie
     #[ORM\Column(type: "guid", nullable: true)]
     private $poster;
 
-    #[ORM\OneToOne(targetEntity: \movie_genre::class, mappedBy: "movie")]
+    #[ORM\OneToOne(targetEntity: MovieGenre::class, mappedBy: "movie")]
     private $movieGenres;
 
-    #[ORM\OneToMany(targetEntity: \screening::class, mappedBy: "movie")]
+    #[ORM\OneToMany(targetEntity: Screening::class, mappedBy: "movie")]
     private $screenings;
 
-    #[ORM\ManyToOne(targetEntity: \language::class, inversedBy: "movieViaIdLanguage")]
+    #[ORM\ManyToOne(targetEntity: Language::class, inversedBy: "movieViaIdLanguage")]
     #[ORM\JoinColumn(name: "id_language",
             referencedColumnName: "id_language",
             nullable: false,
             onDelete: "RESTRICT")]
     private $languageViaIdLanguage;
 
-    #[ORM\ManyToOne(targetEntity: \language::class, inversedBy: "movieViaIdDubbing")]
+    #[ORM\ManyToOne(targetEntity: Language::class, inversedBy: "movieViaIdDubbing")]
     #[ORM\JoinColumn(name: "id_dubbing",
             referencedColumnName: "id_language",
             onDelete: "RESTRICT")]
     private $languageViaIdDubbing;
 
-    #[ORM\ManyToOne(targetEntity: \language::class, inversedBy: "movieViaIdSubtitles")]
+    #[ORM\ManyToOne(targetEntity: Language::class, inversedBy: "movieViaIdSubtitles")]
     #[ORM\JoinColumn(name: "id_subtitles",
             referencedColumnName: "id_language",
             onDelete: "RESTRICT")]
@@ -131,12 +131,12 @@ class movie
         return $this;
     }
 
-    public function getMovieGenres(): ?movie_genre
+    public function getMovieGenres(): ?MovieGenre
     {
         return $this->movieGenres;
     }
 
-    public function setMovieGenres(?movie_genre $movieGenres): static
+    public function setMovieGenres(?MovieGenre $movieGenres): static
     {
         // unset the owning side of the relation if necessary
         if ($movieGenres === null && $this->movieGenres !== null) {
@@ -154,14 +154,14 @@ class movie
     }
 
     /**
-     * @return Collection<int, screening>
+     * @return Collection<int, Screening>
      */
     public function getScreenings(): Collection
     {
         return $this->screenings;
     }
 
-    public function addScreening(screening $screening): static
+    public function addScreening(Screening $screening): static
     {
         if (!$this->screenings->contains($screening)) {
             $this->screenings->add($screening);
@@ -171,7 +171,7 @@ class movie
         return $this;
     }
 
-    public function removeScreening(screening $screening): static
+    public function removeScreening(Screening $screening): static
     {
         if ($this->screenings->removeElement($screening)) {
             // set the owning side to null (unless already changed)
@@ -183,36 +183,36 @@ class movie
         return $this;
     }
 
-    public function getLanguageViaIdLanguage(): ?language
+    public function getLanguageViaIdLanguage(): ?Language
     {
         return $this->languageViaIdLanguage;
     }
 
-    public function setLanguageViaIdLanguage(?language $languageViaIdLanguage): static
+    public function setLanguageViaIdLanguage(?Language $languageViaIdLanguage): static
     {
         $this->languageViaIdLanguage = $languageViaIdLanguage;
 
         return $this;
     }
 
-    public function getLanguageViaIdDubbing(): ?language
+    public function getLanguageViaIdDubbing(): ?Language
     {
         return $this->languageViaIdDubbing;
     }
 
-    public function setLanguageViaIdDubbing(?language $languageViaIdDubbing): static
+    public function setLanguageViaIdDubbing(?Language $languageViaIdDubbing): static
     {
         $this->languageViaIdDubbing = $languageViaIdDubbing;
 
         return $this;
     }
 
-    public function getLanguageViaIdSubtitles(): ?language
+    public function getLanguageViaIdSubtitles(): ?Language
     {
         return $this->languageViaIdSubtitles;
     }
 
-    public function setLanguageViaIdSubtitles(?language $languageViaIdSubtitles): static
+    public function setLanguageViaIdSubtitles(?Language $languageViaIdSubtitles): static
     {
         $this->languageViaIdSubtitles = $languageViaIdSubtitles;
 
@@ -224,7 +224,7 @@ class movie
         return $this->languageViaIdLanguage ? $this->languageViaIdLanguage->getIdLanguage() : null;
     }
 
-    public function setIdLanguage(?language $language): static
+    public function setIdLanguage(?Language $language): static
     {
         $this->languageViaIdLanguage = $language;
 
@@ -236,7 +236,7 @@ class movie
         return $this->languageViaIdDubbing ? $this->languageViaIdDubbing->getIdLanguage() : null;
     }
 
-    public function setIdDubbing(?language $language): static
+    public function setIdDubbing(?Language $language): static
     {
         $this->languageViaIdDubbing = $language;
 
@@ -248,7 +248,7 @@ class movie
         return $this->languageViaIdSubtitles ? $this->languageViaIdSubtitles->getIdLanguage() : null;
     }
 
-    public function setIdSubtitles(?language $language): static
+    public function setIdSubtitles(?Language $language): static
     {
         $this->languageViaIdSubtitles = $language;
 

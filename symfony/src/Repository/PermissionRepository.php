@@ -2,18 +2,18 @@
 
 namespace App\Repository;
 
-use App\Entity\permissions;
+use App\Entity\Permissions;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<permissions>
+ * @extends ServiceEntityRepository<Permissions>
  */
 class PermissionRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, permissions::class);
+        parent::__construct($registry, Permissions::class);
     }
 
     //    /**

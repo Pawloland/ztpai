@@ -2,18 +2,18 @@
 
 namespace App\Repository;
 
-use App\Entity\hall;
+use App\Entity\Hall;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<hall>
+ * @extends ServiceEntityRepository<Hall>
  */
 class HallRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, hall::class);
+        parent::__construct($registry, Hall::class);
     }
 
     //    /**

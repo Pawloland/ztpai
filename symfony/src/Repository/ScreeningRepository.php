@@ -2,18 +2,18 @@
 
 namespace App\Repository;
 
-use App\Entity\screening;
+use App\Entity\Screening;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<screening>
+ * @extends ServiceEntityRepository<Screening>
  */
 class ScreeningRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, screening::class);
+        parent::__construct($registry, Screening::class);
     }
 
     //    /**

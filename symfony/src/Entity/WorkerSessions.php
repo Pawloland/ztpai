@@ -2,19 +2,19 @@
 
 namespace App\Entity;
 
-use App\Repository\ClientSessionsRepository;
+use App\Repository\WorkerSessionsRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ClientSessionsRepository::class)]
-#[ORM\Table(name: "client_sessions")]
-#[ORM\UniqueConstraint(name: "client_sessions_session_token_key", columns: ["session_token"])]
-class client_sessions
+#[ORM\Entity(repositoryClass: WorkerSessionsRepository::class)]
+#[ORM\Table(name: "worker_sessions")]
+#[ORM\UniqueConstraint(name: "worker_sessions_session_token_key", columns: ["session_token"])]
+class WorkerSessions
 {
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    private $id_session_client;
+    private $id_session_worker;
 
     #[ORM\Column(type: "string", length: 80, nullable: false)]
     private $session_token;
@@ -22,16 +22,16 @@ class client_sessions
     #[ORM\Column(type: "datetimetz", nullable: false)]
     private $expiration_date;
 
-    #[ORM\ManyToOne(targetEntity: \client::class, inversedBy: "clientSessions")]
-    #[ORM\JoinColumn(name: "id_client",
-            referencedColumnName: "id_client",
+    #[ORM\ManyToOne(targetEntity: Worker::class, inversedBy: "workerSessions")]
+    #[ORM\JoinColumn(name: "id_worker",
+            referencedColumnName: "id_worker",
             nullable: false,
             onDelete: "CASCADE")]
-    private $client;
+    private $worker;
 
-    public function getIdSessionClient(): ?int
+    public function getIdSessionWorker(): ?int
     {
-        return $this->id_session_client;
+        return $this->id_session_worker;
     }
 
     public function getSessionToken(): ?string
@@ -58,14 +58,14 @@ class client_sessions
         return $this;
     }
 
-    public function getClient(): ?client
+    public function getWorker(): ?Worker
     {
-        return $this->client;
+        return $this->worker;
     }
 
-    public function setClient(?client $client): static
+    public function setWorker(?Worker $worker): static
     {
-        $this->client = $client;
+        $this->worker = $worker;
 
         return $this;
     }

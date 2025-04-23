@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: SeatTypeRepository::class)]
 #[ORM\Table(name: "seat_type")]
 #[ORM\UniqueConstraint(name: "seat_name", columns: ["seat_name"])]
-class seat_type
+class SeatType
 {
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
@@ -24,7 +24,7 @@ class seat_type
     #[ORM\Column(type: "decimal", nullable: false, scale: 2)]
     private $price;
 
-    #[ORM\OneToMany(targetEntity: \seat::class, mappedBy: "seatType")]
+    #[ORM\OneToMany(targetEntity: Seat::class, mappedBy: "seatType")]
     private $seats;
 
     public function __construct()
@@ -62,14 +62,14 @@ class seat_type
     }
 
     /**
-     * @return Collection<int, seat>
+     * @return Collection<int, Seat>
      */
     public function getSeats(): Collection
     {
         return $this->seats;
     }
 
-    public function addSeat(seat $seat): static
+    public function addSeat(Seat $seat): static
     {
         if (!$this->seats->contains($seat)) {
             $this->seats->add($seat);
@@ -79,7 +79,7 @@ class seat_type
         return $this;
     }
 
-    public function removeSeat(seat $seat): static
+    public function removeSeat(Seat $seat): static
     {
         if ($this->seats->removeElement($seat)) {
             // set the owning side to null (unless already changed)

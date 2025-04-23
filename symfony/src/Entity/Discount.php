@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: DiscountRepository::class)]
 #[ORM\Table(name: "discount")]
 #[ORM\UniqueConstraint(name: "discount_discount_name_key", columns: ["discount_name"])]
-class discount
+class Discount
 {
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
@@ -24,7 +24,7 @@ class discount
     #[ORM\Column(type: "decimal", nullable: false, scale: 2)]
     private $amount;
 
-    #[ORM\OneToMany(targetEntity: \reservation::class, mappedBy: "discount")]
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: "discount")]
     private $reservations;
 
     public function __construct()
@@ -62,14 +62,14 @@ class discount
     }
 
     /**
-     * @return Collection<int, reservation>
+     * @return Collection<int, Reservation>
      */
     public function getReservations(): Collection
     {
         return $this->reservations;
     }
 
-    public function addReservation(reservation $reservation): static
+    public function addReservation(Reservation $reservation): static
     {
         if (!$this->reservations->contains($reservation)) {
             $this->reservations->add($reservation);
@@ -79,7 +79,7 @@ class discount
         return $this;
     }
 
-    public function removeReservation(reservation $reservation): static
+    public function removeReservation(Reservation $reservation): static
     {
         if ($this->reservations->removeElement($reservation)) {
             // set the owning side to null (unless already changed)

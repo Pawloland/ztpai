@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: HallRepository::class)]
 #[ORM\Table(name: "hall")]
 #[ORM\UniqueConstraint(name: "hall_hall_name_key", columns: ["hall_name"])]
-class hall
+class Hall
 {
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
@@ -20,10 +20,10 @@ class hall
     #[ORM\Column(type: "string", length: 40, nullable: true)]
     private $hall_name;
 
-    #[ORM\OneToMany(targetEntity: \screening::class, mappedBy: "hall")]
+    #[ORM\OneToMany(targetEntity: Screening::class, mappedBy: "hall")]
     private $screenings;
 
-    #[ORM\OneToMany(targetEntity: \seat::class, mappedBy: "hall")]
+    #[ORM\OneToMany(targetEntity: Seat::class, mappedBy: "hall")]
     private $seats;
 
     public function __construct()
@@ -50,14 +50,14 @@ class hall
     }
 
     /**
-     * @return Collection<int, screening>
+     * @return Collection<int, Screening>
      */
     public function getScreenings(): Collection
     {
         return $this->screenings;
     }
 
-    public function addScreening(screening $screening): static
+    public function addScreening(Screening $screening): static
     {
         if (!$this->screenings->contains($screening)) {
             $this->screenings->add($screening);
@@ -67,7 +67,7 @@ class hall
         return $this;
     }
 
-    public function removeScreening(screening $screening): static
+    public function removeScreening(Screening $screening): static
     {
         if ($this->screenings->removeElement($screening)) {
             // set the owning side to null (unless already changed)
@@ -80,14 +80,14 @@ class hall
     }
 
     /**
-     * @return Collection<int, seat>
+     * @return Collection<int, Seat>
      */
     public function getSeats(): Collection
     {
         return $this->seats;
     }
 
-    public function addSeat(seat $seat): static
+    public function addSeat(Seat $seat): static
     {
         if (!$this->seats->contains($seat)) {
             $this->seats->add($seat);
@@ -97,7 +97,7 @@ class hall
         return $this;
     }
 
-    public function removeSeat(seat $seat): static
+    public function removeSeat(Seat $seat): static
     {
         if ($this->seats->removeElement($seat)) {
             // set the owning side to null (unless already changed)
