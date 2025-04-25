@@ -2,12 +2,18 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\SeatTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
+#[ApiResource(
+    normalizationContext: ['groups' => ['SeatType:read']],
+    denormalizationContext: ['groups' => ['SeatType:write']]
+)]
 #[ORM\Entity(repositoryClass: SeatTypeRepository::class)]
 #[ORM\Table(name: "seat_type")]
 #[ORM\UniqueConstraint(name: "seat_name", columns: ["seat_name"])]
@@ -16,16 +22,20 @@ class SeatType
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    private $id_seat_type;
+    #[Groups(['Hall:read', 'SeatType:read'])]
+    private int $id_seat_type;
 
     #[ORM\Column(type: "string", length: 40, nullable: false)]
-    private $seat_name;
+    #[Groups(['SeatType:read'])]
+    private string $seat_name;
 
     #[ORM\Column(type: "decimal", nullable: false, scale: 2)]
-    private $price;
+    #[Groups(['SeatType:read'])]
+    private string $price;
 
     #[ORM\OneToMany(targetEntity: Seat::class, mappedBy: "seatType")]
-    private $seats;
+    #[Groups(['SeatType:read'])]
+    private iterable $seats;
 
     public function __construct()
     {

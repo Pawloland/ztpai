@@ -2,13 +2,19 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\MovieRepository;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
 
+#[ApiResource(
+    normalizationContext: ['groups' => ['Movie:read']],
+    denormalizationContext: ['groups' => ['Movie:write']]
+)]
 #[ORM\Entity(repositoryClass: MovieRepository::class)]
 #[ORM\Table(name: "movie")]
 #[ORM\Index(name: "fk_movie_language", columns: ["id_language"])]
@@ -19,47 +25,58 @@ class Movie
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    private $id_movie;
+    #[Groups(['Movie:read'])]
+    private int $id_movie;
 
     #[ORM\Column(type: "string", length: 80, nullable: false)]
-    private $title;
+    #[Groups(['Movie:read'])]
+    private string $title;
 
     #[ORM\Column(type: "string", length: 80, nullable: false)]
-    private $original_title;
+    #[Groups(['Movie:read'])]
+    private string $original_title;
 
     #[ORM\Column(type: "time", nullable: false)]
-    private $duration;
+    #[Groups(['Movie:read'])]
+    private DateTimeInterface $duration;
 
     #[ORM\Column(type: "string", length: 500, nullable: true)]
-    private $description;
+    #[Groups(['Movie:read'])]
+    private ?string $description;
 
     #[ORM\Column(type: "guid", nullable: true)]
-    private $poster;
+    #[Groups(['Movie:read'])]
+    private ?string $poster;
 
     #[ORM\OneToOne(targetEntity: MovieGenre::class, mappedBy: "movie")]
-    private $movieGenres;
+    #[Groups(['Movie:read'])]
+    private MovieGenre $movieGenres;
 
     #[ORM\OneToMany(targetEntity: Screening::class, mappedBy: "movie")]
-    private $screenings;
+    #[Groups(['Movie:read'])]
+    private iterable $screenings;
 
     #[ORM\ManyToOne(targetEntity: Language::class, inversedBy: "movieViaIdLanguage")]
     #[ORM\JoinColumn(name: "id_language",
-            referencedColumnName: "id_language",
-            nullable: false,
-            onDelete: "RESTRICT")]
-    private $languageViaIdLanguage;
+        referencedColumnName: "id_language",
+        nullable: false,
+        onDelete: "RESTRICT")]
+    #[Groups(['Movie:read'])]
+    private Language $languageViaIdLanguage;
 
     #[ORM\ManyToOne(targetEntity: Language::class, inversedBy: "movieViaIdDubbing")]
     #[ORM\JoinColumn(name: "id_dubbing",
-            referencedColumnName: "id_language",
-            onDelete: "RESTRICT")]
-    private $languageViaIdDubbing;
+        referencedColumnName: "id_language",
+        onDelete: "RESTRICT")]
+    #[Groups(['Movie:read'])]
+    private Language $languageViaIdDubbing;
 
     #[ORM\ManyToOne(targetEntity: Language::class, inversedBy: "movieViaIdSubtitles")]
     #[ORM\JoinColumn(name: "id_subtitles",
-            referencedColumnName: "id_language",
-            onDelete: "RESTRICT")]
-    private $languageViaIdSubtitles;
+        referencedColumnName: "id_language",
+        onDelete: "RESTRICT")]
+    #[Groups(['Movie:read'])]
+    private Language $languageViaIdSubtitles;
 
     public function __construct()
     {

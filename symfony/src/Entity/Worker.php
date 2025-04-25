@@ -2,11 +2,16 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\WorkerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource(
+    normalizationContext: ['groups' => ['Worker:read']],
+    denormalizationContext: ['groups' => ['Worker:write']]
+)]
 #[ORM\Entity(repositoryClass: WorkerRepository::class)]
 #[ORM\Table(name: "worker")]
 #[ORM\Index(name: "worker_id_worker_type_idx", columns: ["id_worker_type"])]
@@ -16,29 +21,29 @@ class Worker
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    private $id_worker;
+    private int $id_worker;
 
     #[ORM\Column(type: "string", length: 40, nullable: false)]
-    private $worker_name;
+    private string $worker_name;
 
     #[ORM\Column(type: "string", length: 40, nullable: false)]
-    private $worker_surname;
+    private string $worker_surname;
 
     #[ORM\Column(type: "string", length: 40, nullable: false)]
-    private $nick;
+    private string $nick;
 
     #[ORM\Column(type: "string", length: 80, nullable: false)]
-    private $password_hash;
+    private string $password_hash;
 
     #[ORM\OneToMany(targetEntity: WorkerSessions::class, mappedBy: "worker")]
-    private $workerSessions;
+    private iterable $workerSessions;
 
     #[ORM\ManyToOne(targetEntity: WorkerType::class, inversedBy: "workers")]
     #[ORM\JoinColumn(name: "id_worker_type",
             referencedColumnName: "id_worker_type",
             nullable: false,
             onDelete: "RESTRICT")]
-    private $workerType;
+    private WorkerType $workerType;
 
     public function __construct()
     {

@@ -2,11 +2,16 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\WorkerTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource(
+    normalizationContext: ['groups' => ['WorkerType:read']],
+    denormalizationContext: ['groups' => ['WorkerType:write']]
+)]
 #[ORM\Entity(repositoryClass: WorkerTypeRepository::class)]
 #[ORM\Table(name: "worker_type")]
 #[ORM\UniqueConstraint(name: "uq_type_name", columns: ["type_name"])]
@@ -15,16 +20,16 @@ class WorkerType
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    private $id_worker_type;
+    private int $id_worker_type;
 
     #[ORM\Column(type: "string", length: 40, nullable: false)]
-    private $type_name;
+    private string $type_name;
 
     #[ORM\OneToMany(targetEntity: Worker::class, mappedBy: "workerType")]
-    private $workers;
+    private iterable $workers;
 
     #[ORM\OneToMany(targetEntity: WorkerTypePermissions::class, mappedBy: "workerType")]
-    private $workerTypePermissions;
+    private iterable $workerTypePermissions;
 
     public function __construct()
     {

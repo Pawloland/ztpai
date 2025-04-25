@@ -2,10 +2,15 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ClientSessionsRepository;
-use Doctrine\DBAL\Types\Types;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource(
+    normalizationContext: ['groups' => ['ClientSessions:read']],
+    denormalizationContext: ['groups' => ['ClientSessions:write']]
+)]
 #[ORM\Entity(repositoryClass: ClientSessionsRepository::class)]
 #[ORM\Table(name: "client_sessions")]
 #[ORM\UniqueConstraint(name: "client_sessions_session_token_key", columns: ["session_token"])]
@@ -14,20 +19,20 @@ class ClientSessions
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    private $id_session_client;
+    private int $id_session_client;
 
     #[ORM\Column(type: "string", length: 80, nullable: false)]
-    private $session_token;
+    private string $session_token;
 
     #[ORM\Column(type: "datetimetz", nullable: false)]
-    private $expiration_date;
+    private DateTimeInterface $expiration_date;
 
     #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "clientSessions")]
     #[ORM\JoinColumn(name: "id_client",
-            referencedColumnName: "id_client",
-            nullable: false,
-            onDelete: "CASCADE")]
-    private $client;
+        referencedColumnName: "id_client",
+        nullable: false,
+        onDelete: "CASCADE")]
+    private Client $client;
 
     public function getIdSessionClient(): ?int
     {

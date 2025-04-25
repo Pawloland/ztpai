@@ -2,11 +2,17 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\SeatRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
+#[ApiResource(
+    normalizationContext: ['groups' => ['Seat:read']],
+    denormalizationContext: ['groups' => ['Seat:write']]
+)]
 #[ORM\Entity(repositoryClass: SeatRepository::class)]
 #[ORM\Table(name: "seat")]
 #[ORM\Index(name: "fk_seat_hall", columns: ["id_hall"])]
@@ -16,30 +22,35 @@ class Seat
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    private $id_seat;
+    #[Groups(['Hall:read', 'Seat:read'])]
+    private int $id_seat;
 
     #[ORM\Column(type: "string", length: 2, nullable: false)]
-    private $row;
+    #[Groups(['Hall:read', 'Seat:read'])]
+    private string $row;
 
     #[ORM\Column(type: "integer", nullable: false)]
-    private $number;
+    #[Groups(['Hall:read', 'Seat:read'])]
+    private int $number;
 
     #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: "seat")]
-    private $reservation;
+    private iterable $reservation;
 
     #[ORM\ManyToOne(targetEntity: Hall::class, inversedBy: "seats")]
     #[ORM\JoinColumn(name: "id_hall",
             referencedColumnName: "id_hall",
             nullable: false,
             onDelete: "RESTRICT")]
-    private $hall;
+    #[Groups(['Seat:read'])]
+    private Hall $hall;
 
     #[ORM\ManyToOne(targetEntity: SeatType::class, inversedBy: "seats")]
     #[ORM\JoinColumn(name: "id_seat_type",
             referencedColumnName: "id_seat_type",
             nullable: false,
             onDelete: "RESTRICT")]
-    private $seatType;
+    #[Groups(['Hall:read', 'Seat:read'])]
+    private SeatType $seatType;
 
     public function __construct()
     {

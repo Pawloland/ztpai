@@ -2,11 +2,16 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\PermissionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource(
+    normalizationContext: ['groups' => ['Permissions:read']],
+    denormalizationContext: ['groups' => ['Permissions:write']]
+)]
 #[ORM\Entity(repositoryClass: PermissionRepository::class)]
 #[ORM\Table(name: "permissions")]
 #[ORM\UniqueConstraint(name: "permissions_perm_name_key", columns: ["perm_name"])]
@@ -15,13 +20,13 @@ class Permissions
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    private $id_perm;
+    private int $id_perm;
 
     #[ORM\Column(type: "string", length: 60, nullable: false)]
-    private $perm_name;
+    private string $perm_name;
 
     #[ORM\OneToMany(targetEntity: WorkerTypePermissions::class, mappedBy: "permissions")]
-    private $workerTypePermissions;
+    private iterable $workerTypePermissions;
 
     public function __construct()
     {

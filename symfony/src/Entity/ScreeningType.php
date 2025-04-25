@@ -2,12 +2,18 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ScreeningTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
+#[ApiResource(
+    normalizationContext: ['groups' => ['ScreeningType:read']],
+    denormalizationContext: ['groups' => ['ScreeningType:write']]
+)]
 #[ORM\Entity(repositoryClass: ScreeningTypeRepository::class)]
 #[ORM\Table(name: "screening_type")]
 #[ORM\UniqueConstraint(name: "screening_name", columns: ["screening_name"])]
@@ -16,16 +22,19 @@ class ScreeningType
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    private $id_screening_type;
+    #[Groups(['ScreeningType:read'])]
+    private int $id_screening_type;
 
     #[ORM\Column(type: "string", length: 40, nullable: false)]
-    private $screening_name;
+    #[Groups(['ScreeningType:read'])]
+    private string $screening_name;
 
     #[ORM\Column(type: "decimal", nullable: false, scale: 2)]
-    private $price;
+    #[Groups(['ScreeningType:read'])]
+    private string $price;
 
     #[ORM\OneToMany(targetEntity: Screening::class, mappedBy: "screeningType")]
-    private $screenings;
+    private iterable $screenings;
 
     public function __construct()
     {

@@ -2,11 +2,16 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource(
+    normalizationContext: ['groups' => ['Client:read']],
+    denormalizationContext: ['groups' => ['Client:write']]
+)]
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
 #[ORM\Table(name: "client")]
 #[ORM\UniqueConstraint(name: "client_nick_key", columns: ["nick"])]
@@ -16,28 +21,28 @@ class Client
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    private $id_client;
+    private int $id_client;
 
     #[ORM\Column(type: "string", length: 40, nullable: false)]
-    private $client_name;
+    private string $client_name;
 
     #[ORM\Column(type: "string", length: 40, nullable: false)]
-    private $client_surname;
+    private string $client_surname;
 
     #[ORM\Column(type: "string", length: 40, nullable: false)]
-    private $nick;
+    private string $nick;
 
     #[ORM\Column(type: "string", length: 80, nullable: false)]
-    private $password_hash;
+    private string $password_hash;
 
     #[ORM\Column(type: "string", length: 320, nullable: false)]
-    private $mail;
+    private string $mail;
 
     #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: "client")]
-    private $reservations;
+    private iterable $reservations;
 
     #[ORM\OneToMany(targetEntity: ClientSessions::class, mappedBy: "client")]
-    private $clientSessions;
+    private iterable $clientSessions;
 
     public function __construct()
     {

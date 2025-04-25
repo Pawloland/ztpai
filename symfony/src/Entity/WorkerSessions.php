@@ -2,10 +2,15 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\WorkerSessionsRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource(
+    normalizationContext: ['groups' => ['WorkerSessions:read']],
+    denormalizationContext: ['groups' => ['WorkerSessions:write']]
+)]
 #[ORM\Entity(repositoryClass: WorkerSessionsRepository::class)]
 #[ORM\Table(name: "worker_sessions")]
 #[ORM\UniqueConstraint(name: "worker_sessions_session_token_key", columns: ["session_token"])]
@@ -14,10 +19,10 @@ class WorkerSessions
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    private $id_session_worker;
+    private int $id_session_worker;
 
     #[ORM\Column(type: "string", length: 80, nullable: false)]
-    private $session_token;
+    private string $session_token;
 
     #[ORM\Column(type: "datetimetz", nullable: false)]
     private $expiration_date;
@@ -27,7 +32,7 @@ class WorkerSessions
             referencedColumnName: "id_worker",
             nullable: false,
             onDelete: "CASCADE")]
-    private $worker;
+    private Worker $worker;
 
     public function getIdSessionWorker(): ?int
     {

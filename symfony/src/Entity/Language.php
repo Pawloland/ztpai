@@ -2,11 +2,17 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\LanguageRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
+#[ApiResource(
+    normalizationContext: ['groups' => ['Language:read']],
+    denormalizationContext: ['groups' => ['Language:write']]
+)]
 #[ORM\Entity(repositoryClass: LanguageRepository::class)]
 #[ORM\Table(name: "language")]
 #[ORM\UniqueConstraint(name: "language_language_name_key", columns: ["language_name"])]
@@ -16,22 +22,25 @@ class Language
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    private $id_language;
+    #[Groups(['Language:read'])]
+    private int $id_language;
 
     #[ORM\Column(type: "string", length: 40, nullable: false)]
-    private $language_name;
+    #[Groups(['Language:read'])]
+    private string $language_name;
 
     #[ORM\Column(type: "string", length: 5, nullable: false)]
-    private $code;
+    #[Groups(['Language:read'])]
+    private string $code;
 
     #[ORM\OneToMany(targetEntity: Movie::class, mappedBy: "languageViaIdLanguage")]
-    private $movieViaIdLanguage;
+    private iterable $movieViaIdLanguage;
 
     #[ORM\OneToMany(targetEntity: Movie::class, mappedBy: "languageViaIdDubbing")]
-    private $movieViaIdDubbing;
+    private iterable $movieViaIdDubbing;
 
     #[ORM\OneToMany(targetEntity: Movie::class, mappedBy: "languageViaIdSubtitles")]
-    private $movieViaIdSubtitles;
+    private iterable $movieViaIdSubtitles;
 
     public function __construct()
     {

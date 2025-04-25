@@ -2,12 +2,18 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ScreeningRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
+#[ApiResource(
+    normalizationContext: ['groups' => ['Screening:read']],
+    denormalizationContext: ['groups' => ['Screening:write']]
+)]
 #[ORM\Entity(repositoryClass: ScreeningRepository::class)]
 #[ORM\Table(name: "screening")]
 #[ORM\Index(name: "fk_screening_movie", columns: ["id_movie"])]
@@ -18,34 +24,40 @@ class Screening
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    private $id_screening;
+    #[Groups(['Screening:read'])]
+    private int $id_screening;
 
     #[ORM\Column(type: "datetimetz", nullable: true)]
+    #[Groups(['Screening:read'])]
     private $start_time;
 
     #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: "screening")]
-    private $reservation;
+    #[Groups(['Screening:read'])]
+    private iterable $reservation;
 
     #[ORM\ManyToOne(targetEntity: Hall::class, inversedBy: "screenings")]
     #[ORM\JoinColumn(name: "id_hall",
             referencedColumnName: "id_hall",
             nullable: false,
             onDelete: "RESTRICT")]
-    private $hall;
+    #[Groups(['Screening:read'])]
+    private Hall $hall;
 
     #[ORM\ManyToOne(targetEntity: Movie::class, inversedBy: "screenings")]
     #[ORM\JoinColumn(name: "id_movie",
             referencedColumnName: "id_movie",
             nullable: false,
             onDelete: "RESTRICT")]
-    private $movie;
+    #[Groups(['Screening:read'])]
+    private Movie $movie;
 
     #[ORM\ManyToOne(targetEntity: ScreeningType::class, inversedBy: "screenings")]
     #[ORM\JoinColumn(name: "id_screening_type",
             referencedColumnName: "id_screening_type",
             nullable: false,
             onDelete: "RESTRICT")]
-    private $screeningType;
+    #[Groups(['Screening:read'])]
+    private ScreeningType $screeningType;
 
     public function __construct()
     {

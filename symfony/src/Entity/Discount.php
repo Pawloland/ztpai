@@ -2,12 +2,16 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\DiscountRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource(
+    normalizationContext: ['groups' => ['Discount:read']],
+    denormalizationContext: ['groups' => ['Discount:write']]
+)]
 #[ORM\Entity(repositoryClass: DiscountRepository::class)]
 #[ORM\Table(name: "discount")]
 #[ORM\UniqueConstraint(name: "discount_discount_name_key", columns: ["discount_name"])]
@@ -16,16 +20,16 @@ class Discount
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    private $id_discount;
+    private int $id_discount;
 
     #[ORM\Column(type: "string", length: 20, nullable: false)]
-    private $discount_name;
+    private string $discount_name;
 
     #[ORM\Column(type: "decimal", nullable: false, scale: 2)]
-    private $amount;
+    private string $amount;
 
     #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: "discount")]
-    private $reservations;
+    private iterable $reservations;
 
     public function __construct()
     {

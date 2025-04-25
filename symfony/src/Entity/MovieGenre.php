@@ -2,9 +2,15 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\MovieGenreRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
+#[ApiResource(
+    normalizationContext: ['groups' => ['MovieGenre:read']],
+    denormalizationContext: ['groups' => ['MovieGenre:write']]
+)]
 #[ORM\Entity(repositoryClass: MovieGenreRepository::class)]
 #[ORM\Table(name: "movie_genre")]
 #[ORM\Index(name: "fk_movie_genre_genre", columns: ["id_genre"])]
@@ -16,7 +22,8 @@ class MovieGenre
             referencedColumnName: "id_movie",
             nullable: false,
             onDelete: "RESTRICT")]
-    private $movie;
+    #[Groups(['MovieGenre:read'])]
+    private Movie $movie;
 
     #[ORM\Id]
     #[ORM\OneToOne(targetEntity: Genre::class, inversedBy: "movieGenres")]
@@ -24,7 +31,8 @@ class MovieGenre
             referencedColumnName: "id_genre",
             nullable: false,
             onDelete: "RESTRICT")]
-    private $genre;
+    #[Groups(['MovieGenre:read'])]
+    private Genre $genre;
 
     public function getMovie(): ?Movie
     {
