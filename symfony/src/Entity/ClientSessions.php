@@ -34,7 +34,7 @@ class ClientSessions
         onDelete: "CASCADE")]
     private Client $client;
 
-    public function getIdSessionClient(): ?int
+    public function getIdSessionClient(): int
     {
         return $this->id_session_client;
     }

@@ -34,7 +34,7 @@ class WorkerSessions
             onDelete: "CASCADE")]
     private Worker $worker;
 
-    public function getIdSessionWorker(): ?int
+    public function getIdSessionWorker(): int
     {
         return $this->id_session_worker;
     }

@@ -69,21 +69,21 @@ class Movie
         referencedColumnName: "id_language",
         onDelete: "RESTRICT")]
     #[Groups(['Movie:read'])]
-    private Language $languageViaIdDubbing;
+    private ?Language $languageViaIdDubbing;
 
     #[ORM\ManyToOne(targetEntity: Language::class, inversedBy: "movieViaIdSubtitles")]
     #[ORM\JoinColumn(name: "id_subtitles",
         referencedColumnName: "id_language",
         onDelete: "RESTRICT")]
     #[Groups(['Movie:read'])]
-    private Language $languageViaIdSubtitles;
+    private ?Language $languageViaIdSubtitles;
 
     public function __construct()
     {
         $this->screenings = new ArrayCollection();
     }
 
-    public function getIdMovie(): ?int
+    public function getIdMovie(): int
     {
         return $this->id_movie;
     }
@@ -236,9 +236,9 @@ class Movie
         return $this;
     }
 
-    public function getIdLanguage(): ?int
+    public function getIdLanguage(): int
     {
-        return $this->languageViaIdLanguage ? $this->languageViaIdLanguage->getIdLanguage() : null;
+        return $this->languageViaIdLanguage->getIdLanguage();
     }
 
     public function setIdLanguage(?Language $language): static
@@ -250,7 +250,7 @@ class Movie
 
     public function getIdDubbing(): ?int
     {
-        return $this->languageViaIdDubbing ? $this->languageViaIdDubbing->getIdLanguage() : null;
+        return $this->languageViaIdDubbing?->getIdLanguage();
     }
 
     public function setIdDubbing(?Language $language): static
@@ -262,7 +262,7 @@ class Movie
 
     public function getIdSubtitles(): ?int
     {
-        return $this->languageViaIdSubtitles ? $this->languageViaIdSubtitles->getIdLanguage() : null;
+        return $this->languageViaIdSubtitles?->getIdLanguage();
     }
 
     public function setIdSubtitles(?Language $language): static

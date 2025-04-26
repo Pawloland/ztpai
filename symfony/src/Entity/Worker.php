@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
 use App\Repository\WorkerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -40,9 +39,9 @@ class Worker
 
     #[ORM\ManyToOne(targetEntity: WorkerType::class, inversedBy: "workers")]
     #[ORM\JoinColumn(name: "id_worker_type",
-            referencedColumnName: "id_worker_type",
-            nullable: false,
-            onDelete: "RESTRICT")]
+        referencedColumnName: "id_worker_type",
+        nullable: false,
+        onDelete: "RESTRICT")]
     private WorkerType $workerType;
 
     public function __construct()
@@ -50,7 +49,7 @@ class Worker
         $this->workerSessions = new ArrayCollection();
     }
 
-    public function getIdWorker(): ?int
+    public function getIdWorker(): int
     {
         return $this->id_worker;
     }

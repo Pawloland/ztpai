@@ -30,7 +30,7 @@ class Genre
     #[ORM\OneToOne(targetEntity: MovieGenre::class, mappedBy: "genre")]
     private MovieGenre $movieGenres;
 
-    public function getIdGenre(): ?int
+    public function getIdGenre(): int
     {
         return $this->id_genre;
     }

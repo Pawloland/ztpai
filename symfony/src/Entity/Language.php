@@ -49,7 +49,7 @@ class Language
         $this->movieViaIdSubtitles = new ArrayCollection();
     }
 
-    public function getIdLanguage(): ?int
+    public function getIdLanguage(): int
     {
         return $this->id_language;
     }

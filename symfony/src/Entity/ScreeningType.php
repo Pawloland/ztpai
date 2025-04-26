@@ -41,7 +41,7 @@ class ScreeningType
         $this->screenings = new ArrayCollection();
     }
 
-    public function getIdScreeningType(): ?int
+    public function getIdScreeningType(): int
     {
         return $this->id_screening_type;
     }

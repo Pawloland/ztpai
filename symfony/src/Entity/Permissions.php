@@ -33,7 +33,7 @@ class Permissions
         $this->workerTypePermissions = new ArrayCollection();
     }
 
-    public function getIdPerm(): ?int
+    public function getIdPerm(): int
     {
         return $this->id_perm;
     }

@@ -57,7 +57,7 @@ class Seat
         $this->reservation = new ArrayCollection();
     }
 
-    public function getIdSeat(): ?int
+    public function getIdSeat(): int
     {
         return $this->id_seat;
     }

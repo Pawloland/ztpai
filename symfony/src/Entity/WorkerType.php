@@ -37,7 +37,7 @@ class WorkerType
         $this->workerTypePermissions = new ArrayCollection();
     }
 
-    public function getIdWorkerType(): ?int
+    public function getIdWorkerType(): int
     {
         return $this->id_worker_type;
     }

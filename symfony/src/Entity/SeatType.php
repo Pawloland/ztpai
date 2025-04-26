@@ -42,7 +42,7 @@ class SeatType
         $this->seats = new ArrayCollection();
     }
 
-    public function getIdSeatType(): ?int
+    public function getIdSeatType(): int
     {
         return $this->id_seat_type;
     }

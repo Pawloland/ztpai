@@ -36,7 +36,7 @@ class Discount
         $this->reservations = new ArrayCollection();
     }
 
-    public function getIdDiscount(): ?int
+    public function getIdDiscount(): int
     {
         return $this->id_discount;
     }

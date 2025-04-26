@@ -49,7 +49,7 @@ class Client
         $this->clientSessions = new ArrayCollection();
     }
 
-    public function getIdClient(): ?int
+    public function getIdClient(): int
     {
         return $this->id_client;
     }

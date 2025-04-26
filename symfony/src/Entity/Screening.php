@@ -64,7 +64,7 @@ class Screening
         $this->reservation = new ArrayCollection();
     }
 
-    public function getIdScreening(): ?int
+    public function getIdScreening(): int
     {
         return $this->id_screening;
     }

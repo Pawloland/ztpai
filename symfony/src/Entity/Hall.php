@@ -41,7 +41,7 @@ class Hall
         $this->seats = new ArrayCollection();
     }
 
-    public function getIdHall(): ?int
+    public function getIdHall(): int
     {
         return $this->id_hall;
     }

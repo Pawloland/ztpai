@@ -76,7 +76,7 @@ class Reservation
         onDelete: "RESTRICT")]
     private Seat $seat;
 
-    public function getIdReservation(): ?int
+    public function getIdReservation(): int
     {
         return $this->id_reservation;
     }
