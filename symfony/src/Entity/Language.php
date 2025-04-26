@@ -22,15 +22,15 @@ class Language
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[Groups(['Language:read'])]
+    #[Groups(['Movie:read', 'Language:read'])]
     private int $id_language;
 
     #[ORM\Column(type: "string", length: 40, nullable: false)]
-    #[Groups(['Language:read'])]
+    #[Groups(['Movie:read', 'Language:read'])]
     private string $language_name;
 
     #[ORM\Column(type: "string", length: 5, nullable: false)]
-    #[Groups(['Language:read'])]
+    #[Groups(['Movie:read', 'Language:read'])]
     private string $code;
 
     #[ORM\OneToMany(targetEntity: Movie::class, mappedBy: "languageViaIdLanguage")]

@@ -25,27 +25,27 @@ class Movie
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[Groups(['Movie:read'])]
+    #[Groups(['Movie:read', 'Movie:write'])]
     private int $id_movie;
 
     #[ORM\Column(type: "string", length: 80, nullable: false)]
-    #[Groups(['Movie:read'])]
+    #[Groups(['Movie:read', 'Movie:write'])]
     private string $title;
 
     #[ORM\Column(type: "string", length: 80, nullable: false)]
-    #[Groups(['Movie:read'])]
+    #[Groups(['Movie:read', 'Movie:write'])]
     private string $original_title;
 
     #[ORM\Column(type: "time", nullable: false)]
-    #[Groups(['Movie:read'])]
+    #[Groups(['Movie:read', 'Movie:write'])]
     private DateTimeInterface $duration;
 
     #[ORM\Column(type: "string", length: 500, nullable: true)]
-    #[Groups(['Movie:read'])]
+    #[Groups(['Movie:read', 'Movie:write'])]
     private ?string $description;
 
     #[ORM\Column(type: "guid", nullable: true)]
-    #[Groups(['Movie:read'])]
+    #[Groups(['Movie:read', 'Movie:write'])]
     private ?string $poster;
 
     #[ORM\OneToOne(targetEntity: MovieGenre::class, mappedBy: "movie")]
@@ -61,21 +61,21 @@ class Movie
         referencedColumnName: "id_language",
         nullable: false,
         onDelete: "RESTRICT")]
-    #[Groups(['Movie:read'])]
+    #[Groups(['Movie:read', 'Movie:write'])]
     private Language $languageViaIdLanguage;
 
     #[ORM\ManyToOne(targetEntity: Language::class, inversedBy: "movieViaIdDubbing")]
     #[ORM\JoinColumn(name: "id_dubbing",
         referencedColumnName: "id_language",
         onDelete: "RESTRICT")]
-    #[Groups(['Movie:read'])]
+    #[Groups(['Movie:read', 'Movie:write'])]
     private ?Language $languageViaIdDubbing;
 
     #[ORM\ManyToOne(targetEntity: Language::class, inversedBy: "movieViaIdSubtitles")]
     #[ORM\JoinColumn(name: "id_subtitles",
         referencedColumnName: "id_language",
         onDelete: "RESTRICT")]
-    #[Groups(['Movie:read'])]
+    #[Groups(['Movie:read', 'Movie:write'])]
     private ?Language $languageViaIdSubtitles;
 
     public function __construct()
@@ -259,6 +259,7 @@ class Movie
 
         return $this;
     }
+
 
     public function getIdSubtitles(): ?int
     {
