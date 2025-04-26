@@ -1431,6 +1431,7 @@ CREATE OR REPLACE FUNCTION delete_session(
 DECLARE
     v_table_name TEXT;
     v_id_column TEXT;
+    v_rows_deleted INT;
 BEGIN
     -- Determine the table and ID column based on the type
     IF p_type = 'c' THEN
@@ -1454,7 +1455,10 @@ BEGIN
         WHERE ' || v_id_column || ' = ' || p_id || '
           AND session_token = ' || p_session_token;
 
-    -- Return TRUE if the row was deleted
-    RETURN FOUND;
+    -- Get the number of rows affected
+    GET DIAGNOSTICS v_rows_deleted = ROW_COUNT;
+
+    -- Return TRUE if at least one row was deleted, otherwise FALSE
+    RETURN v_rows_deleted > 0;
 END;
 $$ LANGUAGE plpgsql;
