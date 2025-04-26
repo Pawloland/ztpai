@@ -7,10 +7,10 @@ use App\Repository\WorkerSessionsRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ApiResource(
-    normalizationContext: ['groups' => ['WorkerSessions:read']],
-    denormalizationContext: ['groups' => ['WorkerSessions:write']]
-)]
+//#[ApiResource(
+//    normalizationContext: ['groups' => ['WorkerSessions:read']],
+//    denormalizationContext: ['groups' => ['WorkerSessions:write']]
+//)]
 #[ORM\Entity(repositoryClass: WorkerSessionsRepository::class)]
 #[ORM\Table(name: "worker_sessions")]
 #[ORM\UniqueConstraint(name: "worker_sessions_session_token_key", columns: ["session_token"])]

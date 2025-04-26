@@ -8,10 +8,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ApiResource(
-    normalizationContext: ['groups' => ['Permissions:read']],
-    denormalizationContext: ['groups' => ['Permissions:write']]
-)]
+//#[ApiResource(
+//    normalizationContext: ['groups' => ['Permissions:read']],
+//    denormalizationContext: ['groups' => ['Permissions:write']]
+//)]
 #[ORM\Entity(repositoryClass: PermissionRepository::class)]
 #[ORM\Table(name: "permissions")]
 #[ORM\UniqueConstraint(name: "permissions_perm_name_key", columns: ["perm_name"])]

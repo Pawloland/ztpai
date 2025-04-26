@@ -7,10 +7,10 @@ use App\Repository\ClientSessionsRepository;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ApiResource(
-    normalizationContext: ['groups' => ['ClientSessions:read']],
-    denormalizationContext: ['groups' => ['ClientSessions:write']]
-)]
+//#[ApiResource(
+//    normalizationContext: ['groups' => ['ClientSessions:read']],
+//    denormalizationContext: ['groups' => ['ClientSessions:write']]
+//)]
 #[ORM\Entity(repositoryClass: ClientSessionsRepository::class)]
 #[ORM\Table(name: "client_sessions")]
 #[ORM\UniqueConstraint(name: "client_sessions_session_token_key", columns: ["session_token"])]

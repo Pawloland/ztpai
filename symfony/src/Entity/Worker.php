@@ -8,10 +8,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ApiResource(
-    normalizationContext: ['groups' => ['Worker:read']],
-    denormalizationContext: ['groups' => ['Worker:write']]
-)]
+//#[ApiResource(
+//    normalizationContext: ['groups' => ['Worker:read']],
+//    denormalizationContext: ['groups' => ['Worker:write']]
+//)]
 #[ORM\Entity(repositoryClass: WorkerRepository::class)]
 #[ORM\Table(name: "worker")]
 #[ORM\Index(name: "worker_id_worker_type_idx", columns: ["id_worker_type"])]

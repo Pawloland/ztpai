@@ -2,19 +2,16 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ReservationRepository;
-use DateTimeZone;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ApiResource]
+//#[ApiResource]
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
 #[ORM\Table(name: "reservation")]
 #[ORM\Index(name: "reservation_screening_idx", columns: ["id_screening"])]
 #[ORM\Index(name: "reservation_discount_idx", columns: ["id_discount"])]
 #[ORM\Index(name: "reservation_client_idx", columns: ["id_client"])]
-#[ORM\UniqueConstraint(name: "reservation_seat_screening_idx", columns: ["id_seat","id_screening"])]
+#[ORM\UniqueConstraint(name: "reservation_seat_screening_idx", columns: ["id_seat", "id_screening"])]
 class Reservation
 {
     #[ORM\Id]
@@ -22,16 +19,16 @@ class Reservation
     #[ORM\GeneratedValue(strategy: "AUTO")]
     private int $id_reservation;
 
-    #[ORM\Column(type: "decimal", nullable: false,scale: 2)]
+    #[ORM\Column(type: "decimal", nullable: false, scale: 2)]
     private string $total_price_netto;
 
     #[ORM\Column(type: "decimal", nullable: false, scale: 2)]
     private string $total_price_brutto;
 
-    #[ORM\Column(type: "decimal", nullable: false, precision:4, scale: 2)]
+    #[ORM\Column(type: "decimal", nullable: false, precision: 4, scale: 2)]
     private string $vat_percentage;
 
-    #[ORM\Column(type: "datetimetz", nullable: false, options: ["default"=>"CURRENT_TIMESTAMP"])]
+    #[ORM\Column(type: "datetimetz", nullable: false, options: ["default" => "CURRENT_TIMESTAMP"])]
     private $reservation_date;
 
     #[ORM\Column(type: "string", length: 10, nullable: true)]
@@ -61,22 +58,22 @@ class Reservation
 
     #[ORM\ManyToOne(targetEntity: Discount::class, inversedBy: "reservations")]
     #[ORM\JoinColumn(name: "id_discount",
-            referencedColumnName: "id_discount",
-            onDelete: "RESTRICT")]
+        referencedColumnName: "id_discount",
+        onDelete: "RESTRICT")]
     private Discount $discount;
 
     #[ORM\ManyToOne(targetEntity: Screening::class, inversedBy: "reservation")]
     #[ORM\JoinColumn(name: "id_screening",
-            referencedColumnName: "id_screening",
-            nullable: false,
-            onDelete: "RESTRICT")]
+        referencedColumnName: "id_screening",
+        nullable: false,
+        onDelete: "RESTRICT")]
     private Screening $screening;
 
     #[ORM\ManyToOne(targetEntity: Seat::class, inversedBy: "reservation")]
     #[ORM\JoinColumn(name: "id_seat",
-            referencedColumnName: "id_seat",
-            nullable: false,
-            onDelete: "RESTRICT")]
+        referencedColumnName: "id_seat",
+        nullable: false,
+        onDelete: "RESTRICT")]
     private Seat $seat;
 
     public function getIdReservation(): ?int
