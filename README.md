@@ -24,7 +24,12 @@ docker compose run --rm -it -u "$(id -u):$(id -g)" php php bin/console make:enti
 
 Generowanie struktury frontend:
 ```bash
-docker compose run --rm -it node npm create vite@latest
+docker compose run --rm -it node-base npm create vite@latest
+```
+
+Instalowanie nowych zależności frontendu:
+```bash
+docker compose run --rm -it node-base npm install react-router
 ```
 
 Instalowanie zależności frontendu:
