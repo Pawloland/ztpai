@@ -8,8 +8,7 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Attribute\Groups;
-use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
     normalizationContext: ['groups' => ['Movie:read']],
@@ -44,8 +43,13 @@ class Movie
     #[Groups(['Movie:read', 'Movie:write'])]
     private ?string $description;
 
-    #[ORM\Column(type: "guid", nullable: true)]
-    #[Groups(['Movie:read', 'Movie:write'])]
+    #[ORM\Column(type: "guid", nullable: true,
+        insertable: false, # since this property is read-only in api-platform (set by Groups attribute), this option (insertable: false) prevents Doctrine from trying to insert a NULL
+        # which api-platform passes to Doctrine, thus it forces DB to generate UUID when inserting new Movie, but it doesn't prevent changing the value to NULL, or any other UUID with PATCH request
+        options: ['default' => 'gen_random_uuid()'], # this is to appease Doctrine, so it doesn't try to drop the default value in migration (set in sql dump and in column definition bellow)
+        columnDefinition: "uuid DEFAULT gen_random_uuid()" # this manually sets actual column definition, so it is the same as in sql dump, allowing for default value to be set by the database
+    )]
+    #[Groups(['Movie:read'])]
     private ?string $poster;
 
     #[ORM\OneToOne(targetEntity: MovieGenre::class, mappedBy: "movie")]

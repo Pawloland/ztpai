@@ -37,7 +37,7 @@ function App() {
         original_title: '',
         duration: '',
         description: '',
-        poster: '',
+        // poster: '',
         languageViaIdLanguage: '/api/languages/1',
         languageViaIdDubbing: '/api/languages/1',
         languageViaIdSubtitles: '/api/languages/1',
@@ -120,7 +120,7 @@ function App() {
                         original_title: '',
                         duration: '',
                         description: '',
-                        poster: '',
+                        // poster: '',
                         languageViaIdLanguage: '/api/languages/1',
                         languageViaIdDubbing: '/api/languages/1',
                         languageViaIdSubtitles: '/api/languages/1',
@@ -160,10 +160,10 @@ function App() {
                         Description:
                         <textarea name="description" value={formData.description} onChange={handleInputChange} required/>
                     </label>
-                    <label>
-                        Poster filename:
-                        <input type="text" name="poster" value={formData.poster} onChange={handleInputChange} required/>
-                    </label>
+                    {/*<label>*/}
+                    {/*    Poster filename:*/}
+                    {/*    <input type="text" name="poster" value={formData.poster} onChange={handleInputChange} required/>*/}
+                    {/*</label>*/}
                     <label>
                         Language:
                         <select
