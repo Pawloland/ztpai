@@ -47,7 +47,7 @@ Sprawdzenie poprawności mappingu:
 docker compose run --rm -it -u "$(id -u):$(id -g)" php php bin/console doctrine:mapping:info
 ```
 
-Wypisanie SQL z rozbieżnościami międzzy bazą danych a mappingiem:
+Wypisanie SQL z rozbieżnościami między bazą danych a mappingiem:
 ```bash
 docker compose run --rm -it -u "$(id -u):$(id -g)" php php bin/console doctrine:schema:update --dump-sql
 ```
