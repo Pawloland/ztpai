@@ -1,0 +1,57 @@
+a._ {
+    color: white;
+    text-decoration: none;
+    padding: 1em;
+    display: inline-flex; /* Make the link behave like inline text */
+    align-items: center; /* Align text and icon vertically */
+    cursor: pointer; /* Ensures the cursor changes to a pointer when hovering */
+}
+
+
+@media (max-width: 1100px) {
+    a._ {
+        width: 100%;
+        box-sizing: border-box;
+        justify-content: space-between;
+    }
+
+}
+
+a._:hover > .icon {
+    background-color: var(--main-color);
+}
+
+.icon-hamburger {
+    mask: url("/hamburger.svg");
+}
+
+.icon-home {
+    mask: url("/home.svg");
+}
+
+.icon-pen {
+    mask: url("/pen.svg");
+}
+
+.icon-logout {
+    mask: url("/logout.svg");
+}
+
+.icon-bin {
+    mask: url("/bin.svg");
+}
+
+.icon {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    background-color: white;
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    margin-right: 5px;
+    mask-position: center;
+}
+
+a._:hover {
+    color: var(--main-color);
+}
