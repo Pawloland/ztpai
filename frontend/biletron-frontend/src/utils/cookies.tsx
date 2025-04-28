@@ -9,3 +9,7 @@ export function getCookieURIEncodedJSONAsObject(cookieName: string): object | nu
         return acc;
     }, {})[cookieName] || null;
 }
+
+export function destroyCookie(cookieName: string) {
+    document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+}

@@ -19,8 +19,10 @@ final class SecurityController extends AbstractController
     private const HOURS = 0;
     private const MINUTES = 90;
 
+    private const  COOKIE_NAME_HTTPONLY = 'auth_httponly';
     private const  COOKIE_NAME = 'auth';
-    private const  COOKIE_NAME_ADMIN = 'auth_admin';
+    private const COOKIE_NAME_WORKER_HTTPONLY = 'auth_worker_httponly';
+    private const  COOKIE_NAME_WORKER = 'auth_worker';
 
     #[Route('/api/login', name: 'login', methods: ['POST'])]
     public function login(Request $request): JsonResponse
@@ -38,8 +40,8 @@ final class SecurityController extends AbstractController
         ]);
     }
 
-    #[Route('/api/adminLogin', name: 'admin_login', methods: ['POST'])]
-    public function adminLogin(Request $request, EntityManagerInterface $em, Connection $connection): JsonResponse
+    #[Route('/api/workerLogin', name: 'worker_login', methods: ['POST'])]
+    public function workerLogin(Request $request, EntityManagerInterface $em, Connection $connection): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $nick = $data['nick'] ?? null;
@@ -72,18 +74,32 @@ final class SecurityController extends AbstractController
         $token = $result['session_token'];
         $expirationDate = $result['expiration_date'];
 
-        $cookieValue = json_encode(['token' => $token, 'nick' => $worker->getNick()]);
+        $cookieValueHTTPOnly = json_encode(['token' => $token]);
+        $cookieValue = json_encode(['nick' => $worker->getNick()]);
 
         $response = new JsonResponse(['message' => 'Login successful']);
         $response->headers->setCookie(
             new Cookie(
-                self::COOKIE_NAME_ADMIN,
-                $cookieValue,
+                self::COOKIE_NAME_WORKER_HTTPONLY,
+                $cookieValueHTTPOnly,
                 strtotime($expirationDate . ' UTC'),
                 '/',
                 null,
                 true,
                 true,
+                false,
+                'Strict'
+            )
+        );
+        $response->headers->setCookie(
+            new Cookie(
+                self::COOKIE_NAME_WORKER,
+                $cookieValue,
+                strtotime($expirationDate . ' UTC'),
+                '/',
+                null,
+                true,
+                false,
                 false,
                 'Strict'
             )
@@ -102,27 +118,69 @@ final class SecurityController extends AbstractController
         ]);
     }
 
-    #[Route('/api/adminLogout', name: 'admin_logout', methods: ['GET'])]
-    public function adminLogout(Request $request, Connection $connection, EntityManagerInterface $em): JsonResponse
+    private function destroyCookies(Response &$response, string $cookieNameHTTPOnly, string $cookieName): void
     {
-        $cookieValue = $request->cookies->get(self::COOKIE_NAME_ADMIN);
+        $response->headers->clearCookie(
+            $cookieNameHTTPOnly,
+            '/',
+            null,
+            true,
+            true,
+            'Strict'
+        );
+        $response->headers->clearCookie(
+            $cookieName,
+            '/',
+            null,
+            true,
+            false,
+            'Strict'
+        );
+    }
 
-        if (!$cookieValue) {
-            return new JsonResponse(['error' => 'No session found.'], Response::HTTP_BAD_REQUEST);
+    #[Route('/api/workerLogout', name: 'worker_logout', methods: ['GET'])]
+    public function workerLogout(Request $request, Connection $connection, EntityManagerInterface $em): JsonResponse
+    {
+        $cookieValueHTTPOnly = $request->cookies->get(self::COOKIE_NAME_WORKER_HTTPONLY);
+        $cookieValue = $request->cookies->get(self::COOKIE_NAME_WORKER);
+
+
+        if (!$cookieValue || !$cookieValueHTTPOnly) {
+            $response = new JsonResponse(['error' => 'No session found.'], Response::HTTP_BAD_REQUEST);
+            $this->destroyCookies(
+                $response,
+                self::COOKIE_NAME_WORKER_HTTPONLY,
+                self::COOKIE_NAME_WORKER
+            );
+            return $response;
         }
 
+        $cookieDataHTTPOnly = json_decode($cookieValueHTTPOnly, true);
+        $token = $cookieDataHTTPOnly['token'] ?? null;
+
         $cookieData = json_decode($cookieValue, true);
-        $token = $cookieData['token'] ?? null;
         $nick = $cookieData['nick'] ?? null;
 
         if (!$token || !$nick) {
-            return new JsonResponse(['error' => 'Invalid session token or nick.'], Response::HTTP_BAD_REQUEST);
+            $response = new JsonResponse(['error' => 'Invalid session token or nick.'], Response::HTTP_BAD_REQUEST);
+            $this->destroyCookies(
+                $response,
+                self::COOKIE_NAME_WORKER_HTTPONLY,
+                self::COOKIE_NAME_WORKER
+            );
+            return $response;
         }
 
         // Retrieve worker by nick
         $worker = $em->getRepository(Worker::class)->findOneBy(['nick' => $nick]);
         if (!$worker) {
-            return new JsonResponse(['error' => 'Worker not found.'], Response::HTTP_BAD_REQUEST);
+            $response = new JsonResponse(['error' => 'Worker not found.'], Response::HTTP_BAD_REQUEST);
+            $this->destroyCookies(
+                $response,
+                self::COOKIE_NAME_WORKER_HTTPONLY,
+                self::COOKIE_NAME_WORKER
+            );
+            return $response;
         }
 
         $workerId = $worker->getIdWorker();
@@ -139,18 +197,21 @@ final class SecurityController extends AbstractController
         $result = $stmt->fetchAssociative();
 
         if (!$result || !$result['delete_session']) {
-            return new JsonResponse(['error' => 'Failed to delete session.'], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+            $response = new JsonResponse(['error' => 'Failed to delete session.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            $this->destroyCookies(
+                $response,
+                self::COOKIE_NAME_WORKER_HTTPONLY,
+                self::COOKIE_NAME_WORKER
+            );
+            return $response;
         }
 
         // Prepare response and delete the cookie
         $response = new JsonResponse(['message' => 'Logout successful']);
-        $response->headers->clearCookie(
-            self::COOKIE_NAME_ADMIN,
-            '/',
-            null,
-            true,
-            true,
-            'Strict'
+        $this->destroyCookies(
+            $response,
+            self::COOKIE_NAME_WORKER_HTTPONLY,
+            self::COOKIE_NAME_WORKER
         );
 
         return $response;

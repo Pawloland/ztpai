@@ -1,4 +1,12 @@
+export enum AuthCookieName {
+    Worker = 'auth_worker',
+    Client = 'auth',
+}
+
 export interface AuthCookie {
-    token: string;
     email: string;
+}
+
+export interface AuthWorkerCookie {
+    nick: string;
 }

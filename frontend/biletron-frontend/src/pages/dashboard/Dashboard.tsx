@@ -1,15 +1,20 @@
-import {useEffect, useState} from 'react';
+import {ChangeEvent, FormEvent, useEffect, useState} from 'react';
 import {Language, LanguageResponse} from '../../types/Language.ts';
 import {Movie, MoviesResponse} from "../../types/Movie.ts";
 import Header from "../../components/header/Header.tsx";
 import {AllowedRoutes} from "../../types/Routes.ts";
 import {AllowedIconClass} from "../../components/icon/Icon.tsx";
+import {useNavigate} from "react-router";
+import {AuthCookieName, AuthWorkerCookie} from "../../types/AuthCookie.ts";
+import {destroyCookie, getCookieURIEncodedJSONAsObject} from "../../utils/cookies.tsx";
 
 
 function Dashboard() {
     const [movies, setMovies] = useState<Movie[]>([]);
     const [languages, setLanguages] = useState<Language[]>([]);
     const [loading, setLoading] = useState(true);
+    const [message, setMessage] = useState<string | null>(null);
+    const [nick, setNick] = useState<string>("Wyloguj");
     const [formData, setFormData] = useState({
         title: '',
         original_title: '',
@@ -20,6 +25,7 @@ function Dashboard() {
         languageViaIdDubbing: '/api/languages/1',
         languageViaIdSubtitles: '/api/languages/1',
     });
+    const navigate = useNavigate();
 
     const fetchLanguages = async () => {
         try {
@@ -72,9 +78,13 @@ function Dashboard() {
         };
 
         initializeData();
+        const auth_cookie = getCookieURIEncodedJSONAsObject(AuthCookieName.Worker) as AuthWorkerCookie | null;
+        console.log(auth_cookie)
+        setNick(auth_cookie?.nick || "Wyloguj");
+
     }, []);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const {name, value} = e.target;
         setFormData(prev => {
             return {
@@ -84,7 +94,7 @@ function Dashboard() {
         });
     };
 
-    const handleAddMovie = (e: React.FormEvent) => {
+    const handleAddMovie = (e: FormEvent) => {
         e.preventDefault();
         fetch('/api/movies', {
             method: 'POST',
@@ -115,10 +125,36 @@ function Dashboard() {
         <>
             <Header
                 title="Panel administracyjny"
+                message={message}
                 links={[{
                     route: AllowedRoutes.WorkerLogout,
                     iconClass: AllowedIconClass.Logout,
-                    text: 'Worker Logout',
+                    text: nick,
+                    onClick: () => {
+                        fetch('/api' + AllowedRoutes.WorkerLogout, {
+                            method: 'GET'
+                        })
+                            .then((res) => {
+                                if (res.ok) {
+                                    setMessage('Wylogowano pomyślnie!');
+                                    setTimeout(() => {
+                                        navigate(AllowedRoutes.Home);
+                                    }, 1000);
+                                } else {
+                                    setMessage('Nie udało się wylogować, bo taka sesja nie istnieje');
+                                    setTimeout(() => {
+                                        navigate(AllowedRoutes.Home);
+                                    }, 1000);
+                                }
+                            })
+                            .catch((err) => {
+                                console.error('Error logging out:', err)
+                                // At this point, cookie might or might not be deleted by the server, IDK
+                                // we can't delete HTTPOnly cookies from here, so we only delete the not HTTPOnly one
+                                // to ensure, that in the UI there won't be a user nick, which implies being logged in
+                                destroyCookie(AuthCookieName.Worker)
+                            })
+                    }
                 }]}/>
             <main>
                 <div className="wrapper">
