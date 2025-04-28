@@ -17,6 +17,7 @@ createRoot(document.getElementById('root')!).render(
                 <Route path={AllowedRoutes.Home} element={<Movies/>}/>
                 <Route path={AllowedRoutes.Login} element={<Login variant={AllowedVariants.Client}/>}/>
                 <Route path={AllowedRoutes.Register} element={<Register/>}/>
+                <Route path={AllowedRoutes.WorkerLogin} element={<Login variant={AllowedVariants.Worker}/>}/>
                 <Route path={AllowedRoutes.Dashboard} element={<Dashboard/>}/>
                 <Route path="*" element={<div style={{color: "white"}}>404 - Page Not Found</div>}/>
             </Routes>
