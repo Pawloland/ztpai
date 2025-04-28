@@ -5,6 +5,7 @@ import {BrowserRouter, Route, Routes} from "react-router";
 import {AllowedRoutes} from "./types/Routes.ts";
 import Movies from './pages/movies/Movies.tsx'
 import "./index.css"
+import Login, {AllowedVariants} from "./pages/login/Login.tsx";
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
@@ -12,6 +13,7 @@ createRoot(document.getElementById('root')!).render(
             <Routes>
                 {/*<Route path="/" element={<Navigate to="/movies" replace />} />*/}
                 <Route path={AllowedRoutes.Home} element={<Movies/>}/>
+                <Route path={AllowedRoutes.Login} element={<Login variant={AllowedVariants.Client}/>}/>
                 <Route path="*" element={<div style={{color: "white"}}>404 - Page Not Found</div>}/>
             </Routes>
         </BrowserRouter>
