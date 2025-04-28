@@ -6,6 +6,7 @@ import {AllowedRoutes} from "./types/Routes.ts";
 import Movies from './pages/movies/Movies.tsx'
 import "./index.css"
 import Login, {AllowedVariants} from "./pages/login/Login.tsx";
+import Dashboard from "./pages/dashboard/Dashboard.tsx";
 import Register from "./pages/register/Register.tsx";
 
 createRoot(document.getElementById('root')!).render(
@@ -16,6 +17,7 @@ createRoot(document.getElementById('root')!).render(
                 <Route path={AllowedRoutes.Home} element={<Movies/>}/>
                 <Route path={AllowedRoutes.Login} element={<Login variant={AllowedVariants.Client}/>}/>
                 <Route path={AllowedRoutes.Register} element={<Register/>}/>
+                <Route path={AllowedRoutes.Dashboard} element={<Dashboard/>}/>
                 <Route path="*" element={<div style={{color: "white"}}>404 - Page Not Found</div>}/>
             </Routes>
         </BrowserRouter>
