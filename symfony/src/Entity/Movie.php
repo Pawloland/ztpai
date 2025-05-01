@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Doctrine\Common\State\PersistProcessor;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -11,7 +10,6 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\OpenApi\Model\Operation;
 use ApiPlatform\OpenApi\Model\RequestBody;
-use ApiPlatform\State\ProcessorInterface;
 use App\Repository\MovieRepository;
 use App\State\MovieStateProcessorPOST;
 use ArrayObject;
@@ -77,7 +75,7 @@ class Movie
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[Groups(['Movie:read', 'Movie:write'])]
+    #[Groups(['Movie:read'])]
     private int $id_movie;
 
     #[ORM\Column(type: "string", length: 80, nullable: false)]

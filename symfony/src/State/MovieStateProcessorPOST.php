@@ -25,8 +25,7 @@ final class MovieStateProcessorPOST implements ProcessorInterface
         private ProcessorInterface     $persistProcessor,
         private RequestStack           $requestStack,
         private ValidatorInterface     $validator,
-        private EntityManagerInterface $em,
-        private string                 $uploadDir = __DIR__ . '/../../uploads/posters' // customize as needed
+        private EntityManagerInterface $em
     )
     {
     }
