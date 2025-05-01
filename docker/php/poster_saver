@@ -1,0 +1,42 @@
+#!/bin/bash
+# Script to move a file to /app/public/uploads/posters
+
+# `set -eu` enables the following:
+# - `-e`: Exit immediately if any command exits with a non-zero status, except in certain cases like `if` conditions.
+# - `-u`: Treat unset variables as an error and exit immediately if an unset variable is referenced.
+set -eu
+UPLOAD_DIR="/app/public/uploads/posters"
+echo "Running as $(whoami) $(id -g):$(id -u) in $(pwd)"
+
+# Ensure the argument is provided
+if [ "$#" -ne 2 ]; then
+  echo "Usage: $0 <source_absolute_file_path> <destination_file_name>" >&2
+  exit 1
+fi
+
+FILE_PATH="$1"
+
+# Check if the provided path is absolute
+if [[ "$FILE_PATH" != /* ]]; then
+  echo "Error: The file path must be absolute." >&2
+  exit 2
+fi
+
+# Ensure the file exists
+if [ ! -f "$FILE_PATH" ]; then
+  echo "Error: File does not exist at $FILE_PATH" >&2
+  exit 3
+fi
+
+# Create the upload directory if it doesn't exist
+mkdir -p "$UPLOAD_DIR"
+
+# Try to copy the file (deletion of the original file in /tmp is handled by PHP, so mv is not needed)
+if cp "$FILE_PATH" "$UPLOAD_DIR/$2"; then
+  echo "File successfully moved to $UPLOAD_DIR as $2"
+  exit 0
+else
+  ERROR_CODE=$?
+  echo "Error: Failed to move the file \"$FILE_PATH\" to \"$UPLOAD_DIR/\" as $2." >&2
+  exit $ERROR_CODE
+fi

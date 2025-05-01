@@ -66,3 +66,13 @@ Czyszczenie cache metadanych:
 ```bash
 docker compose run --rm -it -u "$(id -u):$(id -g)" php php bin/console doctrine:cache:clear-metadata
 ```
+
+Stworzenie nowego procesora api-platform:
+```bash
+docker compose run --rm -it -u "$(id -u):$(id -g)" php php bin/console make:state-processor
+```
+
+Uruchomienie komendy w działającym kontenerze:
+```bash
+docker compose exec -it -u "$(id -u):$(id -g)" php bash
+```

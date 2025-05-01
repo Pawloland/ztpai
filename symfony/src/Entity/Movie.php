@@ -2,8 +2,19 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Common\State\PersistProcessor;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\OpenApi\Model\Operation;
+use ApiPlatform\OpenApi\Model\RequestBody;
+use ApiPlatform\State\ProcessorInterface;
 use App\Repository\MovieRepository;
+use App\State\MovieStateProcessorPOST;
+use ArrayObject;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -11,6 +22,48 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
+    operations: [
+        new GetCollection(),
+        new Post(
+            uriTemplate: '/movies',
+            inputFormats: ['multipart' => ['multipart/form-data']],
+            openapi: new Operation(
+                summary: 'Create a new movie with a poster',
+                requestBody: new RequestBody(
+                    description: 'Movie fields plus a poster file',
+                    content: new ArrayObject([
+                        'multipart/form-data' => [
+                            'schema' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'title' => ['type' => 'string'],
+                                    'original_title' => ['type' => 'string'],
+                                    'duration' => ['type' => 'string', 'format' => 'time'],
+                                    'description' => ['type' => 'string'],
+                                    'id_language' => ['type' => 'integer'],
+                                    'id_dubbing' => ['type' => 'integer'],
+                                    'id_subtitles' => ['type' => 'integer'],
+                                    'poster' => [
+                                        'type' => 'string',
+                                        'format' => 'binary'
+                                    ]
+                                ],
+                                'required' => ['title', 'original_title', 'duration', 'id_language']
+                            ]
+                        ]
+                    ]),
+                    required: true,
+                )
+            ),
+            normalizationContext: ['groups' => ['Movie:read']],
+            deserialize: false,
+            name: 'post_movie_with_poster',
+            processor: MovieStateProcessorPOST::class,
+        ),
+        new Get(),
+        new Delete(),
+        new Patch(),
+    ],
     normalizationContext: ['groups' => ['Movie:read']],
     denormalizationContext: ['groups' => ['Movie:write']]
 )]

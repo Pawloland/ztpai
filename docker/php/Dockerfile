@@ -1,7 +1,7 @@
 FROM php:8.4.4-fpm-alpine3.21
 
 ## Install necessary dependencies
-RUN apk add --no-cache $PHPIZE_DEPS linux-headers bash curl \
+RUN apk add --no-cache $PHPIZE_DEPS linux-headers bash curl shadow sudo\
     && pecl install xdebug-3.4.2 \
     && docker-php-ext-enable xdebug \
     && apk del $PHPIZE_DEPS
@@ -40,3 +40,12 @@ RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.alpine.sh' 
     apk add --no-cache symfony-cli
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
+
+# Copy the script into the container
+COPY ./docker/php/poster_saver /sbin/poster_saver
+
+# Convert CRLF to LF using sed (in-place edit)
+RUN sed -i 's/\r$//' /sbin/poster_saver \
+    && chown 0:0 /sbin/poster_saver \
+    && chmod 755 /sbin/poster_saver
+

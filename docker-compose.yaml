@@ -18,7 +18,19 @@ services:
       - XDEBUG_MODE=debug # to connect to xdebug from phpstorm: File > Settings > PHP > Servers > + >
       # Name: whatever, Host: 127.0.0.1 (localhost can not work), Port: 8000, Debugger: Xdebug,
       # set absolute path on the server for Project_files/(path of the project here)/symfony to /app
-    command: symfony server:start --no-interaction --allow-all-ip --no-tls
+      - FILESAVER_UID=1000 # docker host UID of the owner of the bind mounted directory in /app under the php container
+      - FILESAVER_GID=1000 # likewise for GID
+      - FILESAVER_USER=filesaver # username of the user that will be created inside the container with UID and GID specified above
+      # Those two variables are used when saving files under /app directory, so that they are owned by the user on the host system
+      # so both container and host can read/write to the files (UID and GID is changed only for the write operation,
+      # because for read operations groups or other users permissions are enough most of the time)
+    command: |
+      bash -c '
+        addgroup -g "$$FILESAVER_GID" "$$FILESAVER_USER" && \
+        adduser -D -h /dev/null -H -u "$$FILESAVER_UID" -G "$$FILESAVER_USER" -s /sbin/nologin "$$FILESAVER_USER" && \
+        echo "www-data ALL=("$$FILESAVER_USER") NOPASSWD: /sbin/poster_saver" >  /etc/sudoers && \
+        symfony server:start --no-interaction --allow-all-ip --no-tls
+      '
 
   postgres:
     container_name: postgres
