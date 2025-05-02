@@ -8,14 +8,15 @@ main._ {
 form.auth {
     display: flex;
     flex-direction: column;
-    padding: 2em;
+    padding: 2em 0;
     gap: 15px;
-    min-width: 220px;
+    max-width: 100%;
 }
 
 form.auth > label {
     color: var(--main-color);
     font-size: 1.5em;
+    word-break: break-word;
 }
 
 form.auth > input {
