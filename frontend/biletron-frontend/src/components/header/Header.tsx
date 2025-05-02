@@ -24,17 +24,27 @@ function Header({links, title, message}: { links?: HeaderLink[] | null, title?: 
 
     return (
         <header className={styles._}>
-            <img src="/logo.png" alt="Biletron" width="100" height="100"/>
+            <img src="/logo.png" alt="Biletron"/>
             {title && <h1>{title}</h1>}
             {message && message}
 
 
             <ul ref={navRef}>
+                <li>
+                    <Icon
+                        href={AllowedRoutes.Hamburger}
+                        iconClass={AllowedIconClass.Hamburger}
+                        text=""
+                        onClick={toogleActive}
+                        className={styles.align_right}
+                    />
+                </li>
                 {links?.map((link, index) => (
                     <li key={index}>
                         <Icon href={link.route} iconClass={link.iconClass} text={link.text} onClick={link.onClick}/>
                     </li>
                 ))}
+
             </ul>
 
             <ul>

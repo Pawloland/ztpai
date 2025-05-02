@@ -4,6 +4,7 @@ import {AllowedIconClass} from "../../components/icon/Icon.tsx";
 import {FormEvent, useEffect, useState} from "react";
 import styles from './Login.module.css';
 import {useNavigate} from "react-router";
+
 export enum AllowedVariants {
     Worker = "worker",
     Client = "client",
