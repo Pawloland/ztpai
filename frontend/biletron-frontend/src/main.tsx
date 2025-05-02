@@ -15,6 +15,7 @@ createRoot(document.getElementById('root')!).render(
             <Routes>
                 {/*<Route path="/" element={<Navigate to="/movies" replace />} />*/}
                 <Route path={AllowedRoutes.Home} element={<Movies/>}/>
+                <Route path={AllowedRoutes.SelectPlace} element={<div> Select place page </div>}/>
                 <Route path={AllowedRoutes.Login} element={<Login variant={AllowedVariants.Client}/>}/>
                 <Route path={AllowedRoutes.Register} element={<Register/>}/>
                 <Route path={AllowedRoutes.WorkerLogin} element={<Login variant={AllowedVariants.Worker}/>}/>
