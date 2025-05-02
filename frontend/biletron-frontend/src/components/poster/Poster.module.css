@@ -1,0 +1,52 @@
+a._ {
+    text-decoration: none;
+    max-width: 100%;
+}
+
+div.poster {
+    width: 214px;
+    height: 323px;
+    flex-shrink: 0;
+    box-shadow: 10px 10px 5px 0 rgba(0, 0, 0, 0.42);
+
+    border-radius: 10px;
+    background-position: 50%;
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    max-width: 100%;
+
+}
+
+
+div.poster > div.overlay {
+    width: 214px;
+    height: 323px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.80) 0%, rgba(39, 39, 39, 0.43) 20.5%, rgba(255, 255, 255, 0.00) 39.5%);
+    background-blend-mode: darken;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    align-items: center;
+    /*color: white;*/
+    padding: 10px;
+    box-sizing: border-box;
+
+
+    color: var(--main-color);
+    text-align: center;
+    /*font-family: "Roboto Flex";*/
+    font-size: 26px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+
+    max-width: 100%;
+    word-break: break-word;
+    break-inside: initial;
+    overflow: clip;
+}
+
