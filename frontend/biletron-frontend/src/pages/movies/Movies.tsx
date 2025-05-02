@@ -1,8 +1,10 @@
+import styles from "./Movies.module.css";
 import {useEffect, useState} from 'react';
 import {Movie, MoviesResponse} from "../../types/Movie.ts";
 import Header from "../../components/header/Header.tsx";
 import {AllowedRoutes} from "../../types/Routes.ts";
 import {AllowedIconClass} from "../../components/icon/Icon.tsx";
+import Poster from "../../components/poster/Poster.tsx";
 
 
 function Movies() {
@@ -46,27 +48,17 @@ function Movies() {
                     iconClass: AllowedIconClass.Pen,
                     text: 'Zarejestruj',
                 }]}/>
-            <main>
-                <div className="wrapper">
-                    <div className="pane right">
-                        <div className="header">
-                            <h2>Movies</h2>
-                            <button onClick={fetchMovies}>Refresh</button>
-                        </div>
-
-                        {loading ? (
-                            <p>Loading movies...</p>
-                        ) : (
-                            <ul>
-                                {movies.map((movie) => (
-                                    <li key={movie.id_movie}>
-                                        <a href={`/api/movies/${movie.id_movie}`}>{movie.title}</a>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
-                </div>
+            <main className={styles._}>
+                {movies.map(movie => {
+                    return (
+                        <Poster
+                            key={movie.id_movie}
+                            ID_Movie={movie.id_movie}
+                            poster={movie.poster}
+                            title={movie.title}
+                        />
+                    );
+                })}
 
             </main>
         </>
