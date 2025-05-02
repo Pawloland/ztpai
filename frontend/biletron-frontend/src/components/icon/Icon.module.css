@@ -13,6 +13,7 @@ a._ {
         width: 100%;
         box-sizing: border-box;
         justify-content: space-between;
+        text-align: end;
     }
 
 }
@@ -50,6 +51,7 @@ a._:hover > .icon {
     mask-repeat: no-repeat;
     margin-right: 5px;
     mask-position: center;
+    min-width: 25px;
 }
 
 a._:hover {

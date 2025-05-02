@@ -11,9 +11,9 @@ export enum AllowedIconClass {
 }
 
 
-function Icon({href, iconClass, text, onClick}: { href: AllowedRoutes; iconClass: AllowedIconClass; text: string; onClick?: () => void }) {
+function Icon({href, iconClass, text, onClick, className}: { href: AllowedRoutes; iconClass: AllowedIconClass; text: string; onClick?: () => void; className?: string }) {
     return (
-        <Link to={href} className={styles._} onClick={(e) => {
+        <Link to={href} className={`${styles._} ${className || ''}`} onClick={(e) => {
             if (onClick) {
                 e.preventDefault();
                 onClick();
