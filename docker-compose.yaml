@@ -39,6 +39,9 @@ services:
         addgroup -g "$$FILESAVER_GID" "$$FILESAVER_USER" && \
         adduser -D -h /dev/null -H -u "$$FILESAVER_UID" -G "$$FILESAVER_USER" -s /sbin/nologin "$$FILESAVER_USER" && \
         echo "www-data ALL=("$$FILESAVER_USER") NOPASSWD: /sbin/poster_saver" >  /etc/sudoers && \
+        
+        symfony server:stop ; \
+    
         symfony server:start --no-interaction --allow-all-ip --no-tls
       '
 
