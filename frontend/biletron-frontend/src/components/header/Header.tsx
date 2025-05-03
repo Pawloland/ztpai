@@ -1,5 +1,5 @@
 import styles from './Header.module.css';
-import {useRef} from 'react';
+import {useRef, useState} from 'react';
 import Icon, {AllowedIconClass} from "../icon/Icon.tsx";
 import {AllowedRoutes} from "../../types/Routes.ts";
 
@@ -11,31 +11,33 @@ export interface HeaderLink {
     onClick?: () => void
 }
 
-function Header({links, title, message}: { links?: HeaderLink[] | null, title?: string | null, message?: string | null }) {
+
+function Header({links, title}: { links?: HeaderLink[] | null, title?: string | null }) {
+    const [c, setC] = useState<number>(0);
 
     const navRef = useRef<HTMLUListElement>(null);
 
-    const toogleActive = () => {
-        if (navRef.current) {
-            navRef.current.classList.toggle(styles.active);
-        }
-    }
+    const toggleActive = () => {
+        navRef.current?.classList.toggle(styles.active);
+    };
 
 
     return (
         <header className={styles._}>
-            <img src="/logo.png" alt="Biletron"/>
+            <img src="/logo.png" alt="Logo" onClick={
+                () => {
+                    setC(c+1);
+                    // Messages.showMessage(c.toString(),4000);
+                }
+            }/>
             {title && <h1>{title}</h1>}
-            {message && message}
-
-
             <ul ref={navRef}>
                 <li>
                     <Icon
                         href={AllowedRoutes.Hamburger}
                         iconClass={AllowedIconClass.Hamburger}
                         text=""
-                        onClick={toogleActive}
+                        onClick={toggleActive}
                         className={styles.align_right}
                     />
                 </li>
@@ -53,12 +55,11 @@ function Header({links, title, message}: { links?: HeaderLink[] | null, title?: 
                         href={AllowedRoutes.Hamburger}
                         iconClass={AllowedIconClass.Hamburger}
                         text=""
-                        onClick={toogleActive}
+                        onClick={toggleActive}
                     />
                 </li>
             </ul>
         </header>
     );
 }
-
 export default Header;

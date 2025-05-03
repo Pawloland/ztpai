@@ -8,10 +8,12 @@ import "./index.css"
 import Login, {AllowedVariants} from "./pages/login/Login.tsx";
 import Dashboard from "./pages/dashboard/Dashboard.tsx";
 import Register from "./pages/register/Register.tsx";
+import Messages from "./components/messages/Messages.tsx";
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <BrowserRouter>
+            <Messages/>
             <Routes>
                 {/*<Route path="/" element={<Navigate to="/movies" replace />} />*/}
                 <Route path={AllowedRoutes.Home} element={<Movies/>}/>
