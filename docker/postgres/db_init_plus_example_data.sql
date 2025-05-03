@@ -12,11 +12,9 @@ CREATE TABLE client (
     id_client SERIAL PRIMARY KEY,
     client_name VARCHAR(40) NOT NULL,
     client_surname VARCHAR(40) NOT NULL,
-    nick VARCHAR(40) NOT NULL,
+    nick VARCHAR(40) NOT NULL UNIQUE,
     password_hash VARCHAR(80) NOT NULL,
-    mail VARCHAR(320) NOT NULL,
-    UNIQUE (nick),
-    UNIQUE (mail)
+    mail VARCHAR(320) NOT NULL UNIQUE
 );
 ALTER SEQUENCE client_id_client_seq RESTART WITH 31;
 
@@ -1107,38 +1105,38 @@ END;
 $$ LANGUAGE plpgsql;
 
 
--- ----------------------------
--- Procedure structure for new_client
--- ----------------------------
-DROP FUNCTION IF EXISTS new_client;
-CREATE OR REPLACE FUNCTION new_client(
-    vcname VARCHAR(40),
-    vcsurname VARCHAR(40),
-    vnick VARCHAR(40),
-    vpasshash VARCHAR(80),
-    vmail VARCHAR(320)
-)
-    RETURNS VOID AS
-$$
-DECLARE
-    -- Declare any necessary variables (if needed)
-BEGIN
-    -- Start the transaction
-    -- SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-
-    -- Check if the nickname or email already exists
-    IF EXISTS (SELECT 1 FROM client WHERE nick = vnick OR mail = vmail) THEN
-        RAISE EXCEPTION 'Nazwa lub mail jest zajęta';
-    END IF;
-
-    -- Insert the new client
-    INSERT INTO client (client_name, client_surname, nick, password_hash, mail)
-    VALUES (vcname, vcsurname, vnick, vpasshash, vmail);
-
-    -- Commit the transaction
-    -- COMMIT;
-END;
-$$ LANGUAGE plpgsql;
+-- -- ----------------------------
+-- -- Procedure structure for new_client
+-- -- ----------------------------
+-- DROP FUNCTION IF EXISTS new_client;
+-- CREATE OR REPLACE FUNCTION new_client(
+--     vcname VARCHAR(40),
+--     vcsurname VARCHAR(40),
+--     vnick VARCHAR(40),
+--     vpasshash VARCHAR(80),
+--     vmail VARCHAR(320)
+-- )
+--     RETURNS VOID AS
+-- $$
+-- DECLARE
+--     -- Declare any necessary variables (if needed)
+-- BEGIN
+--     -- Start the transaction
+--     -- SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+--
+--     -- Check if the nickname or email already exists
+--     IF EXISTS (SELECT 1 FROM client WHERE nick = vnick OR mail = vmail) THEN
+--         RAISE EXCEPTION 'Nazwa lub mail jest zajęta';
+--     END IF;
+--
+--     -- Insert the new client
+--     INSERT INTO client (client_name, client_surname, nick, password_hash, mail)
+--     VALUES (vcname, vcsurname, vnick, vpasshash, vmail);
+--
+--     -- Commit the transaction
+--     -- COMMIT;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
 
 -- ----------------------------
