@@ -3,13 +3,14 @@
 namespace App\Repository;
 
 use App\Entity\ClientSessions;
+use App\Repository\BaseSessions\BaseSessionsRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<ClientSessions>
  */
-class ClientSessionsRepository extends ServiceEntityRepository
+class ClientSessionsRepository extends BaseSessionsRepository
 {
     public function __construct(ManagerRegistry $registry)
     {

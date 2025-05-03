@@ -3,13 +3,15 @@
 namespace App\Repository;
 
 use App\Entity\WorkerSessions;
+use App\Enum\SessionVariant;
+use App\Repository\BaseSessions\BaseSessionsRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @extends ServiceEntityRepository<WorkerSessions>
  */
-class WorkerSessionsRepository extends ServiceEntityRepository
+class WorkerSessionsRepository extends BaseSessionsRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
