@@ -57,7 +57,11 @@ function Login({variant}: { variant: AllowedVariants }) {
                 console.log('Success:', data);
                 setMessage('Zalogowano pomyślnie!');
                 setTimeout(() => {
-                    navigate(AllowedRoutes.Dashboard);
+                    if (variant === AllowedVariants.Worker) {
+                        navigate(AllowedRoutes.Dashboard);
+                    } else {
+                        navigate(AllowedRoutes.Home);
+                    }
                 }, 1000);
             } else {
                 const errorText = await response.text();

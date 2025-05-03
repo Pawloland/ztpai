@@ -5,11 +5,15 @@ import Header from "../../components/header/Header.tsx";
 import {AllowedRoutes} from "../../types/Routes.ts";
 import {AllowedIconClass} from "../../components/icon/Icon.tsx";
 import Poster from "../../components/poster/Poster.tsx";
+import {destroyCookie, getCookieURIEncodedJSONAsObject} from "../../utils/cookies.tsx";
+import {AuthCookie, AuthCookieName} from "../../types/AuthCookie.ts";
+import Messages from "../../components/messages/Messages.tsx";
 
 
 function Movies() {
     const [movies, setMovies] = useState<Movie[]>([]);
     const [loading, setLoading] = useState(true);
+    const [email, setEmail] = useState<string | null>(null);
 
     const fetchMovies = async () => {
         try {
@@ -33,21 +37,53 @@ function Movies() {
             fetchMovies()
         };
         initializeData();
+        const auth_cookie = getCookieURIEncodedJSONAsObject(AuthCookieName.Client) as AuthCookie | null;
+        console.log(auth_cookie)
+        setEmail(auth_cookie?.email ?? null);
+        console.log(email)
     }, []);
 
     return (
         <>
             <Header
                 title="Twój system do kupowania biletów on-line!"
-                links={[{
-                    route: AllowedRoutes.Login,
-                    iconClass: AllowedIconClass.Pen,
-                    text: 'Zaloguj',
-                }, {
-                    route: AllowedRoutes.Register,
-                    iconClass: AllowedIconClass.Pen,
-                    text: 'Zarejestruj',
-                }]}/>
+                links={
+                    email === null
+                        ? [{
+                            route: AllowedRoutes.Login,
+                            iconClass: AllowedIconClass.Pen,
+                            text: 'Zaloguj',
+                        }, {
+                            route: AllowedRoutes.Register,
+                            iconClass: AllowedIconClass.Pen,
+                            text: 'Zarejestruj',
+                        }]
+                        : [{
+                            route: AllowedRoutes.Logout,
+                            iconClass: AllowedIconClass.Logout,
+                            text: email,
+                            onClick: () => {
+                                fetch('/api' + AllowedRoutes.Logout, {
+                                    method: 'GET'
+                                })
+                                    .then((res) => {
+                                        if (res.ok) {
+                                            Messages.showMessage('Wylogowano pomyślnie!', 4000);
+                                        } else {
+                                            Messages.showMessage('Nie udało się wylogować, bo taka sesja nie istnieje', 4000);
+                                        }
+                                        destroyCookie(AuthCookieName.Client);
+                                        setEmail(null);
+
+                                    })
+                                    .catch((err) => {
+                                        console.error('Error logging out:', err);
+                                        destroyCookie(AuthCookieName.Client);
+                                    });
+                            }
+                        }]
+                }
+            />
             <main className={styles._}>
                 {movies.map(movie => {
                     return (
