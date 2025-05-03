@@ -6,7 +6,6 @@ use App\Entity\Client;
 use App\Entity\Worker;
 use App\Enum\CookieVariant;
 use App\Service\SecurityService;
-use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,13 +15,6 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class SecurityController extends AbstractController
 {
-
-
-    public function __construct()
-    {
-    }
-
-
     #[Route('/api/login', name: 'login', methods: ['POST'])]
     public function login(Request $request, EntityManagerInterface $em): JsonResponse
     {
@@ -115,7 +107,7 @@ final class SecurityController extends AbstractController
 
 
     #[Route('/api/register', name: 'register', methods: ['POST'])]
-    public function register(Request $request,  EntityManagerInterface $em): JsonResponse
+    public function register(Request $request, EntityManagerInterface $em): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
