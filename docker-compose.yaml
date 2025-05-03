@@ -67,7 +67,7 @@ services:
   pgadmin:
     env_file:
       - ./.env
-    image: dpage/pgadmin4:latest
+    image: dpage/pgadmin4:9.3
     container_name: pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
