@@ -7,13 +7,13 @@ import {AllowedIconClass} from "../../components/icon/Icon.tsx";
 import {useNavigate} from "react-router";
 import {AuthCookieName, AuthWorkerCookie} from "../../types/AuthCookie.ts";
 import {destroyCookie, getCookieURIEncodedJSONAsObject} from "../../utils/cookies.tsx";
+import Messages from "../../components/messages/Messages.tsx";
 
 
 function Dashboard() {
     const [movies, setMovies] = useState<Movie[]>([]);
     const [languages, setLanguages] = useState<Language[]>([]);
     const [loading, setLoading] = useState(true);
-    const [message, setMessage] = useState<string | null>(null);
     const [nick, setNick] = useState<string>("Wyloguj");
     const [formData, setFormData] = useState({
         title: '',
@@ -125,7 +125,6 @@ function Dashboard() {
         <>
             <Header
                 title="Panel administracyjny"
-                message={message}
                 links={[{
                     route: AllowedRoutes.WorkerLogout,
                     iconClass: AllowedIconClass.Logout,
@@ -136,15 +135,12 @@ function Dashboard() {
                         })
                             .then((res) => {
                                 if (res.ok) {
-                                    setMessage('Wylogowano pomyślnie!');
+                                    Messages.showMessage('Wylogowano pomyślnie!', 4000);
                                     setTimeout(() => {
-                                        navigate(AllowedRoutes.Home);
-                                    }, 1000);
+                                        navigate(AllowedRoutes.WorkerLogin)
+                                    }, 1000)
                                 } else {
-                                    setMessage('Nie udało się wylogować, bo taka sesja nie istnieje');
-                                    setTimeout(() => {
-                                        navigate(AllowedRoutes.Home);
-                                    }, 1000);
+                                    Messages.showMessage('Nie udało się wylogować, bo taka sesja nie istnieje', 4000);
                                 }
                             })
                             .catch((err) => {
