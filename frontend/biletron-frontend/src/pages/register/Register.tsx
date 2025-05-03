@@ -33,8 +33,8 @@ function Register() {
             setMessage('Hasło musi mieć co najmniej 8 znaków');
             return;
         }
-
-        payload.pop('password_rep'); // Remove the password_rep field from the payload
+        console.log(payload)
+        delete payload.password_rep; // Remove the password_rep field from the payload
 
         try {
             const response = await fetch(action, {
@@ -50,12 +50,17 @@ function Register() {
                 console.log('Success:', data);
                 setMessage('Zarejestrowano pomyślnie!');
                 setTimeout(() => {
-                    navigate(AllowedRoutes.Home);
+                    navigate(AllowedRoutes.Login);
                 }, 1000);
             } else {
                 const errorText = await response.text();
-                console.error('Server error:', errorText);
-                setMessage('Wprowadź poprawne dane');
+                if (response.status === 409) {
+                    console.error('Conflict error:', errorText);
+                    setMessage('Użytkownik o podanym adresie e-mail już istnieje');
+                } else {
+                    console.error('Server error:', errorText);
+                    setMessage('Wprowadź poprawne dane');
+                }
             }
         } catch (error) {
             console.error('Network error:', error);
