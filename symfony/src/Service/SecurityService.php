@@ -5,11 +5,8 @@ namespace App\Service;
 use App\Enum\CookieVariant;
 use App\Enum\SessionVariant;
 use App\Repository\BaseSessions\BaseSessionsRepository;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,7 +18,7 @@ class SecurityService
     private const int MINUTES = 90;
 
 
-    public static function createAuthCookie(string $identifier_value, CookieVariant $variant, Request $request, Response &$response,EntityManagerInterface $em): void
+    public static function createAuthCookie(string $identifier_value, CookieVariant $variant, Request $request, Response &$response, EntityManagerInterface $em): void
     {
         $HTTPONLY = $variant->HTTPONLY();
         $NOTHTTPONLY = $variant->NOTHTTPONLY();
@@ -67,7 +64,7 @@ class SecurityService
         $_COOKIE[$NOTHTTPONLY] = $cookieValue;
     }
 
-    public static function updateAuthCookie(CookieVariant $variant, Request $request, Response &$response,EntityManagerInterface $em): bool
+    public static function updateAuthCookie(CookieVariant $variant, Request $request, Response &$response, EntityManagerInterface $em): bool
     {
         $HTTPONLY = $variant->HTTPONLY();
         $NOTHTTPONLY = $variant->NOTHTTPONLY();

@@ -23,7 +23,7 @@ enum SessionVariant: string
     public function IDENTIFIER(): string
     {
         return match ($this) {
-            self::CLIENT => 'email',
+            self::CLIENT => 'mail',
             self::WORKER => 'nick',
         };
     }

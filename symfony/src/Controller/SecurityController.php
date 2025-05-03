@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Client;
 use App\Entity\Worker;
 use App\Enum\CookieVariant;
 use App\Service\SecurityService;
@@ -23,23 +24,33 @@ final class SecurityController extends AbstractController
 
 
     #[Route('/api/login', name: 'login', methods: ['POST'])]
-    public function login(Request $request): JsonResponse
+    public function login(Request $request, EntityManagerInterface $em): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
+        $response = new JsonResponse();
 
-        if (json_last_error() !== JSON_ERROR_NONE || !isset($data['email']) || !isset($data['password'])) {
-            return new JsonResponse(['error' => 'Niepoprawne dane'], Response::HTTP_BAD_REQUEST);
+        if (SecurityService::updateAuthCookie(CookieVariant::CLIENT, $request, $response, $em)) {
+            return $response->setData(['message' => 'Login successful.']);
         }
 
+        $data = json_decode($request->getContent(), true);
+        $email = $data['email'] ?? null;
+        $password = $data['password'] ?? null;
 
-        return $this->json([
-            'login' => 'OK',
-            'path' => 'src/Controller/SecurityController.php',
-        ]);
+        if (!$email || !$password) {
+            return new JsonResponse(['error' => 'Missing credentials.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $client = $em->getRepository(Client::class)->findOneBy(['mail' => $email]);
+        if (!$client || !password_verify($password, $client->getPasswordHash())) {
+            return new JsonResponse(['error' => 'Invalid credentials.'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        SecurityService::createAuthCookie($email, CookieVariant::CLIENT, $request, $response, $em);
+        return $response->setData(['message' => 'Login successful.']);
     }
 
     #[Route('/api/workerLogin', name: 'worker_login', methods: ['POST'])]
-    public function workerLogin(Request $request, EntityManagerInterface $em, Connection $connection): JsonResponse
+    public function workerLogin(Request $request, EntityManagerInterface $em): JsonResponse
     {
         $response = new JsonResponse();
 
@@ -66,12 +77,11 @@ final class SecurityController extends AbstractController
 
 
     #[Route('/api/logout', name: 'logout', methods: ['GET'])]
-    public function logout(Request $request): JsonResponse
+    public function logout(Request $request, EntityManagerInterface $em): JsonResponse
     {
-        return $this->json([
-            'logout' => 'OK',
-            'path' => 'src/Controller/SecurityController.php',
-        ]);
+        $response = new JsonResponse();
+        SecurityService::destroyAuthCookie(CookieVariant::CLIENT, $request, $response, $em);
+        return $response->setData(['message' => 'Logout successfull.']);
     }
 
     private function destroyCookies(Response &$response, string $cookieNameHTTPOnly, string $cookieName): void
@@ -95,7 +105,7 @@ final class SecurityController extends AbstractController
     }
 
     #[Route('/api/workerLogout', name: 'worker_logout', methods: ['GET'])]
-    public function workerLogout(Request $request, Connection $connection, EntityManagerInterface $em): JsonResponse
+    public function workerLogout(Request $request, EntityManagerInterface $em): JsonResponse
     {
         $response = new JsonResponse();
         SecurityService::destroyAuthCookie(CookieVariant::WORKER, $request, $response, $em);
@@ -105,26 +115,31 @@ final class SecurityController extends AbstractController
 
 
     #[Route('/api/register', name: 'register', methods: ['POST'])]
-    public function register(Request $request): JsonResponse
+    public function register(Request $request,  EntityManagerInterface $em): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
-        if (json_last_error() !== JSON_ERROR_NONE ||
-            !isset($data['email']) || !isset($data['password']) || !isset($data['password_rep'])) {
-            return new JsonResponse(['error' => 'Niepoprawne dane'], Response::HTTP_BAD_REQUEST);
+        if (!isset($data['email'], $data['password']) || strlen($data['password']) < 8) {
+            return new JsonResponse(['error' => 'Invalid data or password too short'], Response::HTTP_BAD_REQUEST);
         }
 
-        if ($data['password'] !== $data['password_rep']) {
-            return new JsonResponse(['error' => 'Hasła nie są takie same'], Response::HTTP_BAD_REQUEST);
-        } else if (strlen($data['password']) < 8) {
-            return new JsonResponse(['error' => 'Hasło jest za krótkie'], Response::HTTP_BAD_REQUEST);
+        $hashedPassword = password_hash($data['password'], PASSWORD_BCRYPT);
+
+        $client = new Client()
+            ->setClientName('')
+            ->setClientSurname('')
+            ->setNick($data['email'])
+            ->setPasswordHash($hashedPassword)
+            ->setMail($data['email']);
+
+        try {
+            $em->persist($client);
+            $em->flush();
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'An error occurred while saving the client.'], Response::HTTP_CONFLICT);
         }
 
-
-        return $this->json([
-            'register' => 'OK',
-            'path' => 'src/Controller/SecurityController.php',
-        ]);
+        return new JsonResponse(['message' => 'Registration successful'], Response::HTTP_CREATED);
     }
 
 }
