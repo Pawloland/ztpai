@@ -8,6 +8,7 @@ import {useNavigate} from "react-router";
 import {AuthCookieName, AuthWorkerCookie} from "../../types/AuthCookie.ts";
 import {destroyCookie, getCookieURIEncodedJSONAsObject} from "../../utils/cookies.tsx";
 import Messages from "../../components/messages/Messages.tsx";
+import List from "../../components/list/List.tsx";
 import styles from './Dashboard.module.css';
 
 
@@ -153,123 +154,109 @@ function Dashboard() {
                             })
                     }
                 }]}/>
-            <main>
-                <div className="wrapper">
-                    <div className="pane left">
-                        <h2>Add Movie</h2>
-                        <form onSubmit={handleAddMovie}>
-                            <label>
-                                Title:
-                                <input type="text" name="title" value={formData.title} onChange={handleInputChange} required/>
-                            </label>
-                            <label>
-                                Original Title:
-                                <input type="text" name="original_title" value={formData.original_title} onChange={handleInputChange} required/>
-                            </label>
-                            <label>
-                                Duration:
-                                <input
-                                    type="time"
-                                    step="1"
-                                    name="duration"
-                                    value={formData.duration}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </label>
-                            <label>
-                                Description:
-                                <textarea name="description" value={formData.description} onChange={handleInputChange} required/>
-                            </label>
-                            {/*<label>*/}
-                            {/*    Poster filename:*/}
-                            {/*    <input type="text" name="poster" value={formData.poster} onChange={handleInputChange} required/>*/}
-                            {/*</label>*/}
-                            <label>
-                                Language:
-                                <select
-                                    name="languageViaIdLanguage"
-                                    value={formData.languageViaIdLanguage}
-                                    onChange={handleInputChange}
-                                    required
-                                >
-                                    {languages.map(lang => (
-                                        <option key={`/api/languages/${lang.id_language}`} value={`/api/languages/${lang.id_language}`}>
-                                            {lang.language_name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </label>
-                            <label>
-                                Dubbing:
-                                <select
-                                    name="languageViaIdDubbing"
-                                    value={formData.languageViaIdDubbing}
-                                    onChange={handleInputChange}
-                                    required
-                                >
-                                    {languages.map(lang => (
-                                        <option key={`/api/languages/${lang.id_language}`} value={`/api/languages/${lang.id_language}`}>
-                                            {lang.language_name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </label>
-                            <label>
-                                Subtitles:
-                                <select
-                                    name="languageViaIdSubtitles"
-                                    value={formData.languageViaIdSubtitles}
-                                    onChange={handleInputChange}
-                                    required
-                                >
-                                    {languages.map(lang => (
-                                        <option key={`/api/languages/${lang.id_language}`} value={`/api/languages/${lang.id_language}`}>
-                                            {lang.language_name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </label>
-                            <button type="submit">Add Movie</button>
-                        </form>
-                    </div>
-                    <div className="pane right">
-                        <div className="header">
-                            <h2>Movies</h2>
-                            <button onClick={fetchMovies}>Refresh</button>
-                        </div>
+            <main className={styles.main}>
 
-                        {loading ? (
-                            <p>Loading movies...</p>
-                        ) : (
-                            <ul>
-                                {movies.map((movie) => (
-                                    <li key={movie.id_movie}>
-                                        <a href={`/api/movies/${movie.id_movie}`}>{movie.title}</a>
-                                        <button
-                                            onClick={() => {
-                                                fetch(`/api/movies/${movie.id_movie}`, {
-                                                    method: 'DELETE',
-                                                    headers: {'Content-Type': 'application/json'},
-                                                })
-                                                    .then((res) => {
-                                                        if (res.ok) {
-                                                            fetchMovies(); // Refresh the movie list
-                                                        } else {
-                                                            console.error('Failed to delete movie');
-                                                        }
-                                                    })
-                                                    .catch((err) => console.error('Error deleting movie:', err));
-                                            }}
-                                        >
-                                            Delete
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
-                </div>
+                <List title={"Filmy"} header={["ID", "Tytuł", "Długość"]} data={[["1", "asdadads", "1:0:0"], ["2", "asd", "1:2:0"]]}
+                      onColumnValueClick={
+                          (value: any) => {
+                              console.log(value);
+                              console.log(value[0]);
+                          }
+                      }
+                />
+                <List title={"Rezerwacje"} header={["ID", "Mail", "ID Sali", "ID Fotel", "Rząd", "Kolumna", "Typ siedzenia", "Tytuł", "Typ seansu", "Rozpoczęcie", "Cena brutto"]}
+                      data={[]}
+                      onColumnValueClick={
+                          (value: any) => {
+                              console.log(value);
+                              console.log(value[0]);
+                          }
+                      }
+                />
+                <List title={"Nadchodzące seanse"} header={["ID", "Data", "Godzina", "Tytuł", "Sala", "Typ"]}
+                      data={[
+                          ["1001", "2026.01.01 Thursday", "10:00", "Alien Romulus", "2", "2D"],
+                          ["1001", "2026.01.01 Thursday", "10:00", "Alien Romulus", "2", "2D"],
+                          ["1001", "2026.01.01 Thursday", "10:00", "Alien Romulus", "2", "2D"],
+                          ["1001", "2026.01.01 Thursday", "10:00", "Alien Romulus", "2", "2D"],
+                          ["1001", "2026.01.01 Thursday", "10:00", "Alien Romulus", "2", "2D"],
+                          ["1001", "2026.01.01 Thursday", "10:00", "Alien Romulus", "2", "2D"],
+                          ["1001", "2026.01.01 Thursday", "10:00", "Alien Romulus", "2", "2D"],
+                      ]}
+                      onColumnValueClick={
+                          (value: any) => {
+                              console.log(value);
+                              console.log(value[0]);
+                          }
+                      }
+                />
+
+                <List title={"Klienci"} header={["ID", "Imię", "Nazwisko", "Nick", "Mail"]}
+                      data={[
+                          ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
+                          ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
+                          ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
+                          ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
+                          ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
+                          ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
+                          ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
+                          ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
+                      ]}
+                      onColumnValueClick={
+                          (value: any) => {
+                              console.log(value);
+                              console.log(value[0]);
+                          }
+                      }
+                />
+
+                <List title={"Konta administracyjne"} header={["ID", "Typ", "Imię", "Nazwisko", "Nick"]}
+                      data={[
+                          ["7", "Admin", "admin", "admin", "admin"],
+                          ["7", "Admin", "admin", "admin", "admin"],
+                          ["7", "Admin", "admin", "admin", "admin"],
+                          ["7", "Admin", "admin", "admin", "admin"],
+                          ["7", "Admin", "admin", "admin", "admin"],
+                          ["7", "Admin", "admin", "admin", "admin"],
+                          ["7", "Admin", "admin", "admin", "admin"],
+                          ["7", "Admin", "admin", "admin", "admin"],
+                      ]}
+                      onColumnValueClick={
+                          (value: any) => {
+                              console.log(value);
+                              console.log(value[0]);
+                          }
+                      }
+                />
+
+                <List title={"Sesje klientów"} header={["ID", "Nick", "Data wygaśnięcia"]}
+                      data={[
+                          ["6", "admin@admin.admin", "2025-05-05 16:45:45.993925"],
+                          ["6", "admin@admin.admin", "2025-05-05 16:45:45.993925"],
+                          ["6", "admin@admin.admin", "2025-05-05 16:45:45.993925"],
+                      ]}
+                      onColumnValueClick={
+                          (value: any) => {
+                              console.log(value);
+                              console.log(value[0]);
+                          }
+                      }
+                />
+
+
+                <List title={"Sesje pracowników"} header={["ID", "Nick", "Data wygaśnięcia"]}
+                      data={[
+                          ["6", "admin", "2025-05-05 16:45:45.993925"],
+                          ["6", "admin", "2025-05-05 16:45:45.993925"],
+                          ["6", "admin", "2025-05-05 16:45:45.993925"],
+                      ]}
+                      onColumnValueClick={
+                          (value: any) => {
+                              console.log(value);
+                              console.log(value[0]);
+                          }
+                      }
+                />
 
             </main>
         </>
