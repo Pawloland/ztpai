@@ -8,6 +8,7 @@ import {useNavigate} from "react-router";
 import {AuthCookieName, AuthWorkerCookie} from "../../types/AuthCookie.ts";
 import {destroyCookie, getCookieURIEncodedJSONAsObject} from "../../utils/cookies.tsx";
 import Messages from "../../components/messages/Messages.tsx";
+import styles from './Dashboard.module.css';
 
 
 function Dashboard() {
