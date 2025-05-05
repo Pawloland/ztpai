@@ -10,6 +10,7 @@ import {destroyCookie, getCookieURIEncodedJSONAsObject} from "../../utils/cookie
 import Messages from "../../components/messages/Messages.tsx";
 import List from "../../components/list/List.tsx";
 import styles from './Dashboard.module.css';
+import InsertForm, {InputType} from "../../components/inserForm/InserForm.tsx";
 
 
 function Dashboard() {
@@ -123,6 +124,21 @@ function Dashboard() {
             .catch((err) => console.error('Error adding movie:', err));
     };
 
+    const text: InputType = {type: 'text', required: true}
+    const time: InputType = {type: 'time', required: true}
+    const textarea: InputType = {type: 'textarea', required: true}
+    const select: InputType = {
+        type: 'select',
+        required: true,
+        options: languages.map((lang) => ({
+            key: lang.language_name,
+            value: lang.id_language.toString()
+        })),
+        default_option: 0
+    }
+    const file: InputType = {type: 'file', required: false}
+
+
     return (
         <>
             <Header
@@ -155,7 +171,17 @@ function Dashboard() {
                     }
                 }]}/>
             <main className={styles.main}>
+                <InsertForm form_labels={["title", "original_title", "duration", "description", "language", "dubbing", "subtitles", "poster"]}
+                            submit_text={"Dodaj film"}
+                            labels={["Tytuł", "Tytuł oryginalny", "Długość", "Opis", "Język", "Dubbing", "Napisy", "Plakat"]}
+                            data={[text, text, time, textarea, select, select, select, file]}
+                            onSubmit={(e) => {
+                                console.log(e);
+                                e.preventDefault()
+                            }}
 
+
+                />
                 <List title={"Filmy"} header={["ID", "Tytuł", "Długość"]} data={[["1", "asdadads", "1:0:0"], ["2", "asd", "1:2:0"]]}
                       onColumnValueClick={
                           (value: any) => {
@@ -164,6 +190,19 @@ function Dashboard() {
                           }
                       }
                 />
+                <InsertForm form_labels={["title", "hall", "type", "date"]}
+                            submit_text={"Dodaj seans"}
+                            labels={["Film", "Sala", "Typ Seansu", "Data"]}
+                            data={[select,select,select,select]}
+                            onSubmit={(e) => {
+                                console.log(e);
+                                e.preventDefault()
+                            }}
+
+
+                />
+
+
                 <List title={"Rezerwacje"} header={["ID", "Mail", "ID Sali", "ID Fotel", "Rząd", "Kolumna", "Typ siedzenia", "Tytuł", "Typ seansu", "Rozpoczęcie", "Cena brutto"]}
                       data={[]}
                       onColumnValueClick={
