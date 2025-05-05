@@ -1,0 +1,24 @@
+
+div._ {
+    max-height: 400px;
+    flex-basis: auto;
+    justify-content: flex-start;
+}
+
+div._ > form > table > tbody > tr:hover {
+    background-color: var(--action-color);
+}
+
+
+div._ > form > table > thead > tr > th:first-child,
+div._ > form > table > tbody > tr > td:first-child {
+    text-align: right;
+}
+
+div._ > form > table > thead > tr > th {
+    text-align: left;
+}
+
+div._ > form > table > tbody > tr > td:last-child {
+    padding: 0;
+}
