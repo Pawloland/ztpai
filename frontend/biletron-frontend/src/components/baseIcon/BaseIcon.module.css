@@ -1,0 +1,10 @@
+span.icon {
+    background-color: var(--main-color);
+    border-radius: unset;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.icon:hover {
+    background-color: var(--header-background-color);
+}
