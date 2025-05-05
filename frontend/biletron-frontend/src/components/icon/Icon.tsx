@@ -8,6 +8,7 @@ export enum AllowedIconClass {
     Pen = 'icon-pen',
     Hamburger = 'icon-hamburger',
     Home = 'icon-home',
+    Bin = 'icon-bin',
 }
 
 
