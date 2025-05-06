@@ -59,7 +59,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
             processor: MovieStateProcessorPOST::class,
         ),
         new Get(),
-        new Delete(),
+        new Delete(
+            security: "is_granted('WORKER', object)",
+        ),
         new Patch(),
     ],
     normalizationContext: ['groups' => ['Movie:read']],
