@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
+use App\Enum\UserTypes;
 use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 //#[ApiResource(
 //    normalizationContext: ['groups' => ['Client:read']],
@@ -15,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: "client")]
 #[ORM\UniqueConstraint(name: "client_nick_key", columns: ["nick"])]
 #[ORM\UniqueConstraint(name: "client_mail_key", columns: ["mail"])]
-class Client
+class Client implements UserInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
@@ -172,5 +174,23 @@ class Client
         }
 
         return $this;
+    }
+
+    public function getRoles(): array
+    {
+        return [UserTypes::CLIENT->value]; // Clients don't have specific roles, but they are of type CLIENT
+
+    }
+
+    public function eraseCredentials(): void
+    {
+        // TODO: Implement eraseCredentials() method.
+        return;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        // TODO: Implement getUserIdentifier() method.
+        return $this->mail;
     }
 }

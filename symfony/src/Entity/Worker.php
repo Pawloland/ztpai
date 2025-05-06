@@ -2,10 +2,13 @@
 
 namespace App\Entity;
 
+use App\Enum\Permissions;
+use App\Enum\UserTypes;
 use App\Repository\WorkerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 //#[ApiResource(
 //    normalizationContext: ['groups' => ['Worker:read']],
@@ -15,7 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: "worker")]
 #[ORM\Index(name: "worker_id_worker_type_idx", columns: ["id_worker_type"])]
 #[ORM\UniqueConstraint(name: "worker_nick_key", columns: ["nick"])]
-class Worker
+class Worker implements UserInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
@@ -142,5 +145,38 @@ class Worker
         $this->workerType = $workerType;
 
         return $this;
+    }
+
+    public function getRoles(): array
+    {
+        $roles[] = UserTypes::WORKER->value; // Default for all workers
+        // Add permissions dynamically based on the worker's permissions
+        foreach ($this->workerType->getWorkerTypePermissions() as $permission) {
+            // Combine the user type with permission to form the role
+            $role = UserTypes::WORKER->value;
+            $permission_id = $permission->getPermissions()->getIdPerm();
+            $from_enum = Permissions::tryFrom($permission_id);
+            if ($from_enum === null) {
+                continue;
+            }
+            $role .= '_' . $from_enum->name;
+            $roles[] = $role; //Add only the roles that are implemented on backend in enum
+        }
+        // Always include a default role
+
+
+        return $roles;
+    }
+
+    public function eraseCredentials(): void
+    {
+        // TODO: Implement eraseCredentials() method.
+        return;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        // TODO: Implement getUserIdentifier() method.
+        return $this->nick;
     }
 }
