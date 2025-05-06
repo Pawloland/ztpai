@@ -31,14 +31,15 @@ abstract class BaseSessionsRepository extends ServiceEntityRepository
         ";
 
         $stmt = $conn->prepare($sql);
-        $result = $stmt->executeQuery([
-            'identifier_value' => $identifier_value,
-            'variant' => $variant->value,
-            'days' => $days,
-            'hours' => $hours,
-            'minutes' => $minutes,
-            'timezone' => 'UTC',
-        ])->fetchAssociative();
+
+        $stmt->bindValue('identifier_value', $identifier_value);
+        $stmt->bindValue('variant', $variant->value);
+        $stmt->bindValue('days', $days);
+        $stmt->bindValue('hours', $hours);
+        $stmt->bindValue('minutes', $minutes);
+        $stmt->bindValue('timezone', 'UTC');
+
+        $result = $stmt->executeQuery()->fetchAssociative();
 
 
         if (!$result) {
@@ -67,15 +68,16 @@ abstract class BaseSessionsRepository extends ServiceEntityRepository
         ";
 
         $stmt = $conn->prepare($sql);
-        $result = $stmt->executeQuery([
-            'identifier_value' => $identifier_value,
-            'variant' => $variant->value,
-            'token' => $token,
-            'days' => $days,
-            'hours' => $hours,
-            'minutes' => $minutes,
-            'timezone' => 'UTC',
-        ])->fetchAssociative();
+
+        $stmt->bindValue('identifier_value', $identifier_value);
+        $stmt->bindValue('variant', $variant->value);
+        $stmt->bindValue('token', $token);
+        $stmt->bindValue('days', $days);
+        $stmt->bindValue('hours', $hours);
+        $stmt->bindValue('minutes', $minutes);
+        $stmt->bindValue('timezone', 'UTC');
+
+        $result = $stmt->executeQuery()->fetchAssociative();
 
         if (!$result) {
             return false;
@@ -99,11 +101,13 @@ abstract class BaseSessionsRepository extends ServiceEntityRepository
         ";
 
         $stmt = $conn->prepare($sql);
-        $result = $stmt->executeQuery([
-            'identifier_value' => $identifier_value,
-            'variant' => $variant->value,
-            'token' => $token,
-        ])->fetchAssociative();
+
+        $stmt->bindValue('identifier_value', $identifier_value);
+        $stmt->bindValue('variant', $variant->value);
+        $stmt->bindValue('token', $token);
+
+        $result = $stmt->executeQuery()->fetchAssociative();
+
 
         if (!$result) {
             return false;
