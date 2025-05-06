@@ -10,6 +10,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class SecurityService
 {
@@ -64,7 +65,7 @@ class SecurityService
         $_COOKIE[$NOTHTTPONLY] = $cookieValue;
     }
 
-    public static function updateAuthCookie(CookieVariant $variant, Request $request, Response &$response, EntityManagerInterface $em): bool
+    public static function updateAuthCookie(CookieVariant $variant, Request $request, Response &$response, EntityManagerInterface $em, ?UserInterface &$user = null): bool
     {
         $HTTPONLY = $variant->HTTPONLY();
         $NOTHTTPONLY = $variant->NOTHTTPONLY();
@@ -101,6 +102,8 @@ class SecurityService
                 static::MINUTES,
                 $expiration_date
             );
+            $userRepo = $em->getRepository($sessionVariant->USERENTITY());
+            $user = $userRepo->findOneBy([$sessionVariant->IDENTIFIER() => $auth[$NOTHTTPONLY_IDENTIFIER]]);
         } catch (Exception $e) {
             $is_valid = false;
         }
