@@ -73,6 +73,9 @@ final class SecurityController extends AbstractController
     {
         $response = new JsonResponse();
         SecurityService::destroyAuthCookie(CookieVariant::CLIENT, $request, $response, $em);
+
+        $request->attributes->remove(CookieVariant::CLIENT->name);
+
         return $response->setData(['message' => 'Logout successfull.']);
     }
 
@@ -96,11 +99,14 @@ final class SecurityController extends AbstractController
         );
     }
 
-    #[Route('/api/workerLogout', name: 'worker_logout', methods: ['GET'])]
+    #[Route('/api/workerLogout', name: 'worker_logout', methods: ['GET'],defaults: ['_skip_auth' => true])]
     public function workerLogout(Request $request, EntityManagerInterface $em): JsonResponse
     {
         $response = new JsonResponse();
         SecurityService::destroyAuthCookie(CookieVariant::WORKER, $request, $response, $em);
+
+        $request->attributes->remove(CookieVariant::WORKER->name);
+
         return $response->setData(['message' => 'Logout successfull.']);
 
     }
