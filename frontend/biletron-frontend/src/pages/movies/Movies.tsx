@@ -1,6 +1,6 @@
 import styles from "./Movies.module.css";
 import {useEffect, useState} from 'react';
-import {Movie, MoviesResponse} from "../../types/Movie.ts";
+import {Movie} from "../../types/Movie.ts";
 import Header from "../../components/header/Header.tsx";
 import {AllowedRoutes} from "../../types/Routes.ts";
 import {AllowedIconClass} from "../../components/icon/Icon.tsx";
@@ -8,6 +8,7 @@ import Poster from "../../components/poster/Poster.tsx";
 import {destroyCookie, getCookieURIEncodedJSONAsObject} from "../../utils/cookies.tsx";
 import {AuthCookie, AuthCookieName} from "../../types/AuthCookie.ts";
 import Messages from "../../components/messages/Messages.tsx";
+import {fetchMovies} from "../../services/MovieService.tsx";
 
 
 function Movies() {
@@ -15,32 +16,17 @@ function Movies() {
     const [loading, setLoading] = useState(true);
     const [email, setEmail] = useState<string | null>(null);
 
-    const fetchMovies = async () => {
-        try {
-            const response = await fetch('/api/movies');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data: MoviesResponse = await response.json();
-            setMovies(data.member);
-        } catch (err) {
-            console.error('Error fetching movies:', err);
-        } finally {
-            setLoading(false);
-        }
+    const initializeData = async () => {
+        setLoading(true);
+        setMovies(await fetchMovies());
+        setLoading(false);
     };
 
     useEffect(() => {
         document.title = "SELECT MOVIE PAGE";
-        const initializeData = async () => {
-            setLoading(true);
-            fetchMovies()
-        };
         initializeData();
         const auth_cookie = getCookieURIEncodedJSONAsObject(AuthCookieName.Client) as AuthCookie | null;
-        console.log(auth_cookie)
         setEmail(auth_cookie?.email ?? null);
-        console.log(email)
     }, []);
 
     return (
@@ -85,17 +71,18 @@ function Movies() {
                 }
             />
             <main className={styles._}>
-                {movies.map(movie => {
-                    return (
-                        <Poster
-                            key={movie.id_movie}
-                            ID_Movie={movie.id_movie}
-                            poster={movie.poster}
-                            title={movie.title}
-                        />
-                    );
-                })}
-
+                {
+                    movies.map(movie => {
+                        return (
+                            <Poster
+                                key={movie.id_movie}
+                                ID_Movie={movie.id_movie}
+                                poster={movie.poster}
+                                title={movie.title}
+                            />
+                        );
+                    })
+                }
             </main>
         </>
     );

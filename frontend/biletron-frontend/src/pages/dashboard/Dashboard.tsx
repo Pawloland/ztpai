@@ -1,6 +1,6 @@
 import {ChangeEvent, FormEvent, useEffect, useState} from 'react';
-import {Language, LanguageResponse} from '../../types/Language.ts';
-import {Movie, MoviesResponse} from "../../types/Movie.ts";
+import {Language} from '../../types/Language.ts';
+import {Movie} from "../../types/Movie.ts";
 import Header from "../../components/header/Header.tsx";
 import {AllowedRoutes} from "../../types/Routes.ts";
 import {AllowedIconClass} from "../../components/icon/Icon.tsx";
@@ -11,11 +11,19 @@ import Messages from "../../components/messages/Messages.tsx";
 import List from "../../components/list/List.tsx";
 import styles from './Dashboard.module.css';
 import InsertForm, {InputType} from "../../components/inserForm/InserForm.tsx";
+import {fetchMovies} from "../../services/MovieService.tsx";
+import {fetchLanguages} from "../../services/LanguageService.tsx";
+import {Hall} from "../../types/Hall.tsx";
+import {ScreeningType} from "../../types/ScreeningType.tsx";
+import {fetchHalls} from "../../services/HallService.tsx";
+import {fetchScreeningTypes} from "../../services/ScreeningTypeService.tsx";
 
 
 function Dashboard() {
     const [movies, setMovies] = useState<Movie[]>([]);
     const [languages, setLanguages] = useState<Language[]>([]);
+    const [halls, setHalls] = useState<Hall[]>([]);
+    const [screeningTypes, setScreeningTypes] = useState<ScreeningType[]>([]);
     const [loading, setLoading] = useState(true);
     const [nick, setNick] = useState<string>("Wyloguj");
     const [formData, setFormData] = useState({
@@ -23,66 +31,33 @@ function Dashboard() {
         original_title: '',
         duration: '',
         description: '',
-        // poster: '',
         languageViaIdLanguage: '/api/languages/1',
         languageViaIdDubbing: '/api/languages/1',
         languageViaIdSubtitles: '/api/languages/1',
     });
     const navigate = useNavigate();
 
-    const fetchLanguages = async () => {
-        try {
-            const response = await fetch('/api/languages');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data: LanguageResponse = await response.json();
-            setLanguages(data.member);
-            if (data.member.length > 0) {
-                setFormData(prev => ({
-                    ...prev,
-                    languageViaIdLanguage: `/api/languages/${data.member[0].id_language}`,
-                    languageViaIdDubbing: `/api/languages/${data.member[0].id_language}`,
-                    languageViaIdSubtitles: `/api/languages/${data.member[0].id_language}`,
-                }));
-            }
-            return true;
-        } catch (err) {
-            console.error('Error fetching languages:', err);
-            return false;
-        }
-    };
-
-    const fetchMovies = async () => {
-        try {
-            const response = await fetch('/api/movies');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data: MoviesResponse = await response.json();
-            setMovies(data.member);
-        } catch (err) {
-            console.error('Error fetching movies:', err);
-        } finally {
-            setLoading(false);
-        }
+    const initializeData = async () => {
+        setLoading(true);
+        setLanguages(await fetchLanguages())
+        const first_language_id = languages[0];
+        setFormData(prev => ({
+            ...prev,
+            languageViaIdLanguage: `/api/languages/${first_language_id}`,
+            languageViaIdDubbing: `/api/languages/${first_language_id}`,
+            languageViaIdSubtitles: `/api/languages/${first_language_id}`,
+        }))
+        setMovies(await fetchMovies())
+        setHalls(await fetchHalls())
+        setScreeningTypes(await fetchScreeningTypes())
+        setLoading(false)
     };
 
     useEffect(() => {
         document.title = "ADMIN PAGE"; // Ustawia tytuł karty przeglądarki
-        const initializeData = async () => {
-            setLoading(true);
-            const languagesLoaded = await fetchLanguages();
-            if (languagesLoaded) {
-                await fetchMovies();
-            } else {
-                setLoading(false);
-            }
-        };
 
         initializeData();
         const auth_cookie = getCookieURIEncodedJSONAsObject(AuthCookieName.Worker) as AuthWorkerCookie | null;
-        console.log(auth_cookie)
         setNick(auth_cookie?.nick || "Wyloguj");
 
     }, []);
@@ -127,7 +102,7 @@ function Dashboard() {
     const text: InputType = {type: 'text', required: true}
     const time: InputType = {type: 'time', required: true}
     const textarea: InputType = {type: 'textarea', required: true}
-    const select: InputType = {
+    const languageSelect: InputType = () => ({
         type: 'select',
         required: true,
         options: languages.map((lang) => ({
@@ -135,9 +110,39 @@ function Dashboard() {
             value: lang.id_language.toString()
         })),
         default_option: 0
-    }
+    })
     const file: InputType = {type: 'file', required: false}
-
+    const movieSelect: InputType = () => ({
+        type: 'select',
+        required: true,
+        options: movies.map((movie) => ({
+            key: movie.title,
+            value: movie.id_movie.toString()
+        })),
+        default_option: 0
+    })
+    const hallSelect: InputType = () => ({
+        type: 'select',
+        required: true,
+        options: halls.map((hall) => ({
+            key: hall.hall_name,
+            value: hall.id_hall.toString()
+        })),
+        default_option: 0
+    })
+    const screeningTypeSelect: InputType = () => ({
+        type: 'select',
+        required: true,
+        options: screeningTypes.map((screeningType) => ({
+            key: screeningType.screening_name,
+            value: screeningType.id_screening_type.toString()
+        })),
+        default_option: 0
+    })
+    const datetimeSelect: InputType = () => ({
+        type: 'datetime-local',
+        required: true
+    })
 
     return (
         <>
@@ -174,7 +179,7 @@ function Dashboard() {
                 <InsertForm form_labels={["title", "original_title", "duration", "description", "language", "dubbing", "subtitles", "poster"]}
                             submit_text={"Dodaj film"}
                             labels={["Tytuł", "Tytuł oryginalny", "Długość", "Opis", "Język", "Dubbing", "Napisy", "Plakat"]}
-                            data={[text, text, time, textarea, select, select, select, file]}
+                            data={[text, text, time, textarea, languageSelect(), languageSelect(), languageSelect(), file]}
                             onSubmit={(e) => {
                                 console.log(e);
                                 e.preventDefault()
@@ -182,7 +187,13 @@ function Dashboard() {
 
 
                 />
-                <List title={"Filmy"} header={["ID", "Tytuł", "Długość"]} data={[["1", "asdadads", "1:0:0"], ["2", "asd", "1:2:0"]]}
+                <List title={"Filmy"} header={["ID", "Tytuł", "Długość"]}
+                      data={movies.map(movie => [
+                          movie.id_movie,
+                          movie.title,
+                          new Date(movie.duration).toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit', second: '2-digit'})
+
+                      ])}
                       onColumnValueClick={
                           (value: any) => {
                               console.log(value);
@@ -193,7 +204,7 @@ function Dashboard() {
                 <InsertForm form_labels={["title", "hall", "type", "date"]}
                             submit_text={"Dodaj seans"}
                             labels={["Film", "Sala", "Typ Seansu", "Data"]}
-                            data={[select,select,select,select]}
+                            data={[movieSelect(), hallSelect(), screeningTypeSelect(), datetimeSelect()]}
                             onSubmit={(e) => {
                                 console.log(e);
                                 e.preventDefault()
