@@ -16,7 +16,7 @@ function List({
     title: string;
     header: string[];
     data: ToStringable[][];
-    onColumnValueClick: (valueFromColumnKey: ToStringable[]) => void;
+    onColumnValueClick?: (valueFromColumnKey: ToStringable[]) => void;
 }) {
     if (data.some((row) => row.length !== header.length)) {
         throw new Error("Each row in data must have the same number of elements as the header.");
@@ -32,7 +32,9 @@ function List({
                         {header.map((col, i) => (
                             <th key={i}>{col}</th>
                         ))}
-                        <th></th>
+                        {onColumnValueClick && (
+                            <th></th>
+                        )}
                     </tr>
                     </thead>
                     <tbody>
@@ -41,14 +43,17 @@ function List({
                             {row.map((value, colIndex) => (
                                 <td key={colIndex}>{value.toString()}</td>
                             ))}
-                            <td>
-                                <BaseIcon
-                                    iconClass={AllowedIconClass.Bin}
-                                    onClick={() => {
-                                        onColumnValueClick(row);
-                                    }}
-                                />
-                            </td>
+                            {
+                                onColumnValueClick && (
+                                    <td>
+                                        <BaseIcon
+                                            iconClass={AllowedIconClass.Bin}
+                                            onClick={() => {
+                                                onColumnValueClick(row);
+                                            }}
+                                        />
+                                    </td>
+                                )}
                         </tr>
                     ))}
                     </tbody>

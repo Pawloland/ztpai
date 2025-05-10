@@ -1,5 +1,5 @@
 import styles from './InserForm.module.css';
-import {FormEvent, useState} from 'react';
+import {FormEvent} from 'react';
 
 export interface InputType {
     type: 'text' | 'datetime-local' | 'time' | 'textarea' | 'select' | 'file';
@@ -21,7 +21,6 @@ function InsertForm({
     data: InputType[];
     onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }) {
-    const [upload, setUpload] = useState<string | null>(null);
 
     return (
         <div className={styles._}>
@@ -96,11 +95,6 @@ function InsertForm({
                     <tr>
                         <td colSpan={2}>
                             <input type="submit" value={submit_text}/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colSpan={2}>
-                            {upload ?? ''}
                         </td>
                     </tr>
                     </tbody>

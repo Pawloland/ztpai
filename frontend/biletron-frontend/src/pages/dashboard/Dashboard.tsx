@@ -1,4 +1,4 @@
-import {ChangeEvent, FormEvent, useEffect, useState} from 'react';
+import {FormEvent, useEffect, useState} from 'react';
 import {Language} from '../../types/Language.ts';
 import {Movie} from "../../types/Movie.ts";
 import Header from "../../components/header/Header.tsx";
@@ -19,6 +19,15 @@ import {fetchHalls} from "../../services/HallService.tsx";
 import {fetchScreeningTypes} from "../../services/ScreeningTypeService.tsx";
 import {Screening} from "../../types/Screening.tsx";
 import {fetchScreenings} from "../../services/ScreeningService.tsx";
+import {Client} from "../../types/Client.tsx";
+import {Worker} from "../../types/Worker.tsx";
+import {fetchClients} from "../../services/ClientService.tsx";
+import {fetchWorkers} from "../../services/WorkerService.tsx";
+import {WorkerSession} from "../../types/WorkerSession.tsx";
+import {fetchWorkerSessions} from "../../services/WorkerSessionService.tsx";
+import {formatDate, formatDateTime, formatTime, formatWeekDay} from "../../utils/dateTime.tsx";
+import {ClientSession} from "../../types/ClientSession.tsx";
+import {fetchClientSessions} from "../../services/ClientSessionService.tsx";
 
 
 function Dashboard() {
@@ -27,46 +36,37 @@ function Dashboard() {
     const [halls, setHalls] = useState<Hall[]>([]);
     const [screeningTypes, setScreeningTypes] = useState<ScreeningType[]>([]);
     const [screenings, setScreenings] = useState<Screening[]>([]);
+    const [clients, setClients] = useState<Client[]>([])
+    const [workers, setWorkers] = useState<Worker[]>([])
+    const [workerSessions, setWorkerSessions] = useState<WorkerSession[]>([])
+    const [clientSessions, setClientSessions] = useState<ClientSession[]>([])
     const [loading, setLoading] = useState(true);
     const [nick, setNick] = useState<string>("Wyloguj");
-    const [formData, setFormData] = useState({
-        title: '',
-        original_title: '',
-        duration: '',
-        description: '',
-        languageViaIdLanguage: '/api/languages/1',
-        languageViaIdDubbing: '/api/languages/1',
-        languageViaIdSubtitles: '/api/languages/1',
-    });
     const navigate = useNavigate();
 
     const initializeData = async () => {
         setLoading(true);
 
         // Start all fetches at once
-        const [languagesPromise, moviesPromise, hallsPromise, screeningTypesPromise, screeningPromise] =
-            [fetchLanguages(), fetchMovies(), fetchHalls(), fetchScreeningTypes(), fetchScreenings()]
+        const [languagesPromise, moviesPromise, hallsPromise, screeningTypesPromise, screeningsPromise, clientsPromise, workersPromise, workerSessionsPromise, clientSessionsPromise] =
+            [fetchLanguages(), fetchMovies(), fetchHalls(), fetchScreeningTypes(), fetchScreenings(), fetchClients(), fetchWorkers(), fetchWorkerSessions(), fetchClientSessions()]
 
         // Wait for languages first
         const languages = await languagesPromise;
         setLanguages(languages);
 
-        // Set formData after languages are ready
-        const first_language_id = languages[0];
-        setFormData(prev => ({
-            ...prev,
-            languageViaIdLanguage: `/api/languages/${first_language_id}`,
-            languageViaIdDubbing: `/api/languages/${first_language_id}`,
-            languageViaIdSubtitles: `/api/languages/${first_language_id}`,
-        }));
 
         // Now await the remaining, already-started promises
-        const [movies, halls, screeningTypes, screenings] =
-            await Promise.all([moviesPromise, hallsPromise, screeningTypesPromise, screeningPromise]);
+        const [movies, halls, screeningTypes, screenings, clients, workers, workerSessions, clientSessions] =
+            await Promise.all([moviesPromise, hallsPromise, screeningTypesPromise, screeningsPromise, clientsPromise, workersPromise, workerSessionsPromise, clientSessionsPromise]);
         setMovies(movies);
         setHalls(halls);
         setScreeningTypes(screeningTypes);
         setScreenings(screenings);
+        setClients(clients);
+        setWorkers(workers);
+        setWorkerSessions(workerSessions);
+        setClientSessions(clientSessions);
 
         setLoading(false);
     };
@@ -80,41 +80,62 @@ function Dashboard() {
 
     }, []);
 
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        const {name, value} = e.target;
-        setFormData(prev => {
-            return {
-                ...prev,
-                [name]: value
-            }
-        });
-    };
-
     const handleAddMovie = (e: FormEvent) => {
         e.preventDefault();
+
+        const form = e.target as HTMLFormElement;
+        const formData = new FormData(form);
+
         fetch('/api/movies', {
             method: 'POST',
-            headers: {'Content-Type': 'application/ld+json'},
-            body: JSON.stringify(formData),
-        })
-            .then((res) => {
-                if (res.ok) {
-                    fetchMovies(); // Refresh the movie list
-                    setFormData({
-                        title: '',
-                        original_title: '',
-                        duration: '',
-                        description: '',
-                        // poster: '',
-                        languageViaIdLanguage: '/api/languages/1',
-                        languageViaIdDubbing: '/api/languages/1',
-                        languageViaIdSubtitles: '/api/languages/1',
-                    });
-                } else {
-                    console.error('Failed to add movie');
-                }
-            })
-            .catch((err) => console.error('Error adding movie:', err));
+            body: formData,
+        }).then((res) => {
+            if (res.ok) {
+                res.json().then((newMovie: Movie) => {
+                    setMovies((prev) => [...prev, newMovie].sort((a, b) => a.title.localeCompare(b.title)));
+                });
+                form.reset(); // Reset the form fields
+                Messages.showMessage('Film dodany pomyślnie', 4000);
+            } else {
+                Messages.showMessage('Nie udało się dodać filmu', 4000);
+            }
+        }).catch((err) => {
+                Messages.showMessage('Wystąpił błąd przy dodawaniu filmu', 4000)
+                console.error('Error adding movie:', err);
+            }
+        )
+    };
+
+    const handleAddScreening = (e: FormEvent) => {
+        e.preventDefault();
+
+        const form = e.target as HTMLFormElement;
+        const formData = new FormData(form);
+        const screening = Object.fromEntries(formData.entries()) as unknown as Screening;
+        screening.start_time = new Date(screening.start_time as string).toISOString();
+        console.log(screening);
+
+        fetch('/api/screenings', {
+            method: 'POST',
+            body: JSON.stringify(screening),
+            headers: {
+                'Content-Type': 'application/ld+json',
+            },
+        }).then((res) => {
+            if (res.ok) {
+                res.json().then((newScreening: Screening) => {
+                    setScreenings((prev) => [...prev, newScreening].sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime()));
+                });
+                form.reset(); // Reset the form fields
+                Messages.showMessage('Seans dodany pomyślnie', 4000);
+            } else {
+                Messages.showMessage('Nie udało się dodać seansu', 4000);
+            }
+        }).catch((err) => {
+                Messages.showMessage('Wystąpił błąd przy dodawaniu seansu', 4000)
+                console.error('Error adding screening:', err);
+            }
+        )
     };
 
     const text: InputType = {type: 'text', required: true}
@@ -129,13 +150,13 @@ function Dashboard() {
         })),
         default_option: 0
     })
-    const file: InputType = {type: 'file', required: false}
+    const file: InputType = {type: 'file', required: true}
     const movieSelect = (): InputType => ({
         type: 'select',
         required: true,
         options: movies.map((movie) => ({
             key: movie.title,
-            value: movie.id_movie.toString()
+            value: "/api/movies/" + movie.id_movie.toString()
         })),
         default_option: 0
     })
@@ -144,7 +165,7 @@ function Dashboard() {
         required: true,
         options: halls.map((hall) => ({
             key: hall.hall_name,
-            value: hall.id_hall.toString()
+            value: "/api/halls/" + hall.id_hall.toString()
         })),
         default_option: 0
     })
@@ -153,7 +174,7 @@ function Dashboard() {
         required: true,
         options: screeningTypes.map((screeningType) => ({
             key: screeningType.screening_name,
-            value: screeningType.id_screening_type.toString()
+            value: "/api/screening_types/" + screeningType.id_screening_type.toString()
         })),
         default_option: 0
     })
@@ -199,14 +220,11 @@ function Dashboard() {
                         <p>Ładowanie...</p>
                     </div> :
                     <>
-                        <InsertForm form_labels={["title", "original_title", "duration", "description", "language", "dubbing", "subtitles", "poster"]}
+                        <InsertForm form_labels={["title", "original_title", "duration", "description", "id_language", "id_dubbing", "id_subtitles", "poster"]}
                                     submit_text={"Dodaj film"}
                                     labels={["Tytuł", "Tytuł oryginalny", "Długość", "Opis", "Język", "Dubbing", "Napisy", "Plakat"]}
                                     data={[text, text, time, textarea, languageSelect(), languageSelect(), languageSelect(), file]}
-                                    onSubmit={(e) => {
-                                        console.log(e);
-                                        e.preventDefault()
-                                    }}
+                                    onSubmit={handleAddMovie}
                         />
                         <List title={"Filmy"} header={["ID", "Tytuł", "Długość"]}
                               data={movies.map(movie => [
@@ -222,16 +240,11 @@ function Dashboard() {
                                   }
                               }
                         />
-                        <InsertForm form_labels={["title", "hall", "type", "date"]}
+                        <InsertForm form_labels={["movie", "hall", "screeningType", "start_time"]}
                                     submit_text={"Dodaj seans"}
                                     labels={["Film", "Sala", "Typ Seansu", "Data"]}
                                     data={[movieSelect(), hallSelect(), screeningTypeSelect(), datetimeSelect()]}
-                                    onSubmit={(e) => {
-                                        console.log(e);
-                                        e.preventDefault()
-                                    }}
-
-
+                                    onSubmit={handleAddScreening}
                         />
 
 
@@ -244,15 +257,16 @@ function Dashboard() {
                                   }
                               }
                         />
+
                         <List title={"Nadchodzące seanse"} header={["ID", "Data", "", "Godzina", "Tytuł", "Sala", "Typ"]}
                               data={screenings.map(screening => {
                                   const start_time = new Date(screening.start_time);
 
                                   return [
                                       screening.id_screening,
-                                      start_time.toLocaleDateString(undefined, {year: 'numeric', month: '2-digit', day: '2-digit'}),
-                                      start_time.toLocaleDateString(undefined, {weekday: "long"}).replace(/^./, c => c.toUpperCase()), // Capitalize first letter
-                                      start_time.toLocaleTimeString(undefined, {hour: '2-digit', minute: '2-digit'}),
+                                      formatDate(start_time),
+                                      formatWeekDay(start_time),
+                                      formatTime(start_time),
                                       screening.movie.title,
                                       screening.hall.hall_name,
                                       screening.screeningType.screening_name
@@ -267,16 +281,13 @@ function Dashboard() {
                         />
 
                         <List title={"Klienci"} header={["ID", "Imię", "Nazwisko", "Nick", "Mail"]}
-                              data={[
-                                  ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
-                                  ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
-                                  ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
-                                  ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
-                                  ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
-                                  ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
-                                  ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
-                                  ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
-                              ]}
+                              data={clients.map(client => [
+                                  client.id_client,
+                                  client.client_name,
+                                  client.client_surname,
+                                  client.nick,
+                                  client.mail,
+                              ])}
                               onColumnValueClick={
                                   (value: any) => {
                                       console.log(value);
@@ -286,16 +297,13 @@ function Dashboard() {
                         />
 
                         <List title={"Konta administracyjne"} header={["ID", "Typ", "Imię", "Nazwisko", "Nick"]}
-                              data={[
-                                  ["7", "Admin", "admin", "admin", "admin"],
-                                  ["7", "Admin", "admin", "admin", "admin"],
-                                  ["7", "Admin", "admin", "admin", "admin"],
-                                  ["7", "Admin", "admin", "admin", "admin"],
-                                  ["7", "Admin", "admin", "admin", "admin"],
-                                  ["7", "Admin", "admin", "admin", "admin"],
-                                  ["7", "Admin", "admin", "admin", "admin"],
-                                  ["7", "Admin", "admin", "admin", "admin"],
-                              ]}
+                              data={workers.map(worker => [
+                                  worker.id_worker,
+                                  worker.workerType.type_name,
+                                  worker.worker_name,
+                                  worker.worker_surname,
+                                  worker.nick
+                              ])}
                               onColumnValueClick={
                                   (value: any) => {
                                       console.log(value);
@@ -305,40 +313,26 @@ function Dashboard() {
                         />
 
                         <List title={"Sesje klientów"} header={["ID", "Nick", "Data wygaśnięcia"]}
-                              data={[
-                                  ["6", "admin@admin.admin", "2025-05-05 16:45:45.993925"],
-                                  ["6", "admin@admin.admin", "2025-05-05 16:45:45.993925"],
-                                  ["6", "admin@admin.admin", "2025-05-05 16:45:45.993925"],
-                              ]}
-                              onColumnValueClick={
-                                  (value: any) => {
-                                      console.log(value);
-                                      console.log(value[0]);
-                                  }
-                              }
+                              data={clientSessions.map(clientSession => [
+                                  clientSession.id_session_client,
+                                  clientSession.client.mail,
+                                  formatDateTime(clientSession.expiration_date),
+                              ])}
                         />
 
 
                         <List title={"Sesje pracowników"} header={["ID", "Nick", "Data wygaśnięcia"]}
-                              data={[
-                                  ["6", "admin", "2025-05-05 16:45:45.993925"],
-                                  ["6", "admin", "2025-05-05 16:45:45.993925"],
-                                  ["6", "admin", "2025-05-05 16:45:45.993925"],
-                              ]}
-                              onColumnValueClick={
-                                  (value: any) => {
-                                      console.log(value);
-                                      console.log(value[0]);
-                                  }
-                              }
+                              data={workerSessions.map(workerSession => [
+                                  workerSession.id_session_worker,
+                                  workerSession.worker.nick,
+                                  formatDateTime(workerSession.expiration_date),
+                              ])}
                         />
-
                     </>
                 }
             </main>
         </>
     )
-        ;
 }
 
 export default Dashboard;
