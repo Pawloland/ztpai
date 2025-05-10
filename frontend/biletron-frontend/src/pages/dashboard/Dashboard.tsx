@@ -194,143 +194,151 @@ function Dashboard() {
                     }
                 }]}/>
             <main className={styles.main}>
-                <InsertForm form_labels={["title", "original_title", "duration", "description", "language", "dubbing", "subtitles", "poster"]}
-                            submit_text={"Dodaj film"}
-                            labels={["Tytuł", "Tytuł oryginalny", "Długość", "Opis", "Język", "Dubbing", "Napisy", "Plakat"]}
-                            data={[text, text, time, textarea, languageSelect(), languageSelect(), languageSelect(), file]}
-                            onSubmit={(e) => {
-                                console.log(e);
-                                e.preventDefault()
-                            }}
-                />
-                <List title={"Filmy"} header={["ID", "Tytuł", "Długość"]}
-                      data={movies.map(movie => [
-                          movie.id_movie,
-                          movie.title,
-                          new Date(movie.duration).toLocaleTimeString(undefined, {hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'UTC'}),
+                {loading ?
+                    <div className={styles.loading}>
+                        <p>Ładowanie...</p>
+                    </div> :
+                    <>
+                        <InsertForm form_labels={["title", "original_title", "duration", "description", "language", "dubbing", "subtitles", "poster"]}
+                                    submit_text={"Dodaj film"}
+                                    labels={["Tytuł", "Tytuł oryginalny", "Długość", "Opis", "Język", "Dubbing", "Napisy", "Plakat"]}
+                                    data={[text, text, time, textarea, languageSelect(), languageSelect(), languageSelect(), file]}
+                                    onSubmit={(e) => {
+                                        console.log(e);
+                                        e.preventDefault()
+                                    }}
+                        />
+                        <List title={"Filmy"} header={["ID", "Tytuł", "Długość"]}
+                              data={movies.map(movie => [
+                                  movie.id_movie,
+                                  movie.title,
+                                  new Date(movie.duration).toLocaleTimeString(undefined, {hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'UTC'}),
 
-                      ])}
-                      onColumnValueClick={
-                          (value: any) => {
-                              console.log(value);
-                              console.log(value[0]);
-                          }
-                      }
-                />
-                <InsertForm form_labels={["title", "hall", "type", "date"]}
-                            submit_text={"Dodaj seans"}
-                            labels={["Film", "Sala", "Typ Seansu", "Data"]}
-                            data={[movieSelect(), hallSelect(), screeningTypeSelect(), datetimeSelect()]}
-                            onSubmit={(e) => {
-                                console.log(e);
-                                e.preventDefault()
-                            }}
-
-
-                />
-
-
-                <List title={"Rezerwacje"} header={["ID", "Mail", "ID Sali", "ID Fotel", "Rząd", "Kolumna", "Typ siedzenia", "Tytuł", "Typ seansu", "Rozpoczęcie", "Cena brutto"]}
-                      data={[]}
-                      onColumnValueClick={
-                          (value: any) => {
-                              console.log(value);
-                              console.log(value[0]);
-                          }
-                      }
-                />
-                <List title={"Nadchodzące seanse"} header={["ID", "Data", "", "Godzina", "Tytuł", "Sala", "Typ"]}
-                      data={screenings.map(screening => {
-                          const start_time = new Date(screening.start_time);
-
-                          return [
-                              screening.id_screening,
-                              start_time.toLocaleDateString(undefined, {year: 'numeric', month: '2-digit', day: '2-digit'}),
-                              start_time.toLocaleDateString(undefined, {weekday: "long"}).replace(/^./, c => c.toUpperCase()), // Capitalize first letter
-                              start_time.toLocaleTimeString(undefined, {hour: '2-digit', minute: '2-digit'}),
-                              screening.movie.title,
-                              screening.hall.hall_name,
-                              screening.screeningType.screening_name
-                          ];
-                      })}
-                      onColumnValueClick={
-                          (value: any) => {
-                              console.log(value);
-                              console.log(value[0]);
-                          }
-                      }
-                />
-
-                <List title={"Klienci"} header={["ID", "Imię", "Nazwisko", "Nick", "Mail"]}
-                      data={[
-                          ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
-                          ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
-                          ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
-                          ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
-                          ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
-                          ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
-                          ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
-                          ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
-                      ]}
-                      onColumnValueClick={
-                          (value: any) => {
-                              console.log(value);
-                              console.log(value[0]);
-                          }
-                      }
-                />
-
-                <List title={"Konta administracyjne"} header={["ID", "Typ", "Imię", "Nazwisko", "Nick"]}
-                      data={[
-                          ["7", "Admin", "admin", "admin", "admin"],
-                          ["7", "Admin", "admin", "admin", "admin"],
-                          ["7", "Admin", "admin", "admin", "admin"],
-                          ["7", "Admin", "admin", "admin", "admin"],
-                          ["7", "Admin", "admin", "admin", "admin"],
-                          ["7", "Admin", "admin", "admin", "admin"],
-                          ["7", "Admin", "admin", "admin", "admin"],
-                          ["7", "Admin", "admin", "admin", "admin"],
-                      ]}
-                      onColumnValueClick={
-                          (value: any) => {
-                              console.log(value);
-                              console.log(value[0]);
-                          }
-                      }
-                />
-
-                <List title={"Sesje klientów"} header={["ID", "Nick", "Data wygaśnięcia"]}
-                      data={[
-                          ["6", "admin@admin.admin", "2025-05-05 16:45:45.993925"],
-                          ["6", "admin@admin.admin", "2025-05-05 16:45:45.993925"],
-                          ["6", "admin@admin.admin", "2025-05-05 16:45:45.993925"],
-                      ]}
-                      onColumnValueClick={
-                          (value: any) => {
-                              console.log(value);
-                              console.log(value[0]);
-                          }
-                      }
-                />
+                              ])}
+                              onColumnValueClick={
+                                  (value: any) => {
+                                      console.log(value);
+                                      console.log(value[0]);
+                                  }
+                              }
+                        />
+                        <InsertForm form_labels={["title", "hall", "type", "date"]}
+                                    submit_text={"Dodaj seans"}
+                                    labels={["Film", "Sala", "Typ Seansu", "Data"]}
+                                    data={[movieSelect(), hallSelect(), screeningTypeSelect(), datetimeSelect()]}
+                                    onSubmit={(e) => {
+                                        console.log(e);
+                                        e.preventDefault()
+                                    }}
 
 
-                <List title={"Sesje pracowników"} header={["ID", "Nick", "Data wygaśnięcia"]}
-                      data={[
-                          ["6", "admin", "2025-05-05 16:45:45.993925"],
-                          ["6", "admin", "2025-05-05 16:45:45.993925"],
-                          ["6", "admin", "2025-05-05 16:45:45.993925"],
-                      ]}
-                      onColumnValueClick={
-                          (value: any) => {
-                              console.log(value);
-                              console.log(value[0]);
-                          }
-                      }
-                />
+                        />
 
+
+                        <List title={"Rezerwacje"} header={["ID", "Mail", "ID Sali", "ID Fotel", "Rząd", "Kolumna", "Typ siedzenia", "Tytuł", "Typ seansu", "Rozpoczęcie", "Cena brutto"]}
+                              data={[]}
+                              onColumnValueClick={
+                                  (value: any) => {
+                                      console.log(value);
+                                      console.log(value[0]);
+                                  }
+                              }
+                        />
+                        <List title={"Nadchodzące seanse"} header={["ID", "Data", "", "Godzina", "Tytuł", "Sala", "Typ"]}
+                              data={screenings.map(screening => {
+                                  const start_time = new Date(screening.start_time);
+
+                                  return [
+                                      screening.id_screening,
+                                      start_time.toLocaleDateString(undefined, {year: 'numeric', month: '2-digit', day: '2-digit'}),
+                                      start_time.toLocaleDateString(undefined, {weekday: "long"}).replace(/^./, c => c.toUpperCase()), // Capitalize first letter
+                                      start_time.toLocaleTimeString(undefined, {hour: '2-digit', minute: '2-digit'}),
+                                      screening.movie.title,
+                                      screening.hall.hall_name,
+                                      screening.screeningType.screening_name
+                                  ];
+                              })}
+                              onColumnValueClick={
+                                  (value: any) => {
+                                      console.log(value);
+                                      console.log(value[0]);
+                                  }
+                              }
+                        />
+
+                        <List title={"Klienci"} header={["ID", "Imię", "Nazwisko", "Nick", "Mail"]}
+                              data={[
+                                  ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
+                                  ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
+                                  ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
+                                  ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
+                                  ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
+                                  ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
+                                  ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
+                                  ["31", "", "", "admin@admin.admin", "admin@admin.admin"],
+                              ]}
+                              onColumnValueClick={
+                                  (value: any) => {
+                                      console.log(value);
+                                      console.log(value[0]);
+                                  }
+                              }
+                        />
+
+                        <List title={"Konta administracyjne"} header={["ID", "Typ", "Imię", "Nazwisko", "Nick"]}
+                              data={[
+                                  ["7", "Admin", "admin", "admin", "admin"],
+                                  ["7", "Admin", "admin", "admin", "admin"],
+                                  ["7", "Admin", "admin", "admin", "admin"],
+                                  ["7", "Admin", "admin", "admin", "admin"],
+                                  ["7", "Admin", "admin", "admin", "admin"],
+                                  ["7", "Admin", "admin", "admin", "admin"],
+                                  ["7", "Admin", "admin", "admin", "admin"],
+                                  ["7", "Admin", "admin", "admin", "admin"],
+                              ]}
+                              onColumnValueClick={
+                                  (value: any) => {
+                                      console.log(value);
+                                      console.log(value[0]);
+                                  }
+                              }
+                        />
+
+                        <List title={"Sesje klientów"} header={["ID", "Nick", "Data wygaśnięcia"]}
+                              data={[
+                                  ["6", "admin@admin.admin", "2025-05-05 16:45:45.993925"],
+                                  ["6", "admin@admin.admin", "2025-05-05 16:45:45.993925"],
+                                  ["6", "admin@admin.admin", "2025-05-05 16:45:45.993925"],
+                              ]}
+                              onColumnValueClick={
+                                  (value: any) => {
+                                      console.log(value);
+                                      console.log(value[0]);
+                                  }
+                              }
+                        />
+
+
+                        <List title={"Sesje pracowników"} header={["ID", "Nick", "Data wygaśnięcia"]}
+                              data={[
+                                  ["6", "admin", "2025-05-05 16:45:45.993925"],
+                                  ["6", "admin", "2025-05-05 16:45:45.993925"],
+                                  ["6", "admin", "2025-05-05 16:45:45.993925"],
+                              ]}
+                              onColumnValueClick={
+                                  (value: any) => {
+                                      console.log(value);
+                                      console.log(value[0]);
+                                  }
+                              }
+                        />
+
+                    </>
+                }
             </main>
         </>
-    );
+    )
+        ;
 }
 
 export default Dashboard;
