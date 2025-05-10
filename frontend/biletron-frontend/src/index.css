@@ -9,6 +9,7 @@
     --header-color: white;
     --action-color: #D10127;
     --faded-action-color: #efb29b;
+    --scrollY: 0px;
 }
 
 body {

@@ -21,8 +21,8 @@
 }
 
 div.messages {
-    position: absolute;
-    top: 110px;
+    position: fixed;
+    top: calc(110px - min(var(--scrollY, 0px), 100px));
     left: 10px;
     display: flex;
     flex-direction: column;

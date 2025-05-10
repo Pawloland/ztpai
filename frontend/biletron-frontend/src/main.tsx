@@ -10,6 +10,12 @@ import Dashboard from "./pages/dashboard/Dashboard.tsx";
 import Register from "./pages/register/Register.tsx";
 import Messages from "./components/messages/Messages.tsx";
 
+// Updates the scroll position in the CSS variable --scrollY for global use, for example in Messages component
+window.addEventListener("scroll", () => {
+    document.documentElement.style.setProperty("--scrollY", `${window.scrollY}px`);
+});
+
+
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <BrowserRouter>
