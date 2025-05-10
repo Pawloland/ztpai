@@ -39,18 +39,30 @@ function Dashboard() {
 
     const initializeData = async () => {
         setLoading(true);
-        setLanguages(await fetchLanguages())
+
+        // Start all fetches at once
+        const [languagesPromise, moviesPromise, hallsPromise, screeningTypesPromise] = [fetchLanguages(), fetchMovies(), fetchHalls(), fetchScreeningTypes()]
+
+        // Wait for languages first
+        const languages = await languagesPromise;
+        setLanguages(languages);
+
+        // Set formData after languages are ready
         const first_language_id = languages[0];
         setFormData(prev => ({
             ...prev,
             languageViaIdLanguage: `/api/languages/${first_language_id}`,
             languageViaIdDubbing: `/api/languages/${first_language_id}`,
             languageViaIdSubtitles: `/api/languages/${first_language_id}`,
-        }))
-        setMovies(await fetchMovies())
-        setHalls(await fetchHalls())
-        setScreeningTypes(await fetchScreeningTypes())
-        setLoading(false)
+        }));
+
+        // Now await the remaining, already-started promises
+        const [movies, halls, screeningTypes] = await Promise.all([moviesPromise, hallsPromise, screeningTypesPromise]);
+        setMovies(movies);
+        setHalls(halls);
+        setScreeningTypes(screeningTypes);
+
+        setLoading(false);
     };
 
     useEffect(() => {
