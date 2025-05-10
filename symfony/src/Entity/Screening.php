@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ScreeningRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -13,6 +15,10 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ApiResource(
     normalizationContext: ['groups' => ['Screening:read']],
     denormalizationContext: ['groups' => ['Screening:write']]
+)]
+#[ApiFilter(
+    OrderFilter::class,
+    properties: ['start_time'],
 )]
 #[ORM\Entity(repositoryClass: ScreeningRepository::class)]
 #[ORM\Table(name: "screening")]

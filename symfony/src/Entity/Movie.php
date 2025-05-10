@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -72,16 +74,20 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Index(name: "fk_movie_language", columns: ["id_language"])]
 #[ORM\Index(name: "fk_movie_dubbing", columns: ["id_dubbing"])]
 #[ORM\Index(name: "fk_movie_subtitles", columns: ["id_subtitles"])]
+#[ApiFilter(
+    OrderFilter::class,
+    properties: ['title'],
+)]
 class Movie
 {
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[Groups(['Movie:read'])]
+    #[Groups(['Movie:read','Screening:read'])]
     private int $id_movie;
 
     #[ORM\Column(type: "string", length: 80, nullable: false)]
-    #[Groups(['Movie:read', 'Movie:write'])]
+    #[Groups(['Movie:read', 'Movie:write','Screening:read'])]
     private string $title;
 
     #[ORM\Column(type: "string", length: 80, nullable: false)]

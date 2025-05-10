@@ -21,11 +21,11 @@ class Hall
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[Groups(['Hall:read'])]
+    #[Groups(['Hall:read','Screening:read'])]
     private int $id_hall;
 
     #[ORM\Column(type: "string", length: 40, nullable: true)]
-    #[Groups(['Hall:read'])]
+    #[Groups(['Hall:read','Screening:read'])]
     private string $hall_name;
 
     #[ORM\OneToMany(targetEntity: Screening::class, mappedBy: "hall")]

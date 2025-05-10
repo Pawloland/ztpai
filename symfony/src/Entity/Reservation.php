@@ -19,13 +19,13 @@ class Reservation
     #[ORM\GeneratedValue(strategy: "AUTO")]
     private int $id_reservation;
 
-    #[ORM\Column(type: "decimal", nullable: false, scale: 2)]
+    #[ORM\Column(type: "decimal", scale: 2, nullable: false)]
     private string $total_price_netto;
 
-    #[ORM\Column(type: "decimal", nullable: false, scale: 2)]
+    #[ORM\Column(type: "decimal", scale: 2, nullable: false)]
     private string $total_price_brutto;
 
-    #[ORM\Column(type: "decimal", nullable: false, precision: 4, scale: 2)]
+    #[ORM\Column(type: "decimal", precision: 4, scale: 2, nullable: false)]
     private string $vat_percentage;
 
     #[ORM\Column(type: "datetimetz", nullable: false, options: ["default" => "CURRENT_TIMESTAMP"])]
