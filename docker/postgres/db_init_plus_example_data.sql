@@ -378,7 +378,7 @@ CREATE TABLE screening (
     id_movie INT NOT NULL,
     id_hall INT NOT NULL,
     id_screening_type INT NOT NULL,
-    start_time TIMESTAMP WITH TIME ZONE NULL,
+    start_time TIMESTAMP WITH TIME ZONE NOT NULL,
     -- Foreign Keys
     FOREIGN KEY (id_hall) REFERENCES hall (id_hall) ON DELETE RESTRICT ON UPDATE RESTRICT,
     FOREIGN KEY (id_movie) REFERENCES movie (id_movie) ON DELETE RESTRICT ON UPDATE RESTRICT,

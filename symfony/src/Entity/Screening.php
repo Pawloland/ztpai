@@ -27,7 +27,7 @@ class Screening
     #[Groups(['Screening:read'])]
     private int $id_screening;
 
-    #[ORM\Column(type: "datetimetz", nullable: true)]
+    #[ORM\Column(type: "datetimetz")]
     #[Groups(['Screening:read'])]
     private $start_time;
 
