@@ -56,6 +56,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 )
             ),
             normalizationContext: ['groups' => ['Movie:read']],
+            security: "is_granted('WORKER', object)",
             deserialize: false,
             name: 'post_movie_with_poster',
             processor: MovieStateProcessorPOST::class,
@@ -83,11 +84,11 @@ class Movie
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[Groups(['Movie:read','Screening:read'])]
+    #[Groups(['Movie:read', 'Screening:read'])]
     private int $id_movie;
 
     #[ORM\Column(type: "string", length: 80, nullable: false)]
-    #[Groups(['Movie:read', 'Movie:write','Screening:read'])]
+    #[Groups(['Movie:read', 'Movie:write', 'Screening:read'])]
     private string $title;
 
     #[ORM\Column(type: "string", length: 80, nullable: false)]

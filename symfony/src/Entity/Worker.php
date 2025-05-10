@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\GetCollection;
 use App\Enum\Permissions;
 use App\Enum\UserTypes;
 use App\Repository\WorkerRepository;
@@ -9,11 +12,20 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
 
-//#[ApiResource(
-//    normalizationContext: ['groups' => ['Worker:read']],
-//    denormalizationContext: ['groups' => ['Worker:write']]
-//)]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            security: "is_granted('WORKER', object)",
+        ),
+        new Delete(
+            security: "is_granted('WORKER_RemoveWorker', object) and object.getIdWorker() !== user.getIdWorker()",
+        ),
+    ],
+    normalizationContext: ['groups' => ['Worker:read']],
+    denormalizationContext: ['groups' => ['Worker:write']]
+)]
 #[ORM\Entity(repositoryClass: WorkerRepository::class)]
 #[ORM\Table(name: "worker")]
 #[ORM\Index(name: "worker_id_worker_type_idx", columns: ["id_worker_type"])]
@@ -23,15 +35,19 @@ class Worker implements UserInterface
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
+    #[Groups(['Worker:read', 'WorkerSessions:read', 'WorkerSessions:read'])]
     private int $id_worker;
 
     #[ORM\Column(type: "string", length: 40, nullable: false)]
+    #[Groups(['Worker:read'])]
     private string $worker_name;
 
     #[ORM\Column(type: "string", length: 40, nullable: false)]
+    #[Groups(['Worker:read'])]
     private string $worker_surname;
 
     #[ORM\Column(type: "string", length: 40, nullable: false)]
+    #[Groups(['Worker:read', 'WorkerSessions:read', 'WorkerSessions:read'])]
     private string $nick;
 
     #[ORM\Column(type: "string", length: 80, nullable: false)]
@@ -45,6 +61,7 @@ class Worker implements UserInterface
         referencedColumnName: "id_worker_type",
         nullable: false,
         onDelete: "RESTRICT")]
+    #[Groups(['Worker:read'])]
     private WorkerType $workerType;
 
     public function __construct()
