@@ -196,14 +196,12 @@ function Dashboard() {
                                 console.log(e);
                                 e.preventDefault()
                             }}
-
-
                 />
                 <List title={"Filmy"} header={["ID", "Tytuł", "Długość"]}
                       data={movies.map(movie => [
                           movie.id_movie,
                           movie.title,
-                          new Date(movie.duration).toLocaleTimeString('en-GB', {hour: '2-digit', minute: '2-digit', second: '2-digit'})
+                          new Date(movie.duration).toLocaleTimeString(undefined, {hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'UTC'}),
 
                       ])}
                       onColumnValueClick={
