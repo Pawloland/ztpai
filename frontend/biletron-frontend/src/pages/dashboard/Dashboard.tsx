@@ -102,7 +102,7 @@ function Dashboard() {
     const text: InputType = {type: 'text', required: true}
     const time: InputType = {type: 'time', required: true}
     const textarea: InputType = {type: 'textarea', required: true}
-    const languageSelect: InputType = () => ({
+    const languageSelect = (): InputType => ({
         type: 'select',
         required: true,
         options: languages.map((lang) => ({
@@ -112,7 +112,7 @@ function Dashboard() {
         default_option: 0
     })
     const file: InputType = {type: 'file', required: false}
-    const movieSelect: InputType = () => ({
+    const movieSelect = (): InputType => ({
         type: 'select',
         required: true,
         options: movies.map((movie) => ({
@@ -121,7 +121,7 @@ function Dashboard() {
         })),
         default_option: 0
     })
-    const hallSelect: InputType = () => ({
+    const hallSelect = (): InputType => ({
         type: 'select',
         required: true,
         options: halls.map((hall) => ({
@@ -130,7 +130,7 @@ function Dashboard() {
         })),
         default_option: 0
     })
-    const screeningTypeSelect: InputType = () => ({
+    const screeningTypeSelect = (): InputType => ({
         type: 'select',
         required: true,
         options: screeningTypes.map((screeningType) => ({
@@ -139,7 +139,7 @@ function Dashboard() {
         })),
         default_option: 0
     })
-    const datetimeSelect: InputType = () => ({
+    const datetimeSelect = (): InputType => ({
         type: 'datetime-local',
         required: true
     })
