@@ -9,7 +9,7 @@ export const fetchScreeningTypes = async (): Promise<ScreeningType[]> => {
         const data: ScreeningTypeResponse = await response.json()
         return data.member
     } catch (err) {
-        console.error('Error fetching movies:', err)
+        console.error('Error fetching screening types:', err)
         return []
     }
 }

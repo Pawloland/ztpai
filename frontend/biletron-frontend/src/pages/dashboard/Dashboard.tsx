@@ -17,6 +17,8 @@ import {Hall} from "../../types/Hall.tsx";
 import {ScreeningType} from "../../types/ScreeningType.tsx";
 import {fetchHalls} from "../../services/HallService.tsx";
 import {fetchScreeningTypes} from "../../services/ScreeningTypeService.tsx";
+import {Screening} from "../../types/Screening.tsx";
+import {fetchScreenings} from "../../services/ScreeningService.tsx";
 
 
 function Dashboard() {
@@ -24,6 +26,7 @@ function Dashboard() {
     const [languages, setLanguages] = useState<Language[]>([]);
     const [halls, setHalls] = useState<Hall[]>([]);
     const [screeningTypes, setScreeningTypes] = useState<ScreeningType[]>([]);
+    const [screenings, setScreenings] = useState<Screening[]>([]);
     const [loading, setLoading] = useState(true);
     const [nick, setNick] = useState<string>("Wyloguj");
     const [formData, setFormData] = useState({
@@ -41,7 +44,8 @@ function Dashboard() {
         setLoading(true);
 
         // Start all fetches at once
-        const [languagesPromise, moviesPromise, hallsPromise, screeningTypesPromise] = [fetchLanguages(), fetchMovies(), fetchHalls(), fetchScreeningTypes()]
+        const [languagesPromise, moviesPromise, hallsPromise, screeningTypesPromise, screeningPromise] =
+            [fetchLanguages(), fetchMovies(), fetchHalls(), fetchScreeningTypes(), fetchScreenings()]
 
         // Wait for languages first
         const languages = await languagesPromise;
@@ -57,10 +61,12 @@ function Dashboard() {
         }));
 
         // Now await the remaining, already-started promises
-        const [movies, halls, screeningTypes] = await Promise.all([moviesPromise, hallsPromise, screeningTypesPromise]);
+        const [movies, halls, screeningTypes, screenings] =
+            await Promise.all([moviesPromise, hallsPromise, screeningTypesPromise, screeningPromise]);
         setMovies(movies);
         setHalls(halls);
         setScreeningTypes(screeningTypes);
+        setScreenings(screenings);
 
         setLoading(false);
     };
@@ -233,16 +239,20 @@ function Dashboard() {
                           }
                       }
                 />
-                <List title={"Nadchodzące seanse"} header={["ID", "Data", "Godzina", "Tytuł", "Sala", "Typ"]}
-                      data={[
-                          ["1001", "2026.01.01 Thursday", "10:00", "Alien Romulus", "2", "2D"],
-                          ["1001", "2026.01.01 Thursday", "10:00", "Alien Romulus", "2", "2D"],
-                          ["1001", "2026.01.01 Thursday", "10:00", "Alien Romulus", "2", "2D"],
-                          ["1001", "2026.01.01 Thursday", "10:00", "Alien Romulus", "2", "2D"],
-                          ["1001", "2026.01.01 Thursday", "10:00", "Alien Romulus", "2", "2D"],
-                          ["1001", "2026.01.01 Thursday", "10:00", "Alien Romulus", "2", "2D"],
-                          ["1001", "2026.01.01 Thursday", "10:00", "Alien Romulus", "2", "2D"],
-                      ]}
+                <List title={"Nadchodzące seanse"} header={["ID", "Data", "", "Godzina", "Tytuł", "Sala", "Typ"]}
+                      data={screenings.map(screening => {
+                          const start_time = new Date(screening.start_time);
+
+                          return [
+                              screening.id_screening,
+                              start_time.toLocaleDateString(undefined, {year: 'numeric', month: '2-digit', day: '2-digit'}),
+                              start_time.toLocaleDateString(undefined, {weekday: "long"}).replace(/^./, c => c.toUpperCase()), // Capitalize first letter
+                              start_time.toLocaleTimeString(undefined, {hour: '2-digit', minute: '2-digit'}),
+                              screening.movie.title,
+                              screening.hall.hall_name,
+                              screening.screeningType.screening_name
+                          ];
+                      })}
                       onColumnValueClick={
                           (value: any) => {
                               console.log(value);

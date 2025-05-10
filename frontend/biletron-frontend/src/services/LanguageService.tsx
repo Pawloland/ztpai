@@ -9,7 +9,7 @@ export const fetchLanguages = async (): Promise<Language[]> => {
         const data: LanguageResponse = await response.json()
         return data.member
     } catch (err) {
-        console.error('Error fetching movies:', err)
+        console.error('Error fetching languages:', err)
         return []
     }
 }

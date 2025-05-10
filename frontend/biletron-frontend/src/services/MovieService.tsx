@@ -2,7 +2,7 @@ import {Movie, MoviesResponse} from "../types/Movie.ts";
 
 export const fetchMovies = async (): Promise<Movie[]> => {
     try {
-        const response = await fetch('/api/movies')
+        const response = await fetch('/api/movies?order[title]=asc')
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`)
         }
