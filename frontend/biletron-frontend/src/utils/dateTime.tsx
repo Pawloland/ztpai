@@ -16,16 +16,22 @@ export function formatTime(localTime: Date): string {
     return `${hour}:${minute}:${second}`;
 }
 
+function __formatDateTime(localeDateTime: Date): string {
+    const date = formatDate(localeDateTime)
+    const time = formatTime(localeDateTime);
+    return `${date} ${time}`;
+}
+
+export function formatDateTimeNoSubSecond(dateTimeString: string): string {
+    const localDate = new Date(dateTimeString);
+    return __formatDateTime(localDate);
+}
+
 
 export function formatDateTime(dateTimeString: string): string {
     const localDate = new Date(dateTimeString);
-    const year = localDate.toLocaleDateString(undefined, {year: 'numeric'});
-    const month = localDate.toLocaleDateString(undefined, {month: '2-digit'});
-    const day = localDate.toLocaleDateString(undefined, {day: '2-digit'});
-    const hour = localDate.toLocaleTimeString(undefined, {hour: '2-digit', hour12: false});
-    const minute = localDate.toLocaleTimeString(undefined, {minute: '2-digit'});
-    const second = localDate.toLocaleTimeString(undefined, {second: '2-digit'});
+    const dateTimeNoSubSecond = __formatDateTime(localDate);
     const sub_second = dateTimeString.split(".")[1]?.split("+")[0]
-    return `${year}-${month}-${day} ${hour}:${minute}:${second}.${sub_second}`;
+    return `${dateTimeNoSubSecond}.${sub_second}`;
 }
 

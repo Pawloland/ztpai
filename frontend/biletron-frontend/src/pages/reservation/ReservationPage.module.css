@@ -73,6 +73,10 @@ main._ > form.right > div.room > div.screen {
     text-align: center;
 }
 
+main._ > form.right > div.room > div.seats > span {
+    color: var(--main-color);
+}
+
 main._ > form.right > div.room > div.seats > table tr {
     display: flex;
 }

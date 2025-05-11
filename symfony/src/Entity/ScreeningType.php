@@ -30,7 +30,7 @@ class ScreeningType
     private string $screening_name;
 
     #[ORM\Column(type: "decimal", nullable: false, scale: 2)]
-    #[Groups(['ScreeningType:read'])]
+    #[Groups(['ScreeningType:read','Screening:read'])]
     private string $price;
 
     #[ORM\OneToMany(targetEntity: Screening::class, mappedBy: "screeningType")]

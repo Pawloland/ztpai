@@ -2,10 +2,25 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use App\Repository\ReservationRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
-//#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(),
+    ],
+    normalizationContext: ['groups' => ['Reservation:read']],
+    denormalizationContext: ['groups' => ['Reservation:write']]
+)]
+#[ApiFilter(
+    SearchFilter::class,
+    properties: ['screening.id_screening' => 'exact'])
+]
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
 #[ORM\Table(name: "reservation")]
 #[ORM\Index(name: "reservation_screening_idx", columns: ["id_screening"])]
@@ -17,6 +32,7 @@ class Reservation
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
+    #[Groups(['Reservation:read'])]
     private int $id_reservation;
 
     #[ORM\Column(type: "decimal", scale: 2, nullable: false)]
@@ -67,6 +83,7 @@ class Reservation
         referencedColumnName: "id_screening",
         nullable: false,
         onDelete: "RESTRICT")]
+    #[Groups(['Reservation:read'])]
     private Screening $screening;
 
     #[ORM\ManyToOne(targetEntity: Seat::class, inversedBy: "reservation")]
@@ -74,6 +91,7 @@ class Reservation
         referencedColumnName: "id_seat",
         nullable: false,
         onDelete: "RESTRICT")]
+    #[Groups(['Reservation:read'])]
     private Seat $seat;
 
     public function getIdReservation(): int

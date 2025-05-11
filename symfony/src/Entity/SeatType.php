@@ -22,7 +22,7 @@ class SeatType
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[Groups(['Hall:read', 'SeatType:read'])]
+    #[Groups(['Hall:read', 'SeatType:read', 'Seat:read'])]
     private int $id_seat_type;
 
     #[ORM\Column(type: "string", length: 40, nullable: false)]

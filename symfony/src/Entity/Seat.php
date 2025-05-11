@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\SeatRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -13,6 +15,10 @@ use Symfony\Component\Serializer\Attribute\Groups;
     normalizationContext: ['groups' => ['Seat:read']],
     denormalizationContext: ['groups' => ['Seat:write']]
 )]
+#[ApiFilter(
+    SearchFilter::class,
+    properties: ['hall.id_hall' => 'exact'])
+]
 #[ORM\Entity(repositoryClass: SeatRepository::class)]
 #[ORM\Table(name: "seat")]
 #[ORM\Index(name: "fk_seat_hall", columns: ["id_hall"])]
@@ -22,15 +28,15 @@ class Seat
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[Groups(['Hall:read', 'Seat:read'])]
+    #[Groups(['Seat:read', 'Reservation:read'])]
     private int $id_seat;
 
     #[ORM\Column(type: "string", length: 2, nullable: false)]
-    #[Groups(['Hall:read', 'Seat:read'])]
+    #[Groups(['Seat:read',])]
     private string $row;
 
     #[ORM\Column(type: "integer", nullable: false)]
-    #[Groups(['Hall:read', 'Seat:read'])]
+    #[Groups(['Seat:read'])]
     private int $number;
 
     #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: "seat")]
@@ -38,17 +44,17 @@ class Seat
 
     #[ORM\ManyToOne(targetEntity: Hall::class, inversedBy: "seats")]
     #[ORM\JoinColumn(name: "id_hall",
-            referencedColumnName: "id_hall",
-            nullable: false,
-            onDelete: "RESTRICT")]
+        referencedColumnName: "id_hall",
+        nullable: false,
+        onDelete: "RESTRICT")]
     #[Groups(['Seat:read'])]
     private Hall $hall;
 
     #[ORM\ManyToOne(targetEntity: SeatType::class, inversedBy: "seats")]
     #[ORM\JoinColumn(name: "id_seat_type",
-            referencedColumnName: "id_seat_type",
-            nullable: false,
-            onDelete: "RESTRICT")]
+        referencedColumnName: "id_seat_type",
+        nullable: false,
+        onDelete: "RESTRICT")]
     #[Groups(['Hall:read', 'Seat:read'])]
     private SeatType $seatType;
 
