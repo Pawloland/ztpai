@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Doctrine\Orm\Filter\ExistsFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
@@ -78,6 +80,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiFilter(
     OrderFilter::class,
     properties: ['title'],
+)]
+#[ApiFilter(
+    ExistsFilter::class,
+    properties: ['screenings']
+)]
+#[ApiFilter(
+    DateFilter::class,
+    properties: ['screenings.start_time' => 'strictly_after']
 )]
 class Movie
 {

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
@@ -35,6 +36,10 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ApiFilter(
     OrderFilter::class,
     properties: ['start_time'],
+)]
+#[ApiFilter(
+    DateFilter::class,
+    properties: ['start_time' => 'strictly_after']
 )]
 #[ORM\Entity(repositoryClass: ScreeningRepository::class)]
 #[ORM\Table(name: "screening")]
