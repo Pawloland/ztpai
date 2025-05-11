@@ -5,20 +5,22 @@ import Header from "../../components/header/Header.tsx";
 import {AllowedRoutes} from "../../types/Routes.ts";
 import {AllowedIconClass} from "../../components/icon/Icon.tsx";
 import Poster from "../../components/poster/Poster.tsx";
-import {destroyCookie, getCookieURIEncodedJSONAsObject} from "../../utils/cookies.tsx";
+import {getCookieURIEncodedJSONAsObject} from "../../utils/cookies.tsx";
 import {AuthCookie, AuthCookieName} from "../../types/AuthCookie.ts";
-import Messages from "../../components/messages/Messages.tsx";
-import {fetchMovies} from "../../services/MovieService.tsx";
+import {fetchMoviesWithScreeningsInFuture} from "../../services/MovieService.tsx";
+import {logoutClient} from "../../services/ClientService.tsx";
+import {useNavigate} from "react-router";
 
 
 function Movies() {
     const [movies, setMovies] = useState<Movie[]>([]);
     const [loading, setLoading] = useState(true);
     const [email, setEmail] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     const initializeData = async () => {
         setLoading(true);
-        setMovies(await fetchMovies());
+        setMovies(await fetchMoviesWithScreeningsInFuture());
         setLoading(false);
     };
 
@@ -48,35 +50,25 @@ function Movies() {
                             route: AllowedRoutes.Logout,
                             iconClass: AllowedIconClass.Logout,
                             text: email,
-                            onClick: () => {
-                                fetch('/api' + AllowedRoutes.Logout, {
-                                    method: 'GET'
-                                })
-                                    .then((res) => {
-                                        if (res.ok) {
-                                            Messages.showMessage('Wylogowano pomyślnie!', 4000);
-                                        } else {
-                                            Messages.showMessage('Nie udało się wylogować, bo taka sesja nie istnieje', 4000);
-                                        }
-                                        destroyCookie(AuthCookieName.Client);
-                                        setEmail(null);
-
-                                    })
-                                    .catch((err) => {
-                                        console.error('Error logging out:', err);
-                                        destroyCookie(AuthCookieName.Client);
-                                    });
-                            }
+                            onClick: async () => {
+                                await logoutClient() && navigate(AllowedRoutes.Home);
+                            },
                         }]
                 }
             />
             <main className={styles._}>
-                {
+                {loading ?
+                    (
+                        <div className={styles._}>
+                            <p>Ładowanie...</p>
+                        </div>
+                    )
+                    :
                     movies.map(movie => {
                         return (
                             <Poster
                                 key={movie.id_movie}
-                                ID_Movie={movie.id_movie}
+                                movie={movie}
                                 poster={movie.poster}
                                 title={movie.title}
                             />

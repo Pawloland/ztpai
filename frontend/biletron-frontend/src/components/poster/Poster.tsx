@@ -2,11 +2,18 @@ import styles from "./Poster.module.css";
 import {Link} from 'react-router';
 import {ElementType} from "react";
 import {AllowedRoutes} from "../../types/Routes.ts";
+import {Movie} from "../../types/Movie.ts";
 
-function Poster({ID_Movie, poster = 'default', title = 'Missing title'}: { ID_Movie?: number; poster?: string; title?: string; }) {
-    const Wrapper: ElementType = ID_Movie !== undefined ? Link : 'a';
-    const wrapperProps = ID_Movie !== undefined
-        ? {to: `${AllowedRoutes.SelectPlace}?ID_Movie=${ID_Movie}`}
+function Poster({movie, poster = 'default', title = 'Missing title'}: { movie?: Movie, poster?: string; title?: string; }) {
+    const Wrapper: ElementType = movie !== undefined ? Link : 'a';
+    const wrapperProps = movie !== undefined
+        ? {
+            to: {
+                pathname: AllowedRoutes.Reservation,
+                search: `?id_movie=${movie.id_movie}`,
+            },
+            state: {movie},
+        }
         : {}; // no href at all
 
     return (

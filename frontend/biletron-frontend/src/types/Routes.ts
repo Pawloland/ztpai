@@ -6,6 +6,6 @@ export enum AllowedRoutes {
     WorkerLogin = '/workerLogin',
     Dashboard = '/dashboard',
     WorkerLogout = '/workerLogout',
-    SelectPlace = '/selectPlace',
+    Reservation = '/reservation',
     Hamburger = '#',
 }

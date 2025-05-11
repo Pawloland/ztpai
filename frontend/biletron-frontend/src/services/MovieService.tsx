@@ -13,3 +13,17 @@ export const fetchMovies = async (): Promise<Movie[]> => {
         return []
     }
 };
+
+export const fetchMoviesWithScreeningsInFuture = async (): Promise<Movie[]> => {
+    try {
+        const response = await fetch(`/api/movies?order[title]=asc&screenings.exists=true&screenings.start_time[strictly_after]=${new Date().toISOString()}`)
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        let data: MoviesResponse = await response.json()
+        return data.member
+    } catch (err) {
+        console.error('Error fetching movies:', err)
+        return []
+    }
+}
