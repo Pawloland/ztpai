@@ -1,10 +1,10 @@
-main {
+main._ {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
 }
 
-main > div {
+main._ > div._ {
     display: flex;
     flex-direction: column;
     border-radius: 10px;
@@ -20,95 +20,4 @@ main > div {
     box-sizing: border-box;
     align-items: center;
     justify-content: center;
-
-}
-
-#add_movie {
-    flex: unset;
-}
-
-main > div > form {
-    width: 100%;
-}
-
-main > div > form > table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-main > div > form > table > tbody > tr > th {
-    text-align: right;
-    width: 50%;
-    text-transform: capitalize;
-}
-
-main > div > form > table > tbody > tr > th > * {
-    padding-right: 5px;
-}
-
-main > div > form > table > tbody > tr > th > *::after {
-    content: ":";
-}
-
-
-main > div > form > table > tbody > tr > td {
-    padding: 5px;
-}
-
-/*main > div > form > table > tbody > tr > td:last-child {*/
-/*    text-align: center;*/
-/*}*/
-
-
-main > div > form > table > tbody > tr > td > * {
-    width: 100%;
-    box-sizing: border-box;
-    background: var(--main-color);
-    box-shadow: 12px 16px 7.1px 1px rgba(0, 0, 0, 0.41);
-    border-radius: 23px;
-    padding: 5px;
-    color: var(--background-color);
-}
-
-main > div > form > table > tbody > tr > td > textarea {
-    /*resize: vertical;*/
-    white-space: pre;
-    overflow: clip;
-    resize: both;
-}
-
-.list {
-    max-height: 400px;
-    flex-basis: auto;
-    justify-content: flex-start;
-}
-
-.list > form > table > tbody > tr:hover {
-    background-color: var(--action-color);
-}
-
-
-.list > form > table > thead > tr > th:first-child,
-.list > form > table > tbody > tr > td:first-child {
-    text-align: right;
-}
-
-.list > form > table > thead > tr > th {
-    text-align: left;
-}
-
-
-td:has(span.icon) {
-    padding: 0;
-}
-
-td span.icon {
-    background-color: var(--main-color);
-    border-radius: unset;
-    vertical-align: middle;
-    cursor: pointer;
-}
-
-td span.icon:hover {
-    background-color: var(--header-background-color);
 }

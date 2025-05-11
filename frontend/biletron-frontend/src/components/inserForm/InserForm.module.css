@@ -14,14 +14,13 @@ div._ {
     box-sizing: border-box;
     align-items: center;
     justify-content: center;
-
 }
 
 div._:first-child {
     flex: unset;
 }
 
-div._ > div > form {
+div._ > form {
     width: 100%;
 }
 

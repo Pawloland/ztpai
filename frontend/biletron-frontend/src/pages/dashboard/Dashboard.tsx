@@ -214,9 +214,9 @@ function Dashboard() {
                             })
                     }
                 }]}/>
-            <main className={styles.main}>
+            <main className={styles._}>
                 {loading ?
-                    <div className={styles.loading}>
+                    <div className={styles._}>
                         <p>Ładowanie...</p>
                     </div> :
                     <>
