@@ -231,7 +231,7 @@ main._ input[type="text"]::placeholder {
         word-break: break-word;
     }
 
-    .summary > span:first-child {
+    .summary.specific > span:first-child {
         margin-right: 0 !important;
         padding-left: 5% !important;
     }
