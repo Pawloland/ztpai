@@ -18,6 +18,7 @@ import {fetchSeatsForHalls} from "../../services/SeatService.tsx";
 import {SeatType} from "../../types/SeatType.tsx";
 import {fetchSeatTypes} from "../../services/SeatTypeService.tsx";
 import {fetchReservationsForScreening} from "../../services/ReservationService.tsx";
+import {decimalToInt, IntToDecimal} from "../../utils/decimal.tsx";
 
 
 /** @example
@@ -46,14 +47,14 @@ function ReservationPage() {
     const [screenings, setScreenings] = useState<Screening[]>([]);
     const [screening, setScreening] = useState<Screening>({} as Screening); // Initialize with an empty object to avoid undefined lint error
 
-    const [summary, setSummary] = useState<number>(0);
+    const [summaryNetto, setSummaryNetto] = useState<number>(0);
     const [discount, setDiscount] = useState<number>(0);
     const [seatCounts, setSeatCounts] = useState<{ standard: number; premium: number; bed: number }>({
         standard: 0,
         premium: 0,
         bed: 0,
     });
-    const [total, setTotal] = useState<number>(0);
+    const [totalNetto, setTotalNetto] = useState<number>(0);
 
     const clearLocationState = () => {
         window.history.replaceState({}, '')
@@ -175,22 +176,22 @@ function ReservationPage() {
 
     const handleScreeningChange = (e: ChangeEvent<HTMLSelectElement>) => {
         setScreening(screenings[parseInt(e.target.value)]);
-        setSummary(0);
+        setSummaryNetto(0);
         setSeatCounts({standard: 0, premium: 0, bed: 0});
-        setTotal(0);
+        setTotalNetto(0);
     }
 
     const handleSeatChange = (seat: Seat, screening: Screening, checked: boolean) => {
         const seat_type = seatTypes.find(type => type.id_seat_type === seat.seatType.id_seat_type)!;
         const seat_type_name = seat_type.seat_name;
-        const seat_price = parseFloat(seat_type.price);
-        const screening_price = parseFloat(screening.screeningType.price);
+        const seat_price_gr = decimalToInt(seat_type.price);
+        const screening_price_gr = decimalToInt(screening.screeningType.price)
+
+        const value_netto_gr = (seat_price_gr + screening_price_gr)
+        const delta_netto_gr = checked ? value_netto_gr : -value_netto_gr;
 
 
-        const value = (1 + VAT / 100) * (seat_price + screening_price);
-        const delta = checked ? value : -value;
-
-        setSummary((prev) => prev + delta);
+        setSummaryNetto((prev) => prev + delta_netto_gr);
         setSeatCounts((prev) => ({
             standard: seat_type_name === "standard" ? prev.standard + (checked ? 1 : -1) : prev.standard,
             premium: seat_type_name === "premium" ? prev.premium + (checked ? 1 : -1) : prev.premium,
@@ -198,8 +199,9 @@ function ReservationPage() {
         }));
 
 
-        setTotal((prev) =>
-            Math.max(prev + delta - discount, 0)
+
+        setTotalNetto((prev) =>
+            Math.max(prev + delta_netto_gr - discount, 0)
         );
 
         // setTotal((prevSummary, prevDiscount) =>
@@ -349,7 +351,7 @@ function ReservationPage() {
 
                                     <div className={styles.summary}>
                                         <span>Suma:</span>
-                                        <span id={styles.sum}>{summary.toFixed(2)}</span>
+                                        <span id={styles.sum}>{IntToDecimal(summaryNetto, VAT)}</span>
                                     </div>
                                     <div className={`${styles.summary} ${styles.discount}`}>
                                         <span>Rabat:</span>
@@ -357,7 +359,7 @@ function ReservationPage() {
                                     </div>
                                     <div className={`${styles.summary} ${styles.discounted}`}>
                                         <span>Do zapłaty:</span>
-                                        <span id={styles.total}>{total.toFixed(2)}</span>
+                                        <span id={styles.total}>{IntToDecimal(totalNetto, VAT)}</span>
                                     </div>
                                     <button type="submit">Potwierdzam i płacę</button>
                                 </div>
