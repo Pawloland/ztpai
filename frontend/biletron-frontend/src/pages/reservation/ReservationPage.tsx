@@ -1,7 +1,7 @@
 import Header from "../../components/header/Header.tsx";
 import {AllowedRoutes} from "../../types/Routes.ts";
 import {AllowedIconClass} from "../../components/icon/Icon.tsx";
-import {ChangeEvent, FormEvent, JSX, useEffect, useState} from "react";
+import {ChangeEvent, FormEvent, JSX, KeyboardEvent, useEffect, useState} from "react";
 import styles from './ReservationPage.module.css';
 import {useLocation, useNavigate} from "react-router";
 import {Movie} from "../../types/Movie.ts";
@@ -19,6 +19,7 @@ import {SeatType} from "../../types/SeatType.tsx";
 import {fetchSeatTypes} from "../../services/SeatTypeService.tsx";
 import {fetchReservationsForScreening} from "../../services/ReservationService.tsx";
 import {decimalToInt, IntToDecimal} from "../../utils/decimal.tsx";
+import {fetchDiscount} from "../../services/DiscountService.tsx";
 
 
 /** @example
@@ -48,7 +49,8 @@ function ReservationPage() {
     const [screening, setScreening] = useState<Screening>({} as Screening); // Initialize with an empty object to avoid undefined lint error
 
     const [summaryNetto, setSummaryNetto] = useState<number>(0);
-    const [discount, setDiscount] = useState<number>(0);
+    const [discountNetto, setDiscountNetto] = useState<number>(0);
+    const [discountName, setDiscountName] = useState<string | null>(null);
     const [seatCounts, setSeatCounts] = useState<{ standard: number; premium: number; bed: number }>({
         standard: 0,
         premium: 0,
@@ -181,6 +183,30 @@ function ReservationPage() {
         setTotalNetto(0);
     }
 
+    const handleDiscountChange = (e: KeyboardEvent<HTMLInputElement>) => {
+        e.stopPropagation();
+        const new_discount_value = e.currentTarget.value;
+        if (e.key === 'Enter') {
+            const updateDiscount = async () => {
+                try {
+                    const discount = await fetchDiscount(new_discount_value);
+                    Messages.showMessage("Pomyślnie dodano rabat", 4000);
+                    setDiscountNetto(decimalToInt(discount.amount));
+                    setDiscountName(new_discount_value)
+                } catch (error) {
+                    Messages.showMessage("Niepoprawny kod rabatowy", 4000);
+                    console.error('Error fetching discount:', error);
+                    setDiscountNetto(0);
+                    setDiscountName(null);
+                }
+            }
+            updateDiscount();
+        } else if (new_discount_value !== discountName) {
+            setDiscountNetto(0);
+            setDiscountName(null);
+        }
+    }
+
     const handleSeatChange = (seat: Seat, screening: Screening, checked: boolean) => {
         const seat_type = seatTypes.find(type => type.id_seat_type === seat.seatType.id_seat_type)!;
         const seat_type_name = seat_type.seat_name;
@@ -199,9 +225,8 @@ function ReservationPage() {
         }));
 
 
-
         setTotalNetto((prev) =>
-            Math.max(prev + delta_netto_gr - discount, 0)
+            Math.max(prev + delta_netto_gr, 0)
         );
 
         // setTotal((prevSummary, prevDiscount) =>
@@ -307,7 +332,11 @@ function ReservationPage() {
                                     poster={movie?.poster}
                                 />
                             </div>
-                            <form className={styles.right}>
+                            <form className={styles.right} onSubmit={event => {
+                                console.log(event);
+                                event.preventDefault()
+                                event.stopPropagation()
+                            }}>
                                 <input type="hidden" name="ID_Movie" value={movie?.id_movie} required readOnly/>
                                 <div className={styles.room}>
                                     <div className={styles.screen}>
@@ -347,7 +376,7 @@ function ReservationPage() {
                                         <span>Łóżko</span>
                                         <span>{seatCounts.bed}</span>
                                     </div>
-                                    <input id="discount_code" type="text" name="discount_name" placeholder="Wpisz kod rabatowy"/>
+                                    <input type="text" name="discount_name" placeholder="Wpisz kod rabatowy" onKeyDown={handleDiscountChange}/>
 
                                     <div className={styles.summary}>
                                         <span>Suma:</span>
@@ -355,11 +384,11 @@ function ReservationPage() {
                                     </div>
                                     <div className={`${styles.summary} ${styles.discount}`}>
                                         <span>Rabat:</span>
-                                        <span id={styles.disc}>{discount.toFixed(2)}</span>
+                                        <span id={styles.disc}>{IntToDecimal(discountNetto, VAT)}</span>
                                     </div>
                                     <div className={`${styles.summary} ${styles.discounted}`}>
                                         <span>Do zapłaty:</span>
-                                        <span id={styles.total}>{IntToDecimal(totalNetto, VAT)}</span>
+                                        <span id={styles.total}>{IntToDecimal(Math.max(totalNetto - discountNetto, 0), VAT)}</span>
                                     </div>
                                     <button type="submit">Potwierdzam i płacę</button>
                                 </div>
