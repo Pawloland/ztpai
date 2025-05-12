@@ -1,8 +1,14 @@
 import {HallPartial} from "./Hall.tsx";
-import {SeatTypePartial} from "./SeatType.tsx";
+import {SeatTypeExpandedPartial, SeatTypePartial} from "./SeatType.tsx";
 
 export interface SeatPartial {
     id_seat: number;
+}
+
+export interface SeatExpandedPartial extends SeatPartial {
+    row: string;
+    number: number;
+    seatType: SeatTypeExpandedPartial
 }
 
 export interface Seat extends SeatPartial {

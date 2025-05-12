@@ -1,5 +1,5 @@
 import {HallPartial} from "./Hall.tsx";
-import {ScreeningType} from "./ScreeningType.tsx";
+import {ScreeningType, ScreeningTypePartial} from "./ScreeningType.tsx";
 import {MoviePartial} from "./Movie.ts";
 
 export interface ScreeningPartial {
@@ -11,6 +11,13 @@ export interface Screening extends ScreeningPartial {
     hall: HallPartial;
     movie: MoviePartial;
     screeningType: ScreeningType;
+}
+
+export interface ScreeningExpanded {
+    start_time: string;
+    hall: HallPartial;
+    movie: MoviePartial;
+    screeningType: ScreeningTypePartial;
 }
 
 export interface ScreeningResponse {

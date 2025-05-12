@@ -106,9 +106,14 @@ function ReservationPage() {
     useEffect(() => {
         document.title = "RESERVATION PAGE";
         window.addEventListener("beforeunload", clearLocationState); // clears location.state, so that on the next full page load data is fetched based on id_movie url param, not old location.state
-        initializeData()
         const auth_cookie = getCookieURIEncodedJSONAsObject(AuthCookieName.Client) as AuthCookie | null;
-        setEmail(auth_cookie?.email ?? "Wyloguj");
+        if (!auth_cookie) {
+            Messages.showMessage("Nie jesteś zalogowany", 4000);
+            navigate(AllowedRoutes.Login)
+        } else {
+            setEmail(auth_cookie.email ?? "Wyloguj");
+            initializeData()
+        }
     }, [location, navigate]);
 
 

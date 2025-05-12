@@ -28,10 +28,13 @@ import {fetchWorkerSessions} from "../../services/WorkerSessionService.tsx";
 import {formatDate, formatDateTime, formatTime, formatWeekDay} from "../../utils/dateTime.tsx";
 import {ClientSession} from "../../types/ClientSession.tsx";
 import {fetchClientSessions} from "../../services/ClientSessionService.tsx";
+import {ReservationExpanded} from "../../types/Reservation.tsx";
+import {fetchReservations} from "../../services/ReservationService.tsx";
 
 
 function Dashboard() {
     const [movies, setMovies] = useState<Movie[]>([]);
+    const [reservations, setReservations] = useState<ReservationExpanded[]>([]);
     const [languages, setLanguages] = useState<Language[]>([]);
     const [halls, setHalls] = useState<Hall[]>([]);
     const [screeningTypes, setScreeningTypes] = useState<ScreeningType[]>([]);
@@ -48,8 +51,8 @@ function Dashboard() {
         setLoading(true);
 
         // Start all fetches at once
-        const [languagesPromise, moviesPromise, hallsPromise, screeningTypesPromise, screeningsPromise, clientsPromise, workersPromise, workerSessionsPromise, clientSessionsPromise] =
-            [fetchLanguages(), fetchMovies(), fetchHalls(), fetchScreeningTypes(), fetchScreenings(), fetchClients(), fetchWorkers(), fetchWorkerSessions(), fetchClientSessions()]
+        const [languagesPromise, moviesPromise, reservationsPromise, hallsPromise, screeningTypesPromise, screeningsPromise, clientsPromise, workersPromise, workerSessionsPromise, clientSessionsPromise] =
+            [fetchLanguages(), fetchMovies(), fetchReservations(), fetchHalls(), fetchScreeningTypes(), fetchScreenings(), fetchClients(), fetchWorkers(), fetchWorkerSessions(), fetchClientSessions()]
 
         // Wait for languages first
         const languages = await languagesPromise;
@@ -57,9 +60,11 @@ function Dashboard() {
 
 
         // Now await the remaining, already-started promises
-        const [movies, halls, screeningTypes, screenings, clients, workers, workerSessions, clientSessions] =
-            await Promise.all([moviesPromise, hallsPromise, screeningTypesPromise, screeningsPromise, clientsPromise, workersPromise, workerSessionsPromise, clientSessionsPromise]);
+        const [movies, reservations, halls, screeningTypes, screenings, clients, workers, workerSessions, clientSessions] =
+            await Promise.all([moviesPromise, reservationsPromise, hallsPromise, screeningTypesPromise, screeningsPromise, clientsPromise, workersPromise, workerSessionsPromise, clientSessionsPromise]);
         setMovies(movies);
+        setReservations(reservations as ReservationExpanded[]);
+        console.log(reservations);
         setHalls(halls);
         setScreeningTypes(screeningTypes);
         setScreenings(screenings);
@@ -74,10 +79,14 @@ function Dashboard() {
     useEffect(() => {
         document.title = "ADMIN PAGE"; // Ustawia tytuł karty przeglądarki
 
-        initializeData();
         const auth_cookie = getCookieURIEncodedJSONAsObject(AuthCookieName.Worker) as AuthWorkerCookie | null;
-        setNick(auth_cookie?.nick || "Wyloguj");
-
+        if (!auth_cookie) {
+            Messages.showMessage("Nie jesteś zalogowany", 4000);
+            navigate(AllowedRoutes.WorkerLogin)
+        } else {
+            setNick(auth_cookie?.nick || "Wyloguj");
+            initializeData()
+        }
     }, []);
 
     const handleAddMovie = (e: FormEvent) => {
@@ -248,8 +257,26 @@ function Dashboard() {
                         />
 
 
-                        <List title={"Rezerwacje"} header={["ID", "Mail", "ID Sali", "ID Fotel", "Rząd", "Kolumna", "Typ siedzenia", "Tytuł", "Typ seansu", "Rozpoczęcie", "Cena brutto"]}
-                              data={[]}
+                        <List title={"Rezerwacje"} header={["ID", "Mail", "ID Sali", "ID Fotel", "Rząd", "Kolumna", "Typ siedzenia", "Tytuł", "Typ seansu", "Rozpoczęcie", "", "", "Cena brutto"]}
+                              data={reservations.map(reservation => {
+                                  const start_time = new Date(reservation.screening.start_time);
+
+                                  return [
+                                      reservation.id_reservation,
+                                      reservation.client.mail,
+                                      reservation.screening.hall.id_hall,
+                                      reservation.seat.id_seat,
+                                      reservation.seat.row,
+                                      reservation.seat.number,
+                                      reservation.seat.seatType.seat_name,
+                                      reservation.screening.movie.title,
+                                      reservation.screening.screeningType.screening_name,
+                                      formatDate(start_time),
+                                      formatWeekDay(start_time),
+                                      formatTime(start_time),
+                                      reservation.total_price_brutto + " zł"
+                                  ]
+                              })}
                               onColumnValueClick={
                                   (value: any) => {
                                       console.log(value);

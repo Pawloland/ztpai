@@ -1,8 +1,8 @@
-import {Reservation, ReservationResponse} from "../types/Reservation.tsx";
+import {Reservation, ReservationExpanded, ReservationExpandedResponse, ReservationResponse} from "../types/Reservation.tsx";
 
-export const fetchReservationsForScreening = async (id_screening: number): Promise<Reservation[]> => {
+export const fetchReservations = async (): Promise<Reservation[]|ReservationExpanded[]> => {
     try {
-        const response = await fetch(`/api/reservations?screening.id_screening=${id_screening}`)
+        const response = await fetch(`/api/reservations`)
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`)
         }
@@ -12,5 +12,21 @@ export const fetchReservationsForScreening = async (id_screening: number): Promi
         console.error('Error fetching reservations:', err)
         return []
     }
+}
+
+export const fetchReservationsForScreening = async (id_screening: number): Promise<Reservation[]|ReservationExpanded[]> => {
+    try {
+        const response = await fetch(`/api/reservations?screening.id_screening=${id_screening}`)
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        let data: ReservationExpandedResponse = await response.json()
+        return data.member
+    } catch (err) {
+        console.error('Error fetching reservations:', err)
+        return []
+    }
 };
+
+
 
