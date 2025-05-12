@@ -3,15 +3,22 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use App\Repository\DiscountRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
-//#[ApiResource(
-//    normalizationContext: ['groups' => ['Discount:read']],
-//    denormalizationContext: ['groups' => ['Discount:write']]
-//)]
+#[ApiResource(
+    operations: [
+        new Get(
+            uriVariables: 'discount_name'
+        )
+    ],
+    normalizationContext: ['groups' => ['Discount:read']],
+    denormalizationContext: ['groups' => ['Discount:write']]
+)]
 #[ORM\Entity(repositoryClass: DiscountRepository::class)]
 #[ORM\Table(name: "discount")]
 #[ORM\UniqueConstraint(name: "discount_discount_name_key", columns: ["discount_name"])]
@@ -23,9 +30,11 @@ class Discount
     private int $id_discount;
 
     #[ORM\Column(type: "string", length: 20, nullable: false)]
+    #[Groups(['Discount:read'])]
     private string $discount_name;
 
-    #[ORM\Column(type: "decimal", nullable: false, scale: 2)]
+    #[ORM\Column(type: "decimal", scale: 2, nullable: false)]
+    #[Groups(['Discount:read'])]
     private string $amount;
 
     #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: "discount")]
