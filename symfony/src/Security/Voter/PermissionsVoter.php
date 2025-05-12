@@ -68,17 +68,14 @@ class PermissionsVoter extends Voter
         }
 
         # CLIENT HANDLING
-        if ($userTypeFromAttribute === UserTypes::CLIENT &&
-            ($userFromAuth instanceof Client)
+        if ($userTypeFromAttribute === UserTypes::CLIENT
         ) {
-            return in_array($attribute, $userFromAuth->getRoles());
+            return ($userFromAuth instanceof Client) && in_array($attribute, $userFromAuth->getRoles());
         }
 
         # WORKER HANDLING
-        if ($userTypeFromAttribute === UserTypes::WORKER &&
-            ($userFromAuth instanceof Worker)
-        ) {
-            return in_array($attribute, $userFromAuth->getRoles());
+        if ($userTypeFromAttribute === UserTypes::WORKER) {
+            return ($userFromAuth instanceof Worker) && in_array($attribute, $userFromAuth->getRoles());
         }
 
         return false; // By default, reject everything.
