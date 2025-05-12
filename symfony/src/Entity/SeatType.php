@@ -26,7 +26,7 @@ class SeatType
     private int $id_seat_type;
 
     #[ORM\Column(type: "string", length: 40, nullable: false)]
-    #[Groups(['SeatType:read'])]
+    #[Groups(['SeatType:read','Reservation:read'])]
     private string $seat_name;
 
     #[ORM\Column(type: "decimal", nullable: false, scale: 2)]

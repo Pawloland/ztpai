@@ -56,11 +56,11 @@ class Screening
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[Groups(['Screening:read','Reservation:read'])]
+    #[Groups(['Screening:read', 'Reservation:read'])]
     private int $id_screening;
 
     #[ORM\Column(type: "datetimetz", nullable: false)]
-    #[Groups(['Screening:read', 'Screening:write'])]
+    #[Groups(['Screening:read', 'Screening:write', 'Reservation:read'])]
     private DateTimeInterface $start_time;
 
     #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: "screening")]
@@ -72,7 +72,7 @@ class Screening
         referencedColumnName: "id_hall",
         nullable: false,
         onDelete: "RESTRICT")]
-    #[Groups(['Screening:read', 'Screening:write'])]
+    #[Groups(['Screening:read', 'Screening:write', 'Reservation:read'])]
     private Hall $hall;
 
     #[ORM\ManyToOne(targetEntity: Movie::class, inversedBy: "screenings")]
@@ -80,7 +80,7 @@ class Screening
         referencedColumnName: "id_movie",
         nullable: false,
         onDelete: "RESTRICT")]
-    #[Groups(['Screening:read', 'Screening:write'])]
+    #[Groups(['Screening:read', 'Screening:write', 'Reservation:read'])]
     private Movie $movie;
 
     #[ORM\ManyToOne(targetEntity: ScreeningType::class, inversedBy: "screenings")]
@@ -88,7 +88,7 @@ class Screening
         referencedColumnName: "id_screening_type",
         nullable: false,
         onDelete: "RESTRICT")]
-    #[Groups(['Screening:read', 'Screening:write'])]
+    #[Groups(['Screening:read', 'Screening:write', 'Reservation:read'])]
     private ScreeningType $screeningType;
 
     public function __construct()

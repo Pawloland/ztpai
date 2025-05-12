@@ -98,7 +98,7 @@ class Movie
     private int $id_movie;
 
     #[ORM\Column(type: "string", length: 80, nullable: false)]
-    #[Groups(['Movie:read', 'Movie:write', 'Screening:read'])]
+    #[Groups(['Movie:read', 'Movie:write', 'Screening:read', 'Reservation:read'])]
     private string $title;
 
     #[ORM\Column(type: "string", length: 80, nullable: false)]

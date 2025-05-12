@@ -32,11 +32,11 @@ class Seat
     private int $id_seat;
 
     #[ORM\Column(type: "string", length: 2, nullable: false)]
-    #[Groups(['Seat:read',])]
+    #[Groups(['Seat:read','Reservation:read'])]
     private string $row;
 
     #[ORM\Column(type: "integer", nullable: false)]
-    #[Groups(['Seat:read'])]
+    #[Groups(['Seat:read','Reservation:read'])]
     private int $number;
 
     #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: "seat")]
@@ -55,7 +55,7 @@ class Seat
         referencedColumnName: "id_seat_type",
         nullable: false,
         onDelete: "RESTRICT")]
-    #[Groups(['Hall:read', 'Seat:read'])]
+    #[Groups(['Hall:read', 'Seat:read', 'Reservation:read'])]
     private SeatType $seatType;
 
     public function __construct()

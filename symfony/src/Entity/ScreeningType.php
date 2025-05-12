@@ -22,14 +22,14 @@ class ScreeningType
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[Groups(['ScreeningType:read', 'Screening:read'])]
+    #[Groups(['ScreeningType:read', 'Screening:read','Reservation:read'])]
     private int $id_screening_type;
 
     #[ORM\Column(type: "string", length: 40, nullable: false)]
-    #[Groups(['ScreeningType:read','Screening:read'])]
+    #[Groups(['ScreeningType:read','Screening:read','Reservation:read'])]
     private string $screening_name;
 
-    #[ORM\Column(type: "decimal", nullable: false, scale: 2)]
+    #[ORM\Column(type: "decimal", scale: 2, nullable: false)]
     #[Groups(['ScreeningType:read','Screening:read'])]
     private string $price;
 

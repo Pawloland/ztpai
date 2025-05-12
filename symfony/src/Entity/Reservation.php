@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use App\Repository\ReservationRepository;
@@ -39,6 +40,8 @@ class Reservation
     private string $total_price_netto;
 
     #[ORM\Column(type: "decimal", scale: 2, nullable: false)]
+    #[Groups(['Reservation:read'])]
+    #[ApiProperty(security: "is_granted('WORKER')")]
     private string $total_price_brutto;
 
     #[ORM\Column(type: "decimal", precision: 4, scale: 2, nullable: false)]
@@ -70,6 +73,8 @@ class Reservation
 
     #[ORM\ManyToOne(targetEntity: Client::class, inversedBy: "reservations")]
     #[ORM\JoinColumn(name: "id_client", referencedColumnName: "id_client", onDelete: "RESTRICT")]
+    #[Groups(['Reservation:read'])]
+    #[ApiProperty(security: "is_granted('WORKER')")]
     private Client $client;
 
     #[ORM\ManyToOne(targetEntity: Discount::class, inversedBy: "reservations")]

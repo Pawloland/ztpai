@@ -34,7 +34,7 @@ class Client implements UserInterface
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[Groups(['Client:read','ClientSessions:read'])]
+    #[Groups(['Client:read', 'ClientSessions:read', 'Reservation:read'])]
     private int $id_client;
 
     #[ORM\Column(type: "string", length: 40, nullable: false)]
@@ -53,7 +53,7 @@ class Client implements UserInterface
     private string $password_hash;
 
     #[ORM\Column(type: "string", length: 320, nullable: false)]
-    #[Groups(['Client:read','ClientSessions:read'])]
+    #[Groups(['Client:read', 'ClientSessions:read', 'Reservation:read'])]
     private string $mail;
 
     #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: "client")]

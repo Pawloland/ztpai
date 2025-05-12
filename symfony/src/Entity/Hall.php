@@ -21,7 +21,7 @@ class Hall
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[Groups(['Hall:read','Screening:read'])]
+    #[Groups(['Hall:read','Screening:read','Reservation:read'])]
     private int $id_hall;
 
     #[ORM\Column(type: "string", length: 40, nullable: true)]
