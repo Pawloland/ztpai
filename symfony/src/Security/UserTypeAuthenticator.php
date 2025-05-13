@@ -3,6 +3,7 @@
 namespace App\Security;
 
 use App\Enum\CookieVariant;
+use App\Enum\Globals;
 use App\Service\SecurityService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -51,19 +52,31 @@ abstract class UserTypeAuthenticator extends AbstractAuthenticator
             throw new CustomUserMessageAuthenticationException("No valid cookies found");
         }
 
-        return new SelfValidatingPassport(new UserBadge($user->getUserIdentifier(), fn() => $user));
-        // $apiToken = $request->headers->get('X-AUTH-TOKEN');
-        // if (null === $apiToken) {
-        // The token header was empty, authentication fails with HTTP Status
-        // Code 401 "Unauthorized"
-        // throw new CustomUserMessageAuthenticationException('No API token provided');
-        // }
+        // append the user entity to the request instead of relying only on the returned Password
+        // then return the current user entity, but attach also the list of all entities set in the request
+        // this way we can gather all the entities from every authenticator (assuming it is using the same convention as in this method)
+        // so that later our custom voter can get all the resolved entities, but also know which was resolved as the last one
+        // (returned by us in userLoader parameter when creating the UserBadge)
+        // this way a user can perform actions allowed for clients and workers at the same time (provided appropriate cookies are set)
+        // and doesn't have to first log out from Client and then login as Worker and vice versa to perform actions allowed for one another
 
-        // implement your own logic to get the user identifier from `$apiToken`
-        // e.g. by looking up a user in the database using its API key
-        // $userIdentifier = /** ... */;
+        $authenticatedEntities = $request->attributes->get(Globals::AUTHENTICATED_ENTITIES, []);
+        if (!is_array($authenticatedEntities)) {
+            throw new CustomUserMessageAuthenticationException('Could not start authentication process correctly');
+        }
 
-        // return new SelfValidatingPassport(new UserBadge($userIdentifier));
+        if (!array_key_exists($cookieVariant->name, $authenticatedEntities)) { // if there is no array for specific cookie variant yet
+            $authenticatedEntities[$cookieVariant->name] = [];
+        }
+
+        if (array_all($authenticatedEntities[$cookieVariant->name], fn($element) => $element->getId() !== $user->getId())) { // if the user is not in it yet
+            $authenticatedEntities[$cookieVariant->name][] = $user; // add the user to the array for this cookie variant
+        }
+
+        $request->attributes->set(Globals::AUTHENTICATED_ENTITIES, $authenticatedEntities);
+
+
+        return new SelfValidatingPassport(new UserBadge($user->getUserIdentifier(), fn() => $user, $authenticatedEntities));
     }
 
     final public function onAuthenticationSuccessType(Request $request, TokenInterface $token, string $firewallName, CookieVariant $cookieVariant): ?Response

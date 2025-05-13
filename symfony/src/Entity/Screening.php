@@ -101,9 +101,10 @@ class Screening
         return $this->id_screening;
     }
 
-    public function setIdScreening(int $id_screening): void
+    public function setIdScreening(int $id_screening): static
     {
         $this->id_screening = $id_screening;
+        return $this;
     }
 
     public function getStartTime(): ?\DateTimeInterface
