@@ -1,6 +1,9 @@
 import {Reservation, ReservationExpanded, ReservationExpandedResponse, ReservationResponse} from "../types/Reservation.tsx";
 
-export const fetchReservations = async (): Promise<Reservation[]|ReservationExpanded[]> => {
+/*
+Depending on auth cookies it returns Reservation[] for clients or guest users, and ReservationExpanded[] for worker users
+ */
+export const fetchReservations = async (): Promise<Reservation[] | ReservationExpanded[]> => {
     try {
         const response = await fetch(`/api/reservations`)
         if (!response.ok) {
@@ -14,7 +17,7 @@ export const fetchReservations = async (): Promise<Reservation[]|ReservationExpa
     }
 }
 
-export const fetchReservationsForScreening = async (id_screening: number): Promise<Reservation[]|ReservationExpanded[]> => {
+export const fetchReservationsForScreening = async (id_screening: number): Promise<Reservation[] | ReservationExpanded[]> => {
     try {
         const response = await fetch(`/api/reservations?screening.id_screening=${id_screening}`)
         if (!response.ok) {
@@ -27,6 +30,29 @@ export const fetchReservationsForScreening = async (id_screening: number): Promi
         return []
     }
 };
+
+export const addReservation = async (id_screening: number, id_seat: number[], discount_name?: string | null): Promise<Reservation> => {
+    try {
+        const response = await fetch(`/api/reservations`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/ld+json',
+            },
+            body: JSON.stringify({
+                id_screening: id_screening,
+                id_seat: id_seat,
+                discount_name: discount_name,
+            }),
+        })
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        return await response.json() as Reservation
+    } catch (err) {
+        console.error('Error adding reservation:', err)
+        throw err;
+    }
+}
 
 
 

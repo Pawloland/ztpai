@@ -7,13 +7,23 @@ use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use App\Dto\ReservationInput;
 use App\Repository\ReservationRepository;
+use App\State\ReservationStateProcessorPOST;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ApiResource(
     operations: [
         new GetCollection(),
+        new Post(
+            security: "is_granted('CLIENT')",
+            input: ReservationInput::class,
+            deserialize: true,
+            processor: ReservationStateProcessorPOST::class,
+        ),
     ],
     normalizationContext: ['groups' => ['Reservation:read']],
     denormalizationContext: ['groups' => ['Reservation:write']]
@@ -48,7 +58,7 @@ class Reservation
     private string $vat_percentage;
 
     #[ORM\Column(type: "datetimetz", nullable: false, options: ["default" => "CURRENT_TIMESTAMP"])]
-    private $reservation_date;
+    private DateTimeInterface $reservation_date;
 
     #[ORM\Column(type: "string", length: 10, nullable: true)]
     private string $nip;
@@ -81,7 +91,7 @@ class Reservation
     #[ORM\JoinColumn(name: "id_discount",
         referencedColumnName: "id_discount",
         onDelete: "RESTRICT")]
-    private Discount $discount;
+    private ?Discount $discount;
 
     #[ORM\ManyToOne(targetEntity: Screening::class, inversedBy: "reservation")]
     #[ORM\JoinColumn(name: "id_screening",
@@ -102,6 +112,12 @@ class Reservation
     public function getIdReservation(): int
     {
         return $this->id_reservation;
+    }
+
+    public function setIdReservation(int $id_reservation): static
+    {
+        $this->id_reservation = $id_reservation;
+        return $this;
     }
 
     public function getTotalPriceNetto(): ?string

@@ -17,7 +17,7 @@ import {Seat} from "../../types/Seat.tsx";
 import {fetchSeatsForHalls} from "../../services/SeatService.tsx";
 import {SeatType} from "../../types/SeatType.tsx";
 import {fetchSeatTypes} from "../../services/SeatTypeService.tsx";
-import {fetchReservationsForScreening} from "../../services/ReservationService.tsx";
+import {addReservation, fetchReservationsForScreening} from "../../services/ReservationService.tsx";
 import {decimalToInt, IntToDecimal} from "../../utils/decimal.tsx";
 import {fetchDiscount} from "../../services/DiscountService.tsx";
 
@@ -118,8 +118,27 @@ function ReservationPage() {
 
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-        // event.preventDefault(); // Prevent default form submission
-        //
+        console.log(event);
+        event.preventDefault()
+        event.stopPropagation()
+
+        const formData = new FormData(event.currentTarget);
+
+        const id_seat = formData.getAll("id_seat[]").map((value) => parseInt(value.toString()));
+        console.log(formData, id_seat)
+        const placeReservation = async () => {
+            try {
+                const reservations = await addReservation(screening.id_screening, id_seat, discountName);
+                console.log(reservations);
+                Messages.showMessage("Pomyślnie złożono rezerwację", 4000);
+            } catch (error) {
+                Messages.showMessage("Nie udało się złożyć rezerwacji", 4000);
+                console.error('Error fetching discount:', error);
+            }
+        }
+        placeReservation();
+
+
         // const formData = new FormData(event.currentTarget);
         //
         // const payload: Record<string, any> = {};
@@ -131,7 +150,7 @@ function ReservationPage() {
         //     const response = await fetch(action, {
         //         method: 'POST',
         //         headers: {
-        //             'Content-Type': 'application/json',
+        //             'Content-Type': 'application/ld+json',
         //         },
         //         body: JSON.stringify(payload),
         //     });
@@ -233,10 +252,6 @@ function ReservationPage() {
         setTotalNetto((prev) =>
             Math.max(prev + delta_netto_gr, 0)
         );
-
-        // setTotal((prevSummary, prevDiscount) =>
-        //     Math.max(parseFloat(prevSummary) - parseFloat(prevDiscount), 0).toFixed(2)
-        // );
     };
 
     const renderSeats = (screening: Screening) => {
@@ -337,12 +352,8 @@ function ReservationPage() {
                                     poster={movie?.poster}
                                 />
                             </div>
-                            <form className={styles.right} onSubmit={event => {
-                                console.log(event);
-                                event.preventDefault()
-                                event.stopPropagation()
-                            }}>
-                                <input type="hidden" name="ID_Movie" value={movie?.id_movie} required readOnly/>
+                            <form className={styles.right} onSubmit={handleSubmit}>
+                                {/*<input type="hidden" name="ID_Movie" value={movie?.id_movie} required readOnly/>*/}
                                 <div className={styles.room}>
                                     <div className={styles.screen}>
                                         <p>
