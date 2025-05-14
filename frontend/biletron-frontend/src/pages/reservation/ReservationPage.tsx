@@ -15,9 +15,9 @@ import {fetchScreeningsForMovie} from "../../services/ScreeningService.tsx";
 import {formatDateTimeNoSubSecond} from "../../utils/dateTime.tsx";
 import {Seat} from "../../types/Seat.tsx";
 import {fetchSeatsForHalls} from "../../services/SeatService.tsx";
-import {SeatType} from "../../types/SeatType.tsx";
+import {SeatType, SeatTypePartial} from "../../types/SeatType.tsx";
 import {fetchSeatTypes} from "../../services/SeatTypeService.tsx";
-import {addReservation, fetchReservationsForScreening} from "../../services/ReservationService.tsx";
+import {addBulkReservation, fetchReservationsForScreening} from "../../services/ReservationService.tsx";
 import {decimalToInt, IntToDecimal} from "../../utils/decimal.tsx";
 import {fetchDiscount} from "../../services/DiscountService.tsx";
 
@@ -103,6 +103,8 @@ function ReservationPage() {
         }
     };
 
+    let blockSubmit = false;
+
     useEffect(() => {
         document.title = "RESERVATION PAGE";
         window.addEventListener("beforeunload", clearLocationState); // clears location.state, so that on the next full page load data is fetched based on id_movie url param, not old location.state
@@ -118,18 +120,44 @@ function ReservationPage() {
 
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-        console.log(event);
+        console.log('handleSubmit blocked=', blockSubmit, event);
         event.preventDefault()
         event.stopPropagation()
+        if (blockSubmit) {
+            return;
+        }
 
         const formData = new FormData(event.currentTarget);
 
-        const id_seat = formData.getAll("id_seat[]").map((value) => parseInt(value.toString()));
-        console.log(formData, id_seat)
+        const id_seats = formData.getAll("id_seat[]").map((value) => parseInt(value.toString()));
+        console.log(formData, id_seats)
         const placeReservation = async () => {
             try {
-                const reservations = await addReservation(screening.id_screening, id_seat, discountName);
+                const reservations = await addBulkReservation(screening.id_screening, id_seats, discountName);
                 console.log(reservations);
+                // save seats as reserved in state
+                let reservedSeats: Seat[] = [];
+                for (const reservation of reservations) {
+                    reservedSeats.push({
+                        hall: screening.hall,
+                        id_seat: reservation.seat.id_seat,
+                        number: reservation.seat.number,
+                        row: reservation.seat.row,
+                        seatType: {
+                            id_seat_type: reservation.seat.seatType.id_seat_type
+                        } as SeatTypePartial,
+                    } as Seat);
+                }
+                setSeats((prevSeats) => ({
+                    ...prevSeats,
+                    [screening.hall.id_hall]: {
+                        ...prevSeats[screening.hall.id_hall],
+                        [screening.id_screening]: [
+                            ...(prevSeats[screening.hall.id_hall][screening.id_screening] || []),
+                            ...reservedSeats,
+                        ],
+                    },
+                }))
                 Messages.showMessage("Pomyślnie złożono rezerwację", 4000);
             } catch (error) {
                 Messages.showMessage("Nie udało się złożyć rezerwacji", 4000);
@@ -138,67 +166,8 @@ function ReservationPage() {
         }
         placeReservation();
 
-
-        // const formData = new FormData(event.currentTarget);
-        //
-        // const payload: Record<string, any> = {};
-        // formData.forEach((value, key) => {
-        //     payload[key] = value;
-        // });
-        //
-        // try {
-        //     const response = await fetch(action, {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/ld+json',
-        //         },
-        //         body: JSON.stringify(payload),
-        //     });
-        //
-        //     if (response.ok) {
-        //         const data = await response.json();
-        //         console.log('Success:', data);
-        //         setMessage('Zalogowano pomyślnie!');
-        //         setTimeout(() => {
-        //             if (variant === AllowedVariants.Worker) {
-        //                 navigate(AllowedRoutes.Dashboard);
-        //             } else {
-        //                 navigate(AllowedRoutes.Home);
-        //             }
-        //         }, 1000);
-        //     } else {
-        //         const errorText = await response.text();
-        //         console.error('Server error:', errorText);
-        //         setMessage('Wprowadź poprawne dane');
-        //     }
-        // } catch (error) {
-        //     console.error('Network error:', error);
-        //     setMessage('Błąd sieci, spróbuj ponownie.');
-        // }
     };
     const VAT = 23;
-
-    // const handleSeatChange = (seat: any, screening: Screening, checked: boolean) => {
-    //     const value = (1 + VAT / 100) * (parseFloat(seat.price) + parseFloat(screening.screeningType.price));
-    //     const delta = checked ? value : -value;
-    //
-    //     const summary = document.getElementById("sum")!;
-    //     const discount = document.getElementById("disc")!;
-    //     const total = document.getElementById("total")!;
-    //
-    //     const std = document.getElementById("seat_std")!;
-    //     const pro = document.getElementById("seat_pro")!;
-    //     const bed = document.getElementById("seat_bed")!;
-    //
-    //     summary.innerText = (parseFloat(summary.innerText) + delta).toFixed(2);
-    //
-    //     if (seat.seat_name === "standard") std.innerText = `${parseInt(std.innerText) + (checked ? 1 : -1)}`;
-    //     if (seat.seat_name === "premium") pro.innerText = `${parseInt(pro.innerText) + (checked ? 1 : -1)}`;
-    //     if (seat.seat_name === "bed") bed.innerText = `${parseInt(bed.innerText) + (checked ? 1 : -1)}`;
-    //
-    //     // recalculate total
-    //     total.innerText = Math.max(parseFloat(summary.innerText) - parseFloat(discount.innerText), 0).toFixed(2);
-    // };
 
     const handleScreeningChange = (e: ChangeEvent<HTMLSelectElement>) => {
         setScreening(screenings[parseInt(e.target.value)]);
@@ -208,9 +177,11 @@ function ReservationPage() {
     }
 
     const handleDiscountChange = (e: KeyboardEvent<HTMLInputElement>) => {
+        blockSubmit = true;
         e.stopPropagation();
         const new_discount_value = e.currentTarget.value;
         if (e.key === 'Enter') {
+            console.log('handleDiscountChange', e);
             const updateDiscount = async () => {
                 try {
                     const discount = await fetchDiscount(new_discount_value);
@@ -222,12 +193,15 @@ function ReservationPage() {
                     console.error('Error fetching discount:', error);
                     setDiscountNetto(0);
                     setDiscountName(null);
+
                 }
+                blockSubmit = false;
             }
             updateDiscount();
         } else if (new_discount_value !== discountName) {
             setDiscountNetto(0);
             setDiscountName(null);
+            blockSubmit = false;
         }
     }
 

@@ -13,7 +13,7 @@ export interface SeatExpandedPartial extends SeatPartial {
 
 export interface Seat extends SeatPartial {
     row: string;
-    number: string;
+    number: number;
     hall: HallPartial
     seatType: SeatTypePartial
 }

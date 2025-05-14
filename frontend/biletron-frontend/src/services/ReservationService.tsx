@@ -1,4 +1,5 @@
 import {Reservation, ReservationExpanded, ReservationExpandedResponse, ReservationResponse} from "../types/Reservation.tsx";
+import {ReservationFromBulk, ReservationFromBulkResponse} from "../types/BulkReservation.tsx";
 
 /*
 Depending on auth cookies it returns Reservation[] for clients or guest users, and ReservationExpanded[] for worker users
@@ -31,9 +32,9 @@ export const fetchReservationsForScreening = async (id_screening: number): Promi
     }
 };
 
-export const addReservation = async (id_screening: number, id_seat: number[], discount_name?: string | null): Promise<Reservation> => {
+export const addBulkReservation = async (id_screening: number, id_seat: number[], discount_name?: string | null): Promise<ReservationFromBulk[]> => {
     try {
-        const response = await fetch(`/api/reservations`, {
+        const response = await fetch(`/api/bulk_reservations`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/ld+json',
@@ -47,7 +48,7 @@ export const addReservation = async (id_screening: number, id_seat: number[], di
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`)
         }
-        return await response.json() as Reservation
+        return (await response.json() as ReservationFromBulkResponse).reservation
     } catch (err) {
         console.error('Error adding reservation:', err)
         throw err;
