@@ -27,6 +27,7 @@ class ReservationRepository extends ServiceEntityRepository
                 :id_screening,
                 :id_discount,
                 :id_client,
+                :id_bulk_reservation,
                 :vat_percentage,
                 '',
                 '',
@@ -44,6 +45,7 @@ class ReservationRepository extends ServiceEntityRepository
         $stmt->bindValue('id_screening', $reservation->getScreening()->getIdScreening());
         $stmt->bindValue('id_discount', $reservation->getDiscount()?->getIdDiscount());
         $stmt->bindValue('id_client', $reservation->getClient()->getIdClient());
+        $stmt->bindValue('id_bulk_reservation', $reservation->getBulkReservation()->getIdBulkReservation());
         $stmt->bindValue('vat_percentage', 23);
 
         $result = $stmt->executeQuery()->fetchAssociative();
@@ -51,7 +53,8 @@ class ReservationRepository extends ServiceEntityRepository
         //cast result to reservation object
         $reservation->setIdReservation($result['id_reservation']);
         $reservation->setTotalPriceNetto($result['total_price_netto']);
-        $reservation->setTotalPriceNetto($result['total_price_brutto']);
+        $reservation->setTotalPriceBrutto($result['total_price_brutto']);
+        $reservation->setVatPercentage($result['vat_percentage']);
         $reservation->setReservationDate(new DateTimeImmutable($result['reservation_date']));
         $reservation->setNip('');
         $reservation->setNrb('');
@@ -60,6 +63,7 @@ class ReservationRepository extends ServiceEntityRepository
         $reservation->setAddressFlat('');
         $reservation->setAddressCity('');
         $reservation->setAddressZip('');
+
     }
 
     //    /**

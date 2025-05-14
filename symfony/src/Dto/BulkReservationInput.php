@@ -5,15 +5,15 @@ namespace App\Dto;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class ReservationInput
+final class BulkReservationInput
 {
     #[Assert\NotBlank]
     #[Assert\Type("integer")]
-    #[Groups(['Reservation:write'])]
+    #[Groups(['BulkReservation:write'])]
     public int $id_screening;
 
     #[Assert\Type("string")]
-    #[Groups(['Reservation:write'])]
+    #[Groups(['BulkReservation:write'])]
     public ?string $discount_name = null;
 
 
@@ -27,6 +27,6 @@ final class ReservationInput
         new Assert\Type("integer"),
         new Assert\NotBlank()
     ])]
-    #[Groups(['Reservation:write'])]
+    #[Groups(['BulkReservation:write'])]
     public array $id_seat;
 }

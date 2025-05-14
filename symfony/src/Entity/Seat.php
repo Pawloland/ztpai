@@ -28,15 +28,15 @@ class Seat
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[Groups(['Seat:read', 'Reservation:read'])]
+    #[Groups(['Seat:read', 'Reservation:read','BulkReservation:read'])]
     private int $id_seat;
 
     #[ORM\Column(type: "string", length: 2, nullable: false)]
-    #[Groups(['Seat:read','Reservation:read'])]
+    #[Groups(['Seat:read','Reservation:read','BulkReservation:read'])]
     private string $row;
 
     #[ORM\Column(type: "integer", nullable: false)]
-    #[Groups(['Seat:read','Reservation:read'])]
+    #[Groups(['Seat:read','Reservation:read','BulkReservation:read'])]
     private int $number;
 
     #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: "seat")]
@@ -55,7 +55,7 @@ class Seat
         referencedColumnName: "id_seat_type",
         nullable: false,
         onDelete: "RESTRICT")]
-    #[Groups(['Hall:read', 'Seat:read', 'Reservation:read'])]
+    #[Groups(['Hall:read', 'Seat:read', 'Reservation:read','BulkReservation:read'])]
     private SeatType $seatType;
 
     public function __construct()

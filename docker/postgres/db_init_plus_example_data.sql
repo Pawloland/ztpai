@@ -639,6 +639,16 @@ CREATE INDEX forum_client_idx ON forum (id_client);
 
 
 -- ----------------------------
+-- Table structure for bulk_reservation
+-- ----------------------------
+DROP TABLE IF EXISTS bulk_reservation CASCADE;
+CREATE TABLE bulk_reservation (
+    id_bulk_reservation SERIAL PRIMARY KEY,
+    closed BOOLEAN NOT NULL DEFAULT FALSE
+);
+ALTER SEQUENCE bulk_reservation_id_bulk_reservation_seq RESTART WITH 1;
+
+-- ----------------------------
 -- Table structure for reservation
 -- ----------------------------
 DROP TABLE IF EXISTS reservation CASCADE;
@@ -648,6 +658,7 @@ CREATE TABLE reservation (
     id_screening INT NOT NULL,
     id_discount INT DEFAULT NULL,
     id_client INT DEFAULT NULL,
+    id_bulk_reservation INT NOT NULL,
     total_price_netto NUMERIC(10, 2) NOT NULL,
     total_price_brutto NUMERIC(10, 2) NOT NULL,
     vat_percentage NUMERIC(4, 2) NOT NULL,
@@ -663,13 +674,15 @@ CREATE TABLE reservation (
     FOREIGN KEY (id_client) REFERENCES client (id_client) ON DELETE RESTRICT ON UPDATE RESTRICT,
     FOREIGN KEY (id_discount) REFERENCES discount (id_discount) ON DELETE RESTRICT ON UPDATE RESTRICT,
     FOREIGN KEY (id_screening) REFERENCES screening (id_screening) ON DELETE RESTRICT ON UPDATE RESTRICT,
-    FOREIGN KEY (id_seat) REFERENCES seat (id_seat) ON DELETE RESTRICT ON UPDATE RESTRICT
+    FOREIGN KEY (id_seat) REFERENCES seat (id_seat) ON DELETE RESTRICT ON UPDATE RESTRICT,
+    FOREIGN KEY (id_bulk_reservation) REFERENCES bulk_reservation (id_bulk_reservation) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 -- Indexes
 CREATE UNIQUE INDEX reservation_seat_screening_idx ON reservation (id_seat, id_screening);
 CREATE INDEX reservation_screening_idx ON reservation (id_screening);
 CREATE INDEX reservation_discount_idx ON reservation (id_discount);
 CREATE INDEX reservation_client_idx ON reservation (id_client);
+CREATE INDEX reservation_bulk_reservation_idx ON reservation (id_bulk_reservation);
 ALTER SEQUENCE reservation_id_reservation_seq RESTART WITH 1562;
 
 
@@ -926,6 +939,7 @@ CREATE OR REPLACE FUNCTION new_reservation(
     vidscreening INT,
     viddiscount INT,
     vidclient INT,
+    vidbulk_reservation INT,
     vvatpercentage DECIMAL(4,2),
     vnip VARCHAR(10),
     vnrb VARCHAR(26),
@@ -960,6 +974,16 @@ BEGIN
         errno := 2;
     END IF;
 
+    -- Check if a bulk reservation is for given bulk_reservation
+    IF vidbulk_reservation IS NOT NULL AND EXISTS (
+        SELECT 1
+        FROM bulk_reservation
+        WHERE id_bulk_reservation = vidbulk_reservation
+          AND closed = TRUE
+    ) THEN
+        errno := 4;
+    END IF;
+
     -- If there is an error, raise the exception
     IF errno <> 0 THEN
         CASE errno
@@ -969,6 +993,8 @@ BEGIN
                 RAISE EXCEPTION 'Podane siedzenie nie znajduje się w tej sali';
             WHEN 3 THEN
                 RAISE EXCEPTION 'Nie ma takiego użytkownika';
+            WHEN 4 THEN
+                RAISE EXCEPTION 'Nie można zarezerwować dodatkowego miejsca dla nieistniejącej lub zamkniętej rezerwacji zbiorowej';
             END CASE;
     END IF;
 
@@ -978,6 +1004,7 @@ BEGIN
         id_screening,
         id_discount,
         id_client,
+        id_bulk_reservation,
         total_price_netto,
         total_price_brutto,
         reservation_date,
@@ -995,6 +1022,7 @@ BEGIN
                vidscreening,
                viddiscount,
                vidclient,
+                vidbulk_reservation,
                price_netto,
                (1 + vvatpercentage / 100) * price_netto,
                NOW(),

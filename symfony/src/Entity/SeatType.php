@@ -6,7 +6,6 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\SeatTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 
@@ -22,14 +21,14 @@ class SeatType
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[Groups(['Hall:read', 'SeatType:read', 'Seat:read'])]
+    #[Groups(['Hall:read', 'SeatType:read', 'Seat:read', 'BulkReservation:read'])]
     private int $id_seat_type;
 
     #[ORM\Column(type: "string", length: 40, nullable: false)]
-    #[Groups(['SeatType:read','Reservation:read'])]
+    #[Groups(['SeatType:read', 'Reservation:read', 'BulkReservation:read'])]
     private string $seat_name;
 
-    #[ORM\Column(type: "decimal", nullable: false, scale: 2)]
+    #[ORM\Column(type: "decimal", scale: 2, nullable: false)]
     #[Groups(['SeatType:read'])]
     private string $price;
 

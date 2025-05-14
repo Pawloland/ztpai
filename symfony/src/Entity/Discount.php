@@ -30,11 +30,11 @@ class Discount
     private int $id_discount;
 
     #[ORM\Column(type: "string", length: 20, nullable: false)]
-    #[Groups(['Discount:read'])]
+    #[Groups(['Discount:read','BulkReservation:read'])]
     private string $discount_name;
 
     #[ORM\Column(type: "decimal", scale: 2, nullable: false)]
-    #[Groups(['Discount:read'])]
+    #[Groups(['Discount:read','BulkReservation:read'])]
     private string $amount;
 
     #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: "discount")]

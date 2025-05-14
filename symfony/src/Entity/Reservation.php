@@ -8,9 +8,9 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
-use App\Dto\ReservationInput;
+use App\Dto\BulkReservationInput;
 use App\Repository\ReservationRepository;
-use App\State\ReservationStateProcessorPOST;
+use App\State\BulkReservationStateProcessorPOST;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -18,12 +18,6 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ApiResource(
     operations: [
         new GetCollection(),
-        new Post(
-            security: "is_granted('CLIENT')",
-            input: ReservationInput::class,
-            deserialize: true,
-            processor: ReservationStateProcessorPOST::class,
-        ),
     ],
     normalizationContext: ['groups' => ['Reservation:read']],
     denormalizationContext: ['groups' => ['Reservation:write']]
@@ -37,13 +31,14 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Index(name: "reservation_screening_idx", columns: ["id_screening"])]
 #[ORM\Index(name: "reservation_discount_idx", columns: ["id_discount"])]
 #[ORM\Index(name: "reservation_client_idx", columns: ["id_client"])]
+#[ORM\Index(name: "reservation_bulk_reservation_idx", columns: ["id_bulk_reservation"])]
 #[ORM\UniqueConstraint(name: "reservation_seat_screening_idx", columns: ["id_seat", "id_screening"])]
 class Reservation
 {
     #[ORM\Id]
     #[ORM\Column(type: "integer")]
     #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[Groups(['Reservation:read'])]
+    #[Groups(['Reservation:read','BulkReservation:read'])]
     private int $id_reservation;
 
     #[ORM\Column(type: "decimal", scale: 2, nullable: false)]
@@ -91,6 +86,7 @@ class Reservation
     #[ORM\JoinColumn(name: "id_discount",
         referencedColumnName: "id_discount",
         onDelete: "RESTRICT")]
+    #[Groups(['BulkReservation:read'])]
     private ?Discount $discount;
 
     #[ORM\ManyToOne(targetEntity: Screening::class, inversedBy: "reservation")]
@@ -106,8 +102,18 @@ class Reservation
         referencedColumnName: "id_seat",
         nullable: false,
         onDelete: "RESTRICT")]
-    #[Groups(['Reservation:read'])]
+    #[Groups(['Reservation:read','BulkReservation:read'])]
     private Seat $seat;
+
+
+    #[ORM\ManyToOne(targetEntity: BulkReservation::class, inversedBy: "reservation")]
+    #[ORM\JoinColumn(name: "id_bulk_reservation",
+        referencedColumnName: "id_bulk_reservation",
+        nullable: false,
+        onDelete: "RESTRICT"
+    )]
+    private BulkReservation $bulkReservation;
+
 
     public function getIdReservation(): int
     {
@@ -299,4 +305,19 @@ class Reservation
 
         return $this;
     }
+
+    public function getBulkReservation(): BulkReservation
+    {
+        return $this->bulkReservation;
+    }
+
+    public function setBulkReservation(BulkReservation $bulkReservation): static
+    {
+        $this->bulkReservation = $bulkReservation;
+
+        return $this;
+    }
+
+
+
 }
