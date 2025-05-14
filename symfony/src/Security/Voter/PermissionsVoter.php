@@ -42,7 +42,7 @@ class PermissionsVoter extends Voter
             }
 
             if ($permission) {
-                $permission = Permissions::tryFrom($permission);
+                $permission = Permissions::tryFromName($permission);
                 if ($permission === null) {
                     return false;
                 }
