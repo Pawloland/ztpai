@@ -4,6 +4,8 @@ import {AllowedRoutes} from "../../types/Routes.ts";
 import {AllowedIconClass} from "../../components/icon/Icon.tsx";
 import {FormEvent, useEffect, useState} from "react";
 import {useNavigate} from "react-router";
+import {getCookieURIEncodedJSONAsObject} from "../../utils/cookies.tsx";
+import {AuthCookie, AuthCookieName} from "../../types/AuthCookie.ts";
 
 
 function Register() {
@@ -13,6 +15,10 @@ function Register() {
     const action = '/api' + AllowedRoutes.Register;
     useEffect(() => {
         document.title = "REGISTER PAGE";
+        const auth_cookie = getCookieURIEncodedJSONAsObject(AuthCookieName.Client) as AuthCookie | null;
+        if (auth_cookie) {
+            navigate(AllowedRoutes.Home);
+        }
     }, []);
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {

@@ -4,6 +4,8 @@ import {AllowedIconClass} from "../../components/icon/Icon.tsx";
 import {FormEvent, useEffect, useState} from "react";
 import styles from './Login.module.css';
 import {useNavigate} from "react-router";
+import {getCookieURIEncodedJSONAsObject} from "../../utils/cookies.tsx";
+import {AuthCookie, AuthCookieName} from "../../types/AuthCookie.ts";
 
 export enum AllowedVariants {
     Worker = "worker",
@@ -31,6 +33,13 @@ function Login({variant}: { variant: AllowedVariants }) {
 
     useEffect(() => {
         document.title = "LOGIN PAGE";
+        const auth_cookie = getCookieURIEncodedJSONAsObject(AuthCookieName.Client) as AuthCookie | null;
+        const auth_cookie_worker = getCookieURIEncodedJSONAsObject(AuthCookieName.Worker) as AuthCookie | null;
+        if (auth_cookie && variant === AllowedVariants.Client) {
+            navigate(AllowedRoutes.Home);
+        } else if (auth_cookie_worker && variant === AllowedVariants.Worker) {
+            navigate(AllowedRoutes.Dashboard);
+        }
     }, []);
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {

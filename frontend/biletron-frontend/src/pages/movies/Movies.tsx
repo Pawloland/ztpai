@@ -9,14 +9,12 @@ import {getCookieURIEncodedJSONAsObject} from "../../utils/cookies.tsx";
 import {AuthCookie, AuthCookieName} from "../../types/AuthCookie.ts";
 import {fetchMoviesWithScreeningsInFuture} from "../../services/MovieService.tsx";
 import {logoutClient} from "../../services/ClientService.tsx";
-import {useNavigate} from "react-router";
 
 
 function Movies() {
     const [movies, setMovies] = useState<Movie[]>([]);
     const [loading, setLoading] = useState(true);
     const [email, setEmail] = useState<string | null>(null);
-    const navigate = useNavigate();
 
     const initializeData = async () => {
         setLoading(true);
@@ -51,7 +49,7 @@ function Movies() {
                             iconClass: AllowedIconClass.Logout,
                             text: email,
                             onClick: async () => {
-                                await logoutClient() && navigate(AllowedRoutes.Home);
+                                await logoutClient() && setEmail(null);
                             },
                         }]
                 }

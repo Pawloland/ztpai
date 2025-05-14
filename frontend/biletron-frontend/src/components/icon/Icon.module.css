@@ -5,6 +5,7 @@ a._ {
     display: inline-flex; /* Make the link behave like inline text */
     align-items: center; /* Align text and icon vertically */
     cursor: pointer; /* Ensures the cursor changes to a pointer when hovering */
+    word-break: break-word;
 }
 
 
