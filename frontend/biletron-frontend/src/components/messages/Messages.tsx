@@ -1,7 +1,6 @@
 import styles from './Messages.module.css';
 import {useEffect, useState} from 'react';
 
-
 interface Message {
     id: number;
     text: string;
@@ -14,20 +13,13 @@ function Messages() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [fadingOutIds, setFadingOutIds] = useState<number[]>([]);
 
-
     useEffect(() => {
         const listener = (msg: Message, timeout: number) => {
             setMessages(prev => [...prev, msg]);
 
-            setTimeout(() => {
-                setFadingOutIds(ids => [...ids, msg.id]);
-
-                // Wait for fade-out before actually removing
-                setTimeout(() => {
-                    setMessages(prev => prev.filter(m => m.id !== msg.id));
-                    setFadingOutIds(ids => ids.filter(id => id !== msg.id));
-                }, 300); // match animation duration
-            }, timeout);
+            // Auto timeout
+            const autoDismiss = () => dismissMessage(msg.id);
+            setTimeout(autoDismiss, timeout);
         };
 
         listeners.push(listener);
@@ -36,6 +28,19 @@ function Messages() {
         };
     }, []);
 
+    const dismissMessage = (id: number) => {
+        // Prevent duplicate fade-outs
+        setFadingOutIds(ids => {
+            if (ids.includes(id)) return ids;
+            return [...ids, id];
+        });
+
+        // After fade-out, remove the message
+        setTimeout(() => {
+            setMessages(prev => prev.filter(m => m.id !== id));
+            setFadingOutIds(ids => ids.filter(fid => fid !== id));
+        }, 300); // Match fade-out animation duration
+    };
 
     return (
         <div className={styles.messages}>
@@ -44,7 +49,12 @@ function Messages() {
                     key={msg.id}
                     className={`${styles.message} ${fadingOutIds.includes(msg.id) ? styles['fade-out'] : ''}`}
                 >
-                    {msg.text}
+                    <span>{msg.text}</span>
+                    <button
+                        onClick={() => dismissMessage(msg.id)}
+                    >
+                        ×
+                    </button>
                 </div>
             ))}
         </div>
