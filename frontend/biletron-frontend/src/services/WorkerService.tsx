@@ -13,3 +13,18 @@ export const fetchWorkers = async (): Promise<Worker[]> => {
         return []
     }
 }
+
+export const deleteWorkerById = async (id: number): Promise<boolean> => {
+    try {
+        const response = await fetch(`/api/workers/${id}`, {
+            method: 'DELETE'
+        })
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        return true
+    } catch (err) {
+        console.error('Error deleting worker:', err)
+        return false
+    }
+}

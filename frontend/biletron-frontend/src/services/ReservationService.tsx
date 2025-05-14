@@ -55,5 +55,20 @@ export const addBulkReservation = async (id_screening: number, id_seat: number[]
     }
 }
 
+export const deleteReservationById = async (id: number): Promise<boolean> => {
+    try {
+        const response = await fetch(`/api/reservations/${id}`, {
+            method: 'DELETE'
+        })
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        return true
+    } catch (err) {
+        console.error('Error deleting reservation:', err)
+        return false
+    }
+}
+
 
 

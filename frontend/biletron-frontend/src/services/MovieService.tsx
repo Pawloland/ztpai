@@ -27,3 +27,18 @@ export const fetchMoviesWithScreeningsInFuture = async (): Promise<Movie[]> => {
         return []
     }
 }
+
+export const deleteMovieById = async (id: number): Promise<boolean> => {
+    try {
+        const response = await fetch(`/api/movies/${id}`, {
+            method: 'DELETE'
+        })
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        return true
+    } catch (err) {
+        console.error('Error deleting movie:', err)
+        return false
+    }
+}
