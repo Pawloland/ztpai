@@ -6,6 +6,7 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use App\Dto\BulkReservationInput;
@@ -18,6 +19,9 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ApiResource(
     operations: [
         new GetCollection(),
+        new Delete(
+            security: "is_granted('WORKER_RemoveReservation', object)",
+        )
     ],
     normalizationContext: ['groups' => ['Reservation:read']],
     denormalizationContext: ['groups' => ['Reservation:write']]

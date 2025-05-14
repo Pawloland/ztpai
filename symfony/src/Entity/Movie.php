@@ -10,7 +10,6 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\OpenApi\Model\Operation;
 use ApiPlatform\OpenApi\Model\RequestBody;
@@ -65,9 +64,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
         new Get(),
         new Delete(
-            security: "is_granted('WORKER', object)",
-        ),
-        new Patch(),
+            security: "is_granted('WORKER_RemoveMovie', object)",
+        )
     ],
     normalizationContext: ['groups' => ['Movie:read']],
     denormalizationContext: ['groups' => ['Movie:write']]
