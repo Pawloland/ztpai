@@ -11,25 +11,25 @@ import Messages from "../../components/messages/Messages.tsx";
 import List from "../../components/list/List.tsx";
 import styles from './Dashboard.module.css';
 import InsertForm, {InputType} from "../../components/inserForm/InserForm.tsx";
-import {fetchMovies} from "../../services/MovieService.tsx";
+import {deleteMovieById, fetchMovies} from "../../services/MovieService.tsx";
 import {fetchLanguages} from "../../services/LanguageService.tsx";
 import {Hall} from "../../types/Hall.tsx";
 import {ScreeningType} from "../../types/ScreeningType.tsx";
 import {fetchHalls} from "../../services/HallService.tsx";
 import {fetchScreeningTypes} from "../../services/ScreeningTypeService.tsx";
 import {Screening} from "../../types/Screening.tsx";
-import {fetchScreenings} from "../../services/ScreeningService.tsx";
+import {deleteScreeningById, fetchScreenings} from "../../services/ScreeningService.tsx";
 import {Client} from "../../types/Client.tsx";
 import {Worker} from "../../types/Worker.tsx";
-import {fetchClients} from "../../services/ClientService.tsx";
-import {fetchWorkers} from "../../services/WorkerService.tsx";
+import {deleteClientById, fetchClients} from "../../services/ClientService.tsx";
+import {deleteWorkerById, fetchWorkers} from "../../services/WorkerService.tsx";
 import {WorkerSession} from "../../types/WorkerSession.tsx";
 import {fetchWorkerSessions} from "../../services/WorkerSessionService.tsx";
 import {formatDate, formatDateTime, formatTime, formatWeekDay} from "../../utils/dateTime.tsx";
 import {ClientSession} from "../../types/ClientSession.tsx";
 import {fetchClientSessions} from "../../services/ClientSessionService.tsx";
 import {ReservationExpanded} from "../../types/Reservation.tsx";
-import {fetchReservations} from "../../services/ReservationService.tsx";
+import {deleteReservationById, fetchReservations} from "../../services/ReservationService.tsx";
 
 
 function Dashboard() {
@@ -243,9 +243,13 @@ function Dashboard() {
 
                               ])}
                               onColumnValueClick={
-                                  (value: any) => {
-                                      console.log(value);
-                                      console.log(value[0]);
+                                  async (value: any) => {
+                                      if (await deleteMovieById(value[0])) {
+                                          setMovies((prev) => prev.filter(movie => movie.id_movie !== value[0]));
+                                          Messages.showMessage("Pomyślnie usunięto film", 4000);
+                                      } else {
+                                          Messages.showMessage("Nie masz uprawnień do usunięcia filmu, lub ma on już jakiś seans", 4000);
+                                      }
                                   }
                               }
                         />
@@ -278,9 +282,13 @@ function Dashboard() {
                                   ]
                               })}
                               onColumnValueClick={
-                                  (value: any) => {
-                                      console.log(value);
-                                      console.log(value[0]);
+                                  async (value: any) => {
+                                      if (await deleteReservationById(value[0])) {
+                                          setReservations((prev) => prev.filter(reservation => reservation.id_reservation !== value[0]));
+                                          Messages.showMessage("Pomyślnie usunięto rezerwację", 4000);
+                                      } else {
+                                          Messages.showMessage("Nie masz uprawnień do usunięcia rezerwacji", 4000);
+                                      }
                                   }
                               }
                         />
@@ -300,9 +308,13 @@ function Dashboard() {
                                   ];
                               })}
                               onColumnValueClick={
-                                  (value: any) => {
-                                      console.log(value);
-                                      console.log(value[0]);
+                                  async (value: any) => {
+                                      if (await deleteScreeningById(value[0])) {
+                                          setScreenings((prev) => prev.filter(screening => screening.id_screening !== value[0]));
+                                          Messages.showMessage("Pomyślnie usunięto seans", 4000);
+                                      } else {
+                                          Messages.showMessage("Nie masz uprawnień do usunięcia seansu, lub ma on rezerwacje", 4000);
+                                      }
                                   }
                               }
                         />
@@ -316,9 +328,13 @@ function Dashboard() {
                                   client.mail,
                               ])}
                               onColumnValueClick={
-                                  (value: any) => {
-                                      console.log(value);
-                                      console.log(value[0]);
+                                  async (value: any) => {
+                                      if (await deleteClientById(value[0])) {
+                                          setClients((prev) => prev.filter(client => client.id_client !== value[0]));
+                                          Messages.showMessage("Pomyślnie usunięto konto klienta", 4000);
+                                      } else {
+                                          Messages.showMessage("Nie masz uprawnień do usunięcia konta klienta, lub ma on rezerwacje", 4000);
+                                      }
                                   }
                               }
                         />
@@ -332,9 +348,13 @@ function Dashboard() {
                                   worker.nick
                               ])}
                               onColumnValueClick={
-                                  (value: any) => {
-                                      console.log(value);
-                                      console.log(value[0]);
+                                  async (value: any) => {
+                                      if (await deleteWorkerById(value[0])) {
+                                          setWorkers((prev) => prev.filter(worker => worker.id_worker !== value[0]));
+                                          Messages.showMessage("Pomyślnie usunięto konto administracyjne", 4000);
+                                      } else {
+                                          Messages.showMessage("Nie masz uprawnień do usunięcia konta administracyjnego", 4000);
+                                      }
                                   }
                               }
                         />
