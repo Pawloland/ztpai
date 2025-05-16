@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Client;
 use App\Entity\Worker;
 use App\Enum\CookieVariant;
+use App\Service\RabbitmqService;
 use App\Service\SecurityService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -79,27 +80,7 @@ final class SecurityController extends AbstractController
         return $response->setData(['message' => 'Logout successfull.']);
     }
 
-    private function destroyCookies(Response &$response, string $cookieNameHTTPOnly, string $cookieName): void
-    {
-        $response->headers->clearCookie(
-            $cookieNameHTTPOnly,
-            '/',
-            null,
-            true,
-            true,
-            'Strict'
-        );
-        $response->headers->clearCookie(
-            $cookieName,
-            '/',
-            null,
-            true,
-            false,
-            'Strict'
-        );
-    }
-
-    #[Route('/api/workerLogout', name: 'worker_logout', methods: ['GET'],defaults: ['_skip_auth' => true])]
+    #[Route('/api/workerLogout', name: 'worker_logout', methods: ['GET'], defaults: ['_skip_auth' => true])]
     public function workerLogout(Request $request, EntityManagerInterface $em): JsonResponse
     {
         $response = new JsonResponse();
