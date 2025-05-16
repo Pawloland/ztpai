@@ -1,8 +1,8 @@
-FROM php:8.4.4-fpm-alpine3.21
+FROM php:8.4.7-fpm-alpine3.21
 
 ## Install necessary dependencies
 RUN apk add --no-cache $PHPIZE_DEPS linux-headers bash curl shadow sudo\
-    && pecl install xdebug-3.4.2 \
+    && pecl install xdebug-3.4.3 \
     && docker-php-ext-enable xdebug \
     && apk del $PHPIZE_DEPS
 
@@ -11,14 +11,16 @@ ENV RUN_DEPS="\
     libzip \
     libpng \
     libjpeg-turbo \
-    postgresql-libs"
+    postgresql-libs \
+    icu"
 
 ENV BUILD_DEPS="\
     zlib-dev \
     libzip-dev \
     libpng-dev \
     libjpeg-turbo-dev \
-    postgresql-dev"
+    postgresql-dev \
+    icu-dev"
 
 ENV PHP_EXTENSIONS="\
     opcache \
@@ -26,7 +28,9 @@ ENV PHP_EXTENSIONS="\
     gd \
     bcmath \
     pgsql \
-    pdo_pgsql"
+    pdo_pgsql \
+    sockets \
+    intl"
 
 RUN apk add --no-cache --virtual .build-deps $BUILD_DEPS \
     && docker-php-ext-configure gd --with-jpeg \
