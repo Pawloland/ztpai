@@ -36,7 +36,10 @@ final class SecurityController extends AbstractController
         $client = $em->getRepository(Client::class)->findOneBy(['mail' => $email]);
         if (!$client || !password_verify($password, $client->getPasswordHash())) {
             return new JsonResponse(['error' => 'Invalid credentials.'], Response::HTTP_UNAUTHORIZED);
+        } else if (!$client->getMailConfirmed()) {
+            return new JsonResponse(['error' => 'Email not confirmed.'], Response::HTTP_UNAUTHORIZED);
         }
+
 
         SecurityService::createAuthCookie($email, CookieVariant::CLIENT, $request, $response, $em);
         return $response->setData(['message' => 'Login successful.']);

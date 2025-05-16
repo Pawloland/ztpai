@@ -75,7 +75,7 @@ function Login({variant}: { variant: AllowedVariants }) {
             } else {
                 const errorText = await response.text();
                 console.error('Server error:', errorText);
-                setMessage('Wprowadź poprawne dane');
+                setMessage('Wprowadź poprawne dane, lub potwierdź mail.');
             }
         } catch (error) {
             console.error('Network error:', error);

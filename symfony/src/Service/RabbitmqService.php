@@ -27,7 +27,7 @@ class RabbitmqService
     public static function requestConfirmationEmail(string $email): void
     {
         $channel = self::getChannel();
-        $channel->queue_declare(Globals::RABBITMQ_QUEUE, false, false, false, false);
+        $channel->queue_declare(Globals::RABBITMQ_QUEUE, false, true, false, false);
         $channel->basic_publish(new AMQPMessage($email), '', Globals::RABBITMQ_QUEUE);
     }
 }

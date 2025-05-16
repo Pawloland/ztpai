@@ -57,7 +57,7 @@ services:
         [ ! -f /etc/passwd.back ] && cp /etc/passwd /etc/passwd.back
         [ ! -f /etc/group.back ] && cp /etc/group /etc/group.back
         [ ! -f /etc/shadow.back ] && cp /etc/shadow /etc/shadow.back
-    
+      
         # Restore original system files
         cp /etc/passwd.back /etc/passwd
         cp /etc/group.back /etc/group
@@ -66,9 +66,11 @@ services:
         addgroup -g "$$FILESAVER_GID" "$$FILESAVER_USER" && \
         adduser -D -h /dev/null -H -u "$$FILESAVER_UID" -G "$$FILESAVER_USER" -s /sbin/nologin "$$FILESAVER_USER" && \
         echo "www-data ALL=("$$FILESAVER_USER") NOPASSWD: /sbin/poster_saver" >  /etc/sudoers && \
-        
+      
         symfony server:stop ; \
-    
+      
+        php bin/console app:consume-confirmation & \
+      
         symfony server:start --no-interaction --allow-all-ip --no-tls
       '
 

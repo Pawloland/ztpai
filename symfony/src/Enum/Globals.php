@@ -11,4 +11,5 @@ class Globals
     public const string AUTHORIZED_ENTITY = 'AUTHORIZED_ENTITY';
 
     public const string RABBITMQ_QUEUE = 'email_queue';
+    public const string RABBITMQ_QUEUE_ACK = 'email_queue_ack';
 }
