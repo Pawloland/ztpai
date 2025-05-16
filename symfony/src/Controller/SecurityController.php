@@ -114,6 +114,7 @@ final class SecurityController extends AbstractController
         try {
             $em->persist($client);
             $em->flush();
+            RabbitmqService::requestConfirmationEmail($client->getMail());
         } catch (\Exception $e) {
             return new JsonResponse(['error' => 'An error occurred while saving the client.'], Response::HTTP_CONFLICT);
         }

@@ -1,6 +1,24 @@
 services:
-  php:
-    container_name: php
+  rabbitmq:
+    image: rabbitmq:management
+    env_file:
+      - ./.env
+    container_name: rabbitmq
+    ports:
+      - "${RABBITMQ_NODE_PORT_EXTERNAL:-5672}:${RABBITMQ_NODE_PORT:-5672}" # RabbitMQ default port
+      - "${RABBITMQ_MNGMNT_PORT_EXTERNAL:-15672}:15672" # RabbitMQ management plugin port
+    environment:
+      RABBITMQ_DEFAULT_USER: "${RABBITMQ_DEFAULT_USER:-guest}"
+      RABBITMQ_DEFAULT_PASS: "${RABBITMQ_DEFAULT_PASS:-guest}"
+    healthcheck:
+      test: >
+        rabbitmq-diagnostics check_port_connectivity
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  php_base:
+    container_name: php_base
     build:
       context: .
       dockerfile: docker/php/Dockerfile
@@ -8,12 +26,21 @@ services:
       - ./.env
     volumes:
       - ./symfony:/app # Mount the symfony directory to /app inside the container
+    working_dir: /app
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    command: bash -c "echo [INFO] This docker service does nothing. It should be extended and not run directly. If you see this message more than one time for the same service, then something is set up incorrectly. This message should be seen only when bare docker compose up is run."
+
+  php:
+    container_name: php
+    extends: php_base
+    volumes:
       - ./docker/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:ro
       - ./docker/php/conf.d/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini:ro
       # - ./docker/php/tmp:/tmp:rw
     ports:
       - "8000:8000"
-    working_dir: /app
     environment:
       - XDEBUG_MODE=debug # to connect to xdebug from phpstorm: File > Settings > PHP > Servers > + >
       # Name: whatever, Host: 127.0.0.1 (localhost can not work), Port: 8000, Debugger: Xdebug,
@@ -44,6 +71,14 @@ services:
     
         symfony server:start --no-interaction --allow-all-ip --no-tls
       '
+
+
+  php-rabbitmq-consumer:
+    extends: php_base
+    container_name: php-rabbitmq-consumer
+    command: php consumer.php
+
+
 
   postgres:
     container_name: postgres
