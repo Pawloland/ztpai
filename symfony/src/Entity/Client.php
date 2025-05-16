@@ -56,6 +56,10 @@ class Client implements UserInterface
     #[Groups(['Client:read', 'ClientSessions:read', 'Reservation:read'])]
     private string $mail;
 
+    #[ORM\Column(type: "boolean", nullable: false, insertable: false, options: ["default" => false])]
+    private bool $mail_confirmed;
+
+
     #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: "client")]
     private iterable $reservations;
 
@@ -129,6 +133,18 @@ class Client implements UserInterface
     public function setMail(string $mail): static
     {
         $this->mail = $mail;
+
+        return $this;
+    }
+
+    public function getMailConfirmed(): bool
+    {
+        return $this->mail_confirmed;
+    }
+
+    public function setMailConfirmed(bool $mail_confirmed): static
+    {
+        $this->mail_confirmed = $mail_confirmed;
 
         return $this;
     }

@@ -14,7 +14,8 @@ CREATE TABLE client (
     client_surname VARCHAR(40) NOT NULL,
     nick VARCHAR(40) NOT NULL UNIQUE,
     password_hash VARCHAR(80) NOT NULL,
-    mail VARCHAR(320) NOT NULL UNIQUE
+    mail VARCHAR(320) NOT NULL UNIQUE,
+    mail_confirmed BOOLEAN NOT NULL DEFAULT FALSE
 );
 ALTER SEQUENCE client_id_client_seq RESTART WITH 31;
 
