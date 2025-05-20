@@ -9,7 +9,7 @@ export const fetchClientSessions = async (): Promise<ClientSession[]> => {
         const data: ClientSessionResponse = await response.json()
         return data.member
     } catch (err) {
-        console.error('Error fetching client sessions:', err)
+        //console.error('Error fetching client sessions:', err)
         return []
     }
 }

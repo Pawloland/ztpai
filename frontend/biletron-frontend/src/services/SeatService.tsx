@@ -9,7 +9,7 @@ export const fetchSeatsForHalls = async (id_hall: number): Promise<Seat[]> => {
         const data: SeatResponse = await response.json()
         return data.member
     } catch (err) {
-        console.error('Error fetching seats:', err)
+        //console.error('Error fetching seats:', err)
         return []
     }
 }

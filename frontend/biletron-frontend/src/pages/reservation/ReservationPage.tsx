@@ -95,7 +95,7 @@ function ReservationPage() {
             setScreening(screeningsResolved[0]);
             setSeatTypes(seatTypesResolved);
         } catch (e) {
-            console.error(e);
+            //console.error(e);
             Messages.showMessage("Wystąpił błąd podczas rezerwacji", 4000);
             navigate('/', {replace: true});
         } finally {
@@ -120,7 +120,7 @@ function ReservationPage() {
 
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-        console.log('handleSubmit blocked=', blockSubmit, event);
+        //console.log('handleSubmit blocked=', blockSubmit, event);
         event.preventDefault()
         event.stopPropagation()
         if (blockSubmit) {
@@ -130,11 +130,11 @@ function ReservationPage() {
         const formData = new FormData(event.currentTarget);
 
         const id_seats = formData.getAll("id_seat[]").map((value) => parseInt(value.toString()));
-        console.log(formData, id_seats)
+        //console.log(formData, id_seats)
         const placeReservation = async () => {
             try {
                 const reservations = await addBulkReservation(screening.id_screening, id_seats, discountName);
-                console.log(reservations);
+                //console.log(reservations);
                 // save seats as reserved in state
                 let reservedSeats: Seat[] = [];
                 for (const reservation of reservations) {
@@ -161,7 +161,7 @@ function ReservationPage() {
                 Messages.showMessage("Pomyślnie złożono rezerwację", 4000);
             } catch (error) {
                 Messages.showMessage("Nie udało się złożyć rezerwacji", 4000);
-                console.error('Error fetching discount:', error);
+                //console.error('Error fetching discount:', error);
             }
         }
         placeReservation();
@@ -181,7 +181,7 @@ function ReservationPage() {
         e.stopPropagation();
         const new_discount_value = e.currentTarget.value;
         if (e.key === 'Enter') {
-            console.log('handleDiscountChange', e);
+            //console.log('handleDiscountChange', e);
             const updateDiscount = async () => {
                 try {
                     const discount = await fetchDiscount(new_discount_value);
@@ -190,7 +190,7 @@ function ReservationPage() {
                     setDiscountName(new_discount_value)
                 } catch (error) {
                     Messages.showMessage("Niepoprawny kod rabatowy", 4000);
-                    console.error('Error fetching discount:', error);
+                    //console.error('Error fetching discount:', error);
                     setDiscountNetto(0);
                     setDiscountName(null);
 

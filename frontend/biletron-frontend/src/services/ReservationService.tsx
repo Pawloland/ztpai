@@ -13,7 +13,7 @@ export const fetchReservations = async (): Promise<Reservation[] | ReservationEx
         let data: ReservationResponse = await response.json()
         return data.member
     } catch (err) {
-        console.error('Error fetching reservations:', err)
+        //console.error('Error fetching reservations:', err)
         return []
     }
 }
@@ -27,7 +27,7 @@ export const fetchReservationsForScreening = async (id_screening: number): Promi
         let data: ReservationExpandedResponse = await response.json()
         return data.member
     } catch (err) {
-        console.error('Error fetching reservations:', err)
+        //console.error('Error fetching reservations:', err)
         return []
     }
 };
@@ -50,7 +50,7 @@ export const addBulkReservation = async (id_screening: number, id_seat: number[]
         }
         return (await response.json() as ReservationFromBulkResponse).reservation
     } catch (err) {
-        console.error('Error adding reservation:', err)
+        //console.error('Error adding reservation:', err)
         throw err;
     }
 }
@@ -65,7 +65,7 @@ export const deleteReservationById = async (id: number): Promise<boolean> => {
         }
         return true
     } catch (err) {
-        console.error('Error deleting reservation:', err)
+        //console.error('Error deleting reservation:', err)
         return false
     }
 }

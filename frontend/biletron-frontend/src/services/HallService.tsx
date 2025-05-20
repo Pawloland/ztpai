@@ -9,7 +9,7 @@ export const fetchHalls = async (): Promise<Hall[]> => {
         const data: HallResponse = await response.json()
         return data.member
     } catch (err) {
-        console.error('Error fetching halls:', err)
+        //console.error('Error fetching halls:', err)
         return []
     }
 }

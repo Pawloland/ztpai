@@ -9,7 +9,7 @@ export const fetchWorkerSessions = async (): Promise<WorkerSession[]> => {
         const data: WorkerSessionResponse = await response.json()
         return data.member
     } catch (err) {
-        console.error('Error fetching worker sessions:', err)
+        //console.error('Error fetching worker sessions:', err)
         return []
     }
 }

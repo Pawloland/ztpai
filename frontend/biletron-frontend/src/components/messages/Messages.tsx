@@ -62,7 +62,7 @@ function Messages() {
 }
 
 Messages.showMessage = (text: string, timeout = 3000) => {
-    console.log(text)
+    //console.log(text)
     const id = nextId++;
     const message: Message = {id, text};
     listeners.forEach(l => l(message, timeout));

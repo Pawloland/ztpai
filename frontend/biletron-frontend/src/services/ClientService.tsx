@@ -13,7 +13,7 @@ export const fetchClients = async (): Promise<Client[]> => {
         const data: ClientResponse = await response.json()
         return data.member
     } catch (err) {
-        console.error('Error fetching clients:', err)
+        //console.error('Error fetching clients:', err)
         return []
     }
 }
@@ -33,7 +33,7 @@ export const logoutClient = async (): Promise<boolean> => {
         destroyCookie(AuthCookieName.Client);
         return true;
     } catch (err) {
-        console.error('Error logging out:', err);
+        //console.error('Error logging out:', err);
         Messages.showMessage('Wystąpił błąd podczas wylogowywania', 4000);
         destroyCookie(AuthCookieName.Client);
         return false;
@@ -50,7 +50,7 @@ export const deleteClientById = async (id: number): Promise<boolean> => {
         }
         return true
     } catch (err) {
-        console.error('Error deleting client:', err)
+        //console.error('Error deleting client:', err)
         return false
     }
 }

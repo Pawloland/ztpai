@@ -9,7 +9,7 @@ export const fetchScreenings = async (): Promise<Screening[]> => {
         let data: ScreeningResponse = await response.json()
         return data.member
     } catch (err) {
-        console.error('Error fetching screenings:', err)
+        //console.error('Error fetching screenings:', err)
         return []
     }
 };
@@ -23,7 +23,7 @@ export const fetchScreeningsForMovie = async (id_movie: number): Promise<Screeni
         let data: ScreeningResponse = await response.json()
         return data.member
     } catch (err) {
-        console.error('Error fetching screenings:', err)
+        //console.error('Error fetching screenings:', err)
         return []
     }
 };
@@ -38,7 +38,7 @@ export const deleteScreeningById = async (id: number): Promise<boolean> => {
         }
         return true
     } catch (err) {
-        console.error('Error deleting screening:', err)
+        //console.error('Error deleting screening:', err)
         return false
     }
 }

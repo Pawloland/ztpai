@@ -64,7 +64,7 @@ function Dashboard() {
             await Promise.all([moviesPromise, reservationsPromise, hallsPromise, screeningTypesPromise, screeningsPromise, clientsPromise, workersPromise, workerSessionsPromise, clientSessionsPromise]);
         setMovies(movies);
         setReservations(reservations as ReservationExpanded[]);
-        console.log(reservations);
+        //console.log(reservations);
         setHalls(halls);
         setScreeningTypes(screeningTypes);
         setScreenings(screenings);
@@ -110,7 +110,7 @@ function Dashboard() {
             }
         }).catch((err) => {
                 Messages.showMessage('Wystąpił błąd przy dodawaniu filmu', 4000)
-                console.error('Error adding movie:', err);
+                //console.error('Error adding movie:', err);
             }
         )
     };
@@ -122,7 +122,7 @@ function Dashboard() {
         const formData = new FormData(form);
         const screening = Object.fromEntries(formData.entries()) as unknown as Screening;
         screening.start_time = new Date(screening.start_time as string).toISOString();
-        console.log(screening);
+        //console.log(screening);
 
         fetch('/api/screenings', {
             method: 'POST',
@@ -142,7 +142,7 @@ function Dashboard() {
             }
         }).catch((err) => {
                 Messages.showMessage('Wystąpił błąd przy dodawaniu seansu', 4000)
-                console.error('Error adding screening:', err);
+                //console.error('Error adding screening:', err);
             }
         )
     };
@@ -215,7 +215,7 @@ function Dashboard() {
                                 }
                             })
                             .catch((err) => {
-                                console.error('Error logging out:', err)
+                                //console.error('Error logging out:', err)
                                 // At this point, cookie might or might not be deleted by the server, IDK
                                 // we can't delete HTTPOnly cookies from here, so we only delete the not HTTPOnly one
                                 // to ensure, that in the UI there won't be a user nick, which implies being logged in

@@ -9,7 +9,7 @@ export const fetchSeatTypes = async (): Promise<SeatType[]> => {
         const data: SeatTypeResponse = await response.json()
         return data.member
     } catch (err) {
-        console.error('Error fetching seat types:', err)
+        //console.error('Error fetching seat types:', err)
         return []
     }
 }

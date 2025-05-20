@@ -8,7 +8,7 @@ export const fetchDiscount = async (discount_name: string): Promise<Discount> =>
         }
         return await response.json() as Discount
     } catch (err) {
-        console.error('Error fetching discount:', err)
+        //console.error('Error fetching discount:', err)
         throw err;
     }
 }

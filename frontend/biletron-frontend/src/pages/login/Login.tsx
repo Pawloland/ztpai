@@ -63,7 +63,7 @@ function Login({variant}: { variant: AllowedVariants }) {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log('Success:', data);
+                //console.log('Success:', data);
                 setMessage('Zalogowano pomyślnie!');
                 setTimeout(() => {
                     if (variant === AllowedVariants.Worker) {
@@ -74,11 +74,11 @@ function Login({variant}: { variant: AllowedVariants }) {
                 }, 1000);
             } else {
                 const errorText = await response.text();
-                console.error('Server error:', errorText);
+                //console.error('Server error:', errorText);
                 setMessage('Wprowadź poprawne dane, lub potwierdź mail.');
             }
         } catch (error) {
-            console.error('Network error:', error);
+            //console.error('Network error:', error);
             setMessage('Błąd sieci, spróbuj ponownie.');
         }
     };
